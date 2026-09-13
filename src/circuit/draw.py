@@ -123,7 +123,7 @@ def _contact_glyph(tag: str) -> str:
 
 def _coil_glyph(tag: str) -> str:
     if "Y" in tag:
-        return "solenoid_box"
+        return "solenoid_coil"
     if tag.startswith("T1"):
         return "timer_pull_in"
     return "relay_coil"
@@ -160,6 +160,9 @@ def draw_electrical(spec: CircuitSpec, dest: Path) -> Path:
             bot_y = g.get("out", (x, y + 18))[1]
             s.line(x, prev_bottom, x, top_y)
             s.text(x + 18, y + 4, c, 11, "start")
+            if gid in {"contact_no", "pushbutton", "limit_switch"}:
+                s.text(x - 12, top_y + 8, "13", 8, "end")
+                s.text(x - 12, bot_y + 2, "14", 8, "end")
             prev_bottom = bot_y
             y += 62
         coil_y = 430
@@ -170,16 +173,24 @@ def draw_electrical(spec: CircuitSpec, dest: Path) -> Path:
             label = path.coil
             if gid == "timer_pull_in":
                 s.text(x + 36, coil_y + 5, label, 10, "start")
-            elif gid == "solenoid_box":
-                s.text(x, coil_y + 24, label, 11)
             else:
-                s.text(x, coil_y + 5, label, 9)
-            a2_y = coil.get("A2", (x, coil_y + 12))[1]
-            s.line(x, a2_y, x, y0)
+                s.text(x + 28, coil_y + 5, label, 10, "start")
+            a1 = coil.get("A1", (x, coil_y - 12))
+            a2 = coil.get("A2", (x, coil_y + 12))
+            s.text(a1[0] - 10, a1[1] + 8, "A1", 8, "end")
+            s.text(a2[0] - 10, a2[1] + 2, "A2", 8, "end")
+            s.line(x, a2[1], x, y0)
         else:
             s.line(x, coil_y - 14, x, y0)
         s.dot(x, y0)
         s.text(x, 548, "main" if path.kind == "main" else "control", 9)
+
+    n_control = sum(1 for p in paths if p.kind != "main")
+    if 0 < n_control < len(paths):
+        split_x = 88 + n_control * col_w - col_w / 2 + 70
+        s.line(split_x, 56, split_x, y0 + 8, 0.8, "#888888")
+        s.text((88 + (n_control - 1) * col_w + 88) / 2, 568, "control", 11)
+        s.text((88 + n_control * col_w + 88 + (len(paths) - 1) * col_w) / 2, 568, "main", 11)
 
     dest.write_text(s.tostring())
     return dest

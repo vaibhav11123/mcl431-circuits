@@ -35,8 +35,20 @@ def compile_paths(spec: CircuitSpec) -> list[CurrentPath]:
     start_contacts = ["START"]
     if "JOB" in spec.sensors:
         start_contacts.append("JOB")
+    # L10: start only from home (nB1 retracted on each cylinder)
+    for cyl in spec.cylinders.values():
+        if cyl.sensors:
+            start_contacts.append(cyl.sensors[0])
     paths.append(
         CurrentPath(number=n, kind="control", contacts=start_contacts, coil="K_START")
+    )
+    n += 1
+    # L9 p5 indirect: holding path START ∨ K_START, still gated by JOB
+    latch = ["K_START"]
+    if "JOB" in spec.sensors:
+        latch.append("JOB")
+    paths.append(
+        CurrentPath(number=n, kind="control", contacts=latch, coil="K_START")
     )
     n += 1
 
@@ -68,7 +80,13 @@ def compile_paths(spec: CircuitSpec) -> list[CurrentPath]:
                 prev_contacts = [cyl.sensors[-1] if step.action.endswith("+") else cyl.sensors[0]]
             elif cid in spec.motors:
                 prev_contacts = ["K_START"]
-    return paths
+
+    control = [p for p in paths if p.kind != "main"]
+    main = [p for p in paths if p.kind == "main"]
+    return [
+        p.model_copy(update={"number": i})
+        for i, p in enumerate(control + main, start=1)
+    ]
 
 
 def displacement_rows(sequence: list[SeqStep]) -> list[dict[str, str]]:
