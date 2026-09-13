@@ -5,9 +5,9 @@ from __future__ import annotations
 from pathlib import Path
 
 from circuit.calc import solution_lines_grinding, solution_lines_hilo_2017
-from circuit.catalog import stamp, stamp_dcv_4_3_closed
+from circuit.catalog import stamp, stamp_dcv_4_3_closed, stamp_dcv_5_2
 from circuit.compile_sequence import apply_compile
-from circuit.spec import CircuitSpec, PatternId
+from circuit.spec import CircuitSpec, Domain, PatternId
 from circuit.svgdraw import SVG
 
 
@@ -175,9 +175,59 @@ def draw_hydraulic(spec: CircuitSpec, dest: Path) -> Path:
     return dest
 
 
+def draw_pneumatic(spec: CircuitSpec, dest: Path) -> Path:
+    """L10 p5: cylinders on top, 5/2 under, filled supply dot, exhaust on the stamp."""
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    s = SVG(1200, 720)
+    s.text(600, 22, spec.meta.title, 18)
+    s.text(600, 42, "Pneumatic circuit  ·  lecture L10 p5 stamps  ·  de-energized", 12)
+
+    supply_y = 560
+    cols = list(spec.cylinders.items())
+    x0, span = 280, 420
+    first_1: tuple[float, float] | None = None
+    for i, (name, cyl) in enumerate(cols):
+        cx = x0 + i * span
+        sols = spec.valves[cyl.dcv].solenoids
+        ports = stamp_dcv_5_2(s, cx, 360, cyl.dcv, list(sols))
+        for pid in ("4", "2", "1"):
+            if pid in ports:
+                s.text(ports[pid][0] + (8 if pid != "1" else 12), ports[pid][1] + (0 if pid != "1" else 14), pid, 10, "start")
+        cports = stamp(s, "cylinder_l10", cx - 70, 70, 200, 80)
+        s.text(cx - 86, 110, name, 13, "end")
+        if cyl.sensors:
+            s.text(cports["cap"][0], 64, cyl.sensors[0], 11)
+            if len(cyl.sensors) > 1:
+                s.text(cports["rod"][0], 64, cyl.sensors[1], 11)
+        s.line(ports["4"][0], ports["4"][1], ports["4"][0], cports["cap"][1])
+        s.line(ports["4"][0], cports["cap"][1], cports["cap"][0], cports["cap"][1])
+        s.dot(*cports["cap"])
+        jog_y = 220
+        s.line(ports["2"][0], ports["2"][1], ports["2"][0], jog_y)
+        s.line(ports["2"][0], jog_y, cports["rod"][0], jog_y)
+        s.line(cports["rod"][0], jog_y, cports["rod"][0], cports["rod"][1])
+        s.dot(*cports["rod"])
+        s.line(ports["1"][0], ports["1"][1], ports["1"][0], supply_y)
+        if first_1 is None:
+            first_1 = (ports["1"][0], supply_y)
+            s.dot(*first_1)
+        else:
+            s.line(first_1[0], supply_y, ports["1"][0], supply_y)
+            s.dot(ports["1"][0], supply_y)
+
+    if first_1:
+        sx, sy = first_1
+        s.line(sx, sy, sx, sy + 50)
+        s.triangle([(sx - 10, sy + 50), (sx + 10, sy + 50), (sx, sy + 72)])
+        s.text(sx + 18, sy + 66, "supply", 11, "start")
+
+    dest.write_text(s.tostring())
+    return dest
+
+
 def _contact_glyph(tag: str) -> str:
     upper = tag.upper()
-    if upper in {"START", "S1"}:
+    if upper in {"START", "S1", "S3"}:
         return "pushbutton"
     if "B" in upper or upper == "JOB":
         return "limit_switch"
@@ -355,16 +405,22 @@ def write_solution(spec: CircuitSpec, dest: Path) -> Path:
 
 def draw_all(spec: CircuitSpec, out_dir: Path) -> dict[str, Path]:
     out_dir.mkdir(parents=True, exist_ok=True)
+    pneu = spec.meta.domain in {Domain.PNEUMATIC, Domain.PNEUMATIC_PLUS_ELECTRICAL}
     written: dict[str, Path] = {
-        "hydraulic": draw_hydraulic(spec, out_dir / "hydraulic_circuit.svg"),
         "electrical": draw_electrical(spec, out_dir / "electrical_circuit.svg"),
         "phase": draw_phase(spec, out_dir / "step_displacement.svg"),
         "solution": write_solution(spec, out_dir / "solution.txt"),
     }
+    if pneu:
+        written["pneumatic"] = draw_pneumatic(spec, out_dir / "pneumatic_circuit.svg")
+    else:
+        written["hydraulic"] = draw_hydraulic(spec, out_dir / "hydraulic_circuit.svg")
     from circuit.png import svg_to_png
 
     pngs: dict[str, Path] = {}
-    for key in ("hydraulic", "electrical", "phase"):
+    for key in ("hydraulic", "pneumatic", "electrical", "phase"):
+        if key not in written:
+            continue
         png = svg_to_png(written[key])
         if png is not None:
             pngs[f"{key}_png"] = png

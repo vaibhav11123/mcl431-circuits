@@ -134,6 +134,24 @@ GLYPHS: dict[str, Glyph] = {
         44,
         {"1": (0.00, 0.50), "2": (1.00, 0.50)},
     ),
+    "dcv_5_2": Glyph(
+        "dcv_5_2.png",
+        220,
+        72,
+        {
+            "4": (0.42, 0.06),
+            "2": (0.58, 0.06),
+            "1": (0.52, 1.00),
+            "5": (0.48, 0.88),
+            "3": (0.60, 0.88),
+        },
+    ),
+    "pressure_switch": Glyph(
+        "pressure_switch.png",
+        64,
+        40,
+        {"in": (0.78, 0.00), "out": (0.78, 1.00)},
+    ),
 }
 
 
@@ -202,4 +220,21 @@ def stamp_dcv_4_3_closed(
         svg.text(right + sol_w / 2, cy + sol_h / 2 + 14, solenoids[1], 11)
 
     svg.text(x0 - 4, y_env - 8, tag, 12, "start")
+    return ports
+
+
+def stamp_dcv_5_2(
+    svg: SVG,
+    cx: float,
+    cy: float,
+    tag: str,
+    solenoids: list[str],
+) -> dict[str, tuple[float, float]]:
+    """L10 p5: 5/2 double solenoid, ports 4/2 top, 1 supply, 3/5 exhaust."""
+    ports = stamp(svg, "dcv_5_2", cx, cy, anchor="center")
+    svg.text(cx - 118, cy - 8, tag, 12, "end")
+    if solenoids:
+        svg.text(cx - 118, cy + 18, solenoids[0], 11, "end")
+    if len(solenoids) > 1:
+        svg.text(cx + 118, cy + 18, solenoids[1], 11, "start")
     return ports

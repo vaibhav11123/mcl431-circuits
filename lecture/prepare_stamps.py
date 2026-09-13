@@ -108,6 +108,12 @@ def main() -> None:
     cv = Image.open(CROPS / "check_valve.png")
     _save(cv.crop((330, 5, 580, 320)), "check_valve.png")
 
+    # L10 p5 5/2 body only — drop baked-in 1Y1/1Y2 so paper tags can be overlaid
+    ep = Image.open(CROPS / "dcv_5_2_double_solenoid.png")
+    _save(ep.crop((230, 705, 900, 935)), "dcv_5_2.png")
+    ps = Image.open(CROPS / "pressure_switch.png")
+    _save(ps.crop((200, 80, 500, 280)), "pressure_switch.png")
+
 
 if __name__ == "__main__":
     main()

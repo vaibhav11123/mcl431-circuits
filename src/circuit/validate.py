@@ -29,15 +29,20 @@ def validate_spec(spec: CircuitSpec, root: Path | None = None) -> list[Check]:
     checks: list[Check] = []
     atlas = load_atlas_ids(root)
 
-    if spec.power.pumps:
-        checks.append(Check("has_pump", True, ",".join(p.id for p in spec.power.pumps)))
-    else:
-        checks.append(Check("has_pump", False, "no pump"))
-
     hyd = spec.meta.domain in {
         Domain.HYDRAULIC,
         Domain.HYDRAULIC_PLUS_ELECTRICAL,
     }
+    pneu = spec.meta.domain in {
+        Domain.PNEUMATIC,
+        Domain.PNEUMATIC_PLUS_ELECTRICAL,
+    }
+    if spec.power.pumps:
+        checks.append(Check("has_pump", True, ",".join(p.id for p in spec.power.pumps)))
+    elif pneu:
+        checks.append(Check("has_pump", True, "pneumatic — no hydraulic pump"))
+    else:
+        checks.append(Check("has_pump", False, "no pump"))
     if hyd:
         checks.append(
             Check(

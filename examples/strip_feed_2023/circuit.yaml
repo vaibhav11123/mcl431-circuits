@@ -1,0 +1,47 @@
+meta:
+  title: 2023 Minor-2 Q1 strip feed
+  domain: pneumatic_plus_electrical
+  exam_id: 2023_minor2_q1
+  patterns:
+    - ep_dac_5_2
+    - sequence_double_solenoid
+
+sequence:
+  - { action: 1A+, label: hold strip }
+  - { action: 2A-, label: retract feed }
+  - { action: 1A-, label: release }
+  - { action: 2A+, label: return forward }
+
+power:
+  pumps: []
+  tank: ""
+
+cylinders:
+  1A:
+    dcv: 1V
+    sensors: [1B1, 1B2]
+  2A:
+    dcv: 2V
+    sensors: [2B1, 2B2]
+
+motors: {}
+
+valves:
+  1V:
+    type: dcv_5_2_double_solenoid
+    solenoids: [1Y1, 1Y2]
+  2V:
+    type: dcv_5_2_double_solenoid
+    solenoids: [2Y1, 2Y2]
+
+sensors:
+  - S1
+  - S3
+  - 1B1
+  - 1B2
+  - 2B1
+  - 2B2
+
+electrical:
+  convention: lecture
+  paths: []

@@ -5,6 +5,38 @@ from __future__ import annotations
 from circuit.spec import CircuitSpec, CurrentPath, SeqStep
 
 
+def _start_and_latch(spec: CircuitSpec) -> tuple[list[str], list[str]]:
+    sensors = set(spec.sensors)
+    start: list[str] = []
+    if "S1" in sensors:
+        start.append("S1")
+        if "S3" in sensors:
+            start.append("S3")
+    else:
+        start.append("START")
+        if "JOB" in sensors:
+            start.append("JOB")
+    first: dict[str, str] = {}
+    for step in spec.sequence:
+        act = step.action
+        if act.endswith("+") or act.endswith("-"):
+            first.setdefault(act[:-1], act)
+    for cid, cyl in spec.cylinders.items():
+        if not cyl.sensors:
+            continue
+        fa = first.get(cid, "")
+        if fa.endswith("-") and len(cyl.sensors) > 1:
+            start.append(cyl.sensors[-1])
+        else:
+            start.append(cyl.sensors[0])
+    latch = ["K_START"]
+    if "JOB" in sensors:
+        latch.append("JOB")
+    elif "S1" in sensors:
+        latch.append("S1")
+    return start, latch
+
+
 def _solenoid_for(spec: CircuitSpec, action: str) -> str | None:
     if action.endswith("_ON"):
         mid = action[: -len("_ON")]
@@ -32,21 +64,11 @@ def compile_paths(spec: CircuitSpec) -> list[CurrentPath]:
 
     paths: list[CurrentPath] = []
     n = 1
-    start_contacts = ["START"]
-    if "JOB" in spec.sensors:
-        start_contacts.append("JOB")
-    # L10: start only from home (nB1 retracted on each cylinder)
-    for cyl in spec.cylinders.values():
-        if cyl.sensors:
-            start_contacts.append(cyl.sensors[0])
+    start_contacts, latch = _start_and_latch(spec)
     paths.append(
         CurrentPath(number=n, kind="control", contacts=start_contacts, coil="K_START")
     )
     n += 1
-    # L9 p5 indirect: holding path START ∨ K_START, still gated by JOB
-    latch = ["K_START"]
-    if "JOB" in spec.sensors:
-        latch.append("JOB")
     paths.append(
         CurrentPath(number=n, kind="control", contacts=latch, coil="K_START")
     )

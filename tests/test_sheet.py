@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from circuit.draw import draw_electrical, draw_hydraulic
+from circuit.draw import draw_electrical, draw_hydraulic, draw_pneumatic
 from circuit.spec import CircuitSpec
 
 
@@ -39,3 +39,13 @@ def test_hilo_hydraulic_svg_has_p1_p2_uv(tmp_path: Path) -> None:
     svg = dest.read_text()
     for token in ("P1", "P2", "UV", "RV", "HC1"):
         assert token in svg, token
+
+
+def test_strip_feed_pneumatic_svg_has_two_5_2(tmp_path: Path) -> None:
+    spec = CircuitSpec.from_yaml(ROOT / "examples/strip_feed_2023/circuit.yaml")
+    dest = tmp_path / "pneumatic_circuit.svg"
+    draw_pneumatic(spec, dest)
+    svg = dest.read_text()
+    for token in ("1A", "2A", "1Y1", "2Y2", "4", "2", "1"):
+        assert token in svg, token
+    assert svg.count('href="data:image/png') >= 4

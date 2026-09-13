@@ -49,6 +49,18 @@ def test_hilo_golden_has_two_pumps_and_uv() -> None:
     assert report["pass"], failed
 
 
+def test_strip_feed_eval_passes() -> None:
+    spec = CircuitSpec.from_yaml(ROOT / "examples/strip_feed_2023/circuit.yaml")
+    report = eval_spec(spec, ROOT)
+    failed = [c for c in report["checks"] if not c["ok"]]
+    assert report["pass"], failed
+    from circuit.compile_sequence import apply_compile
+
+    coils = [p.coil for p in apply_compile(spec).electrical.paths if p.coil]
+    for name in ("1Y1", "2Y2", "1Y2", "2Y1"):
+        assert name in coils, name
+
+
 def test_l4_regen_not_attached_to_b1() -> None:
     spec = CircuitSpec.from_yaml(ROOT / "examples/grinding_machine/circuit.yaml")
     report = eval_spec(spec, ROOT)

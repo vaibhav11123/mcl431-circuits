@@ -66,6 +66,16 @@ def math_checks(spec: CircuitSpec) -> list[Check]:
         checks.append(Check("hilo_bore_not_given", not invented, "bore not_given"))
         force = next((c.force_kn for c in spec.cylinders.values() if c.force_kn), None)
         checks.append(Check("hilo_force_7800", force is not None and abs(force * 1000 - 7800) < 1, str(force)))
+    if exam == "2023_minor2_q1":
+        n52 = sum(1 for v in spec.valves.values() if "5_2" in v.type)
+        checks.append(Check("two_5_2", n52 == 2, str(n52)))
+        checks.append(
+            Check(
+                "domain_pneumatic",
+                "pneumatic" in spec.meta.domain.value,
+                spec.meta.domain.value,
+            )
+        )
     return checks
 
 
@@ -97,5 +107,6 @@ def golden_specs(root: Path) -> list[Path]:
     required = [
         root / "examples/grinding_machine/circuit.yaml",
         root / "examples/hilo_punch_2017/circuit.yaml",
+        root / "examples/strip_feed_2023/circuit.yaml",
     ]
     return [p for p in required if p.exists()]

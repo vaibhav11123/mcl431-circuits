@@ -1,0 +1,46 @@
+meta:
+  title: 2016 Minor-1 Q2 emboss
+  domain: pneumatic_plus_electrical
+  exam_id: 2016_minor1_emboss
+  patterns:
+    - ep_dac_5_2
+    - sequence_double_solenoid
+
+sequence:
+  - { action: 1A1+, label: clamp }
+  - { action: 2A1+, label: emboss }
+  - { action: 2A1-, label: retract at 4 bar }
+  - { action: 1A1-, label: unclamp }
+
+power:
+  pumps: []
+  tank: ""
+
+cylinders:
+  1A1:
+    dcv: 1V
+    sensors: [1B1, 1B2]
+  2A1:
+    dcv: 2V
+    sensors: [2B1, 2B2]
+
+motors: {}
+
+valves:
+  1V:
+    type: dcv_5_2_double_solenoid
+    solenoids: [1Y1, 1Y2]
+  2V:
+    type: dcv_5_2_double_solenoid
+    solenoids: [2Y1, 2Y2]
+
+sensors:
+  - S1
+  - 1B1
+  - 1B2
+  - 2B1
+  - 2B2
+
+electrical:
+  convention: lecture
+  paths: []
