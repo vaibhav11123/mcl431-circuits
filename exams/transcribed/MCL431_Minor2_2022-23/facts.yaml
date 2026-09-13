@@ -1,0 +1,62 @@
+# Extracted from exams/pages/MCL431_Minor2_2022-23_p01.jpeg. No invented answers.
+id: MCL431_Minor2_2022-23
+year: 2023
+paper: Minor-2 Exam 26-Mar-2023
+date: 2023-03-26
+readable: true
+source_page: exams/pages/MCL431_Minor2_2022-23_p01.jpeg
+questions:
+  - part: Q1
+    marks: 30
+    domain: pneumatic_plus_electrical
+    identifiers: [1A, 2A, S1, S3]
+    identifier_style: nA
+    sequence:
+      - S1 main switch on
+      - S3 punch-tool upper (start)
+      - 1A+
+      - 2A-
+      - 1A-
+      - 2A+
+    sequence_note: printed text is hold then retract then release then return forward; scan notes write 1A+ 2A- 1A- 2A+
+    cylinders:
+      1A: { role: hold_strip }
+      2A: { role: feed_retract_then_return_forward }
+    sensors:
+      - end_positions
+      - optical_indicator_when_2A_retracted_and_1A_released
+    switches:
+      S1: main switch
+      S3: punch-tool upper / start (simulated by push button)
+    pumps: 0
+    timer_s: null
+    tags: [strip_feed, sequence_double_solenoid, pneumatic, electrical]
+  - part: Q2
+    marks: 30
+    domain: plc
+    course_version: v2
+    identifiers: [START, STOP]
+    identifier_style: plc
+    sequence: []
+    plc:
+      analog_input:
+        device: conveyor load cell
+        range_kg: [0, 950]
+        resolution_bits: 12
+        channel: 2
+        slot: 3
+      analog_output:
+        device: speed controller
+        voltage_v: [0, 10]
+        rpm: [0, 40000]
+        resolution_bits: 10
+        channel: 1
+        slot: 2
+      speeds_rpm:
+        at_470_kg: 22500
+        above_580_kg: 35455
+        below_220_kg: 11855
+      lamps: 3
+      start_stop: [START, STOP]
+    tags: [plc_v2, analog_io, conveyor]
+    note: PLC ladder — not a lecture L8 relay sheet.

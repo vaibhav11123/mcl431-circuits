@@ -1,0 +1,18 @@
+MCL431: CAM and Automation
+Minor-2 Exam
+[07-Oct-2017]
+MAX MARKS: 60    MAX TIME: 60 min
+Source scan: exams/pages/MCL431_Minor2_2017-18_Sem1_p01.png
+Same paper as exams/pages/Fall17-Minor2_p01.png and exams/pyqs/[Fall17]-Minor2.pdf.
+(Words reconstructed from the CamScanner page.)
+
+Q1. An Electro-pneumatic system is to be designed for a Drilling Machine having an indexing table controlled by pneumatic actuators. Indexing table slides on the machine table and can be positioned at any of the four drilling locations with the help of pneumatic actuators 1A and 2A. Drill travel is controlled by actuator 3A. Drill Spindle ON/OFF is controlled by a separate relay in the circuit (Drill can be started/stopped at the beginning of the sequence and stopped after all holes drilled in the job). Hole drilling sequence should be 1-2-3-4 and indexing table should be positioned back to 1 for next job. All 4 holes should be drilled in a workpiece after pressing a START push button and detecting a workpiece on the table. Select suitable sensors for the system.
+[12 + 8 + 10 + 30]
+
+Attempt the following:
+1. Draw pneumatic circuit for the drilling machine using 5/3 DCVs for all 3 actuators.
+2. Draw the step sequence table with columns for each cylinder. List each step enabling condition along with comment on operation performed during that step.
+3. Draw Displacement-Step diagram.
+4. Draw the Electrical circuit for the drilling machine.
+
+Figure 1: Drilling Machine with Indexing Table — 1A and 2A slide the table to holes 1–4; 3A is the vertical drill; workpiece on table; START.

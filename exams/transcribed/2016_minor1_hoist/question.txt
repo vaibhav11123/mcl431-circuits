@@ -1,0 +1,17 @@
+MCL431: CAM AND AUTOMATION
+Minor 1 Exam (29-Aug-2016)
+[File on disk: MCL431_Minor-13Dec2020.pdf — header on the paper is 29-Aug-2016.]
+
+Q1. A hydraulic system shown in Fig. 1 is designed to lift a load of 5.4 Ton at an average speed of 1300 mm/min using Hydraulic chain hoist driven by a Hydraulic motor having volumetric displacement of 90 cc. Volumetric & Mechanical efficiency of Motor is 92% and 87% respectively. Hoist pulley dia is 250 cm. A Vane pump having volumetric displacement of 170 cc is used to drive the system. Pump has Volumetric & Mechanical efficiency of 83% and 89% respectively. Hydraulic oil: Specific gravity 0.85, Kinematic viscosity 120 cS. Considering losses in hydraulic circuit, calculate the following:
+
+i) Pressure at Pump outlet
+(15 Marks)
+ii) Electric Motor RPM and HP
+(10 Marks)
+
+Volumetric displacement is the volume of fluid displaced in one rotation of pump or Motor.
+Pipe 1: L = 1m, D = 30 mm; Pipe 2: L = 3.85m, D = 25 mm; Pipe 3: L = 1.40m, D = 25 mm; Pipe 4: L = 4.50 m, D = 30 mm;
+
+Figure 1 on paper: tank; vane pump driven by electric motor M; Pipe 1 suction; L1; Pipe 2 to check valve; Pipe 3 across top to hydraulic motor with elbows; Pipe 4 return.
+
+Hint table on paper: Volumetric and Mechanical Efficiencies of Hydraulic Motor and Pump (definitions printed for ηv and ηm of motor and pump).

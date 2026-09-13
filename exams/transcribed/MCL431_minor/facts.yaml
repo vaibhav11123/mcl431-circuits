@@ -1,0 +1,48 @@
+# Extracted from exams/pages/MCL431_minor_p01.png–p04.png (27-Sep-2022). No invented answers.
+id: MCL431_minor
+year: 2022
+paper: Minor Exam 27-Sep-2022
+date: 2022-09-27
+readable: true
+source_pages:
+  - exams/pages/MCL431_minor_p01.png
+  - exams/pages/MCL431_minor_p02.png
+  - exams/pages/MCL431_minor_p03.png
+  - exams/pages/MCL431_minor_p04.png
+domain: hydraulic
+identifiers: [HC1, HC2, HM1, DCV1, PA, PB, RV1, RV2, RV3, RV4, RV5]
+identifier_style: HCn
+sequence:
+  - HC1+ clamp 2.50 kN
+  - HM1_ON 600 RPM
+  - HC2+ approach 45 cm
+  - grind 35 s (only PB; PA unloaded)
+job:
+  cube_edge_cm: 40
+  grind_torque_kn_cm: 1.6
+  approach_cm: 45
+  grind_s: 35
+  components_per_hour: 60
+cylinders:
+  HC1: { role: clamp, bore_mm: 50, rod_mm: 25, force_kn: 2.50, friction_kn: 1.50 }
+  HC2: { role: feed, bore_mm: 40, rod_mm: 25, approach_cm: 45, friction_kn: 1.50 }
+motor:
+  HM1:
+    rpm: 600
+    displacement_cm3_rev: 5
+    volumetric_efficiency_pct: 80
+    friction_torque_kn_cm: 0.40
+    friction_rotations: [CW, CCW]
+pumps: 2
+pump_ids: [PA, PB]
+during_grind: only PB operating; PA relieving to reservoir
+relief_valves: [RV1, RV2, RV3, RV4, RV5]
+prv_safety_margin_pct: 10
+electric_motor_mechanical_efficiency_pct: 90
+dcv: DCV1 (left and right envelopes asked)
+sensors: []
+timer_s: 35
+tags: [grinding_sequence, grinding_calc, hilo_double_pump, motor_analysis]
+part_a: mcq_only
+marks_part_b: 80
+marks_split: [6, 5, 25, 15, 10, 15, 4]

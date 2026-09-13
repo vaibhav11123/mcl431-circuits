@@ -1,0 +1,66 @@
+# Extracted from MCL431_SelfStudy_Minor_01July2023.pdf Part B, B2. No invented answers.
+id: 2023_selfstudy_b2
+year: 2023
+paper: MCL431_SelfStudy_Minor_01July2023.pdf
+date: 2023-07-01
+part: B2
+marks: 20
+domain: hydraulic
+identifiers:
+  - P1
+  - P2
+sequence:
+  - forming hammer approaches job from 11 cm
+  - form hemispherical cup
+cylinders:
+  - role: forming hammer
+    piston_area_cm2: 20
+    rod_area_cm2: 6
+    bore_mm: null
+    rod_mm: null
+    packing_friction_kn: 1.3
+    deform_force_kn: 6
+    force_kn: 6
+shape:
+  type: hemispherical cup
+  radius_cm: 19
+approach_cm: 11
+pumps: 2
+pump_flow:
+  P1_cm3_s: 400
+  P2_cm3_s: 70
+pipes:
+  diameters_cm:
+    D1a: 3.7
+    D1b: 3.7
+    D2_to_D8: 2.5
+  lengths_cm:
+    L1: 20
+    L2: 40
+    L3: 36
+    L4: 20
+    L5: 26
+    L6: 100
+    L7: 108
+    L8: 50
+  flow: laminar
+  ignore_undimensioned_short_pipes: true
+k_factors:
+  tee: 3.8
+  elbow: 2.7
+  check_valve: 3.3
+  dcv: 4.2
+fluid:
+  kinematic_viscosity_cS: 105
+  weight_density_N_per_m3: 9866
+line_losses:
+  punching: negligibly small
+sensors: []
+timer_s: null
+motor: null
+figure:
+  type: hi-lo forming press
+  labels: [P1, P2, 1a, 1b, 2a, 2b, CV, DCV, 3, 4, 5, 6, 7, 8]
+  legend:
+    E: Elbows
+    T: Tee

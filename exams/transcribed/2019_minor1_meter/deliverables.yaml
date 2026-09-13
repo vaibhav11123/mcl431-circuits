@@ -1,0 +1,18 @@
+# What 2019 Minor-1 Q1 asks to produce. Three circuit figures are already on the paper.
+sheets: []
+circuit_figure_on_paper: true
+calcs:
+  - cylinder size from standard sizes (Piston Area : Rod Area ~ 2:1)
+  - pressure and flow rate on extend and retract stroke
+  - system efficiency (fluid power to overcome load on cylinder / total power into fluid)
+  - Case 1 (compulsory): no flow controls, calculate extend speed
+  - Case 2 (even roll): meter-in, extend 0.5 m/min
+  - Case 3 (odd roll): meter-out, extend 0.05 m/min
+paper_asks:
+  - Cylinder size (standard sizes table; assume piston area : rod area ~ 2:1)
+  - Pressure and Flow Rate on Extend & Retract stroke
+  - System efficiency (Fluid Power to overcome load on cylinder / Total Power into Fluid)
+marks: 60
+case_marks:
+  case1: 40
+  case2_or_case3: 20

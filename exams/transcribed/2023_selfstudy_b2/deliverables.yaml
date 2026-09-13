@@ -1,0 +1,10 @@
+# What B2 asks to produce. Circuit figure is already on the paper.
+sheets: []
+circuit_figure_on_paper: true
+calcs:
+  - head loss in pipes
+  - head loss in valves
+  - head loss in fittings
+paper_asks:
+  - Find the Head Loss in Pipes, Valves and Fitting.
+marks: 20

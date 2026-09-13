@@ -1,0 +1,12 @@
+# What 2016 Minor-1 Q1 asks to produce. Fig. 1 is already on the paper.
+sheets: []
+circuit_figure_on_paper: true
+calcs:
+  - pressure at pump outlet
+  - electric motor RPM and HP
+paper_asks:
+  - Pressure at Pump outlet
+  - Electric Motor RPM and HP
+  - Considering losses in hydraulic circuit
+marks: 25
+marks_split: [15, 10]

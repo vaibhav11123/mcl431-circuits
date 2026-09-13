@@ -1,0 +1,21 @@
+id: 2023_selfstudy_b1
+year: 2023
+paper: Self Study Minor 01-July-2023 B1
+domain: hydraulic_plus_electrical
+identifiers: [HC1, HC2, HM1, START, JOB]
+sequence:
+  - START
+  - HC1+
+  - HM1_ON
+  - HC2+
+  - TIMER_30S
+  - HC2-
+  - HC1-
+cylinders:
+  HC1: { bore_mm: 45, rod_mm: 22.5, force_kn: 2.5 }
+  HC2: { bore_mm: 40, rod_mm: 20, approach_cm: 45 }
+motor:
+  HM1: { rpm: 400 }
+sensors: [end_positions, job_presence]
+pumps: 1
+timer_s: 30

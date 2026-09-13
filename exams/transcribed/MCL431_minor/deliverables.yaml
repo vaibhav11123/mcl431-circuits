@@ -1,0 +1,17 @@
+sheets: [hydraulic_given]
+calcs:
+  - sequence of HC1 HC2 HM1 for DCV1 left and right envelopes
+  - name RV1-RV5 by function
+  - PA and PB flow cm3/s for 35 s grind and 60 parts/hour
+  - pressure ratings of PA and PB in MPa
+  - RV1-RV5 settings (safety PRV 10% higher)
+  - electric motor M HP at 90% mechanical efficiency
+  - reservoir size in litres
+paper_asks:
+  - Analyse the printed hydraulic circuit (Fig. 2); do not invent a new plant
+  - DCV1 is controlled manually
+  - During grinding only PB runs; PA unloads to tank
+electrical_sheet: false
+part_a: mcq (20 questions) — no circuit drawing
+marks: 80
+marks_split: [6, 5, 25, 15, 10, 15, 4]

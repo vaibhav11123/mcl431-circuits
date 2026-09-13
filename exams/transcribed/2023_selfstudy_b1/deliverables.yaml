@@ -1,0 +1,3 @@
+sheets: [hydraulic, electrical]
+calcs: [clamp_pressure_from_2_5_kn]
+notes: Paper says electro-pneumatic diagram of a hydraulic machine. Do not draw a 5/2 air plant.

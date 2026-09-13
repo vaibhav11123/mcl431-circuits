@@ -1,0 +1,51 @@
+# Extracted from MCL431_Minor-13Dec2020.pdf (paper header: 29-Aug-2016). No invented answers.
+id: 2016_minor1_hoist
+year: 2016
+paper: MCL431_Minor-13Dec2020.pdf
+paper_header: Minor 1 Exam (29-Aug-2016)
+date: 2016-08-29
+part: Q1
+marks: 25
+marks_split: [15, 10]
+domain: hydraulic
+identifiers: []
+sequence: []
+cylinders: []
+load_ton: 5.4
+average_speed_mm_per_min: 1300
+hoist:
+  type: hydraulic chain hoist
+  pulley_dia_cm: 250
+motor:
+  type: hydraulic motor
+  volumetric_displacement_cc: 90
+  volumetric_efficiency_pct: 92
+  mechanical_efficiency_pct: 87
+pump:
+  type: vane
+  volumetric_displacement_cc: 170
+  volumetric_efficiency_pct: 83
+  mechanical_efficiency_pct: 89
+pumps: 1
+fluid:
+  specific_gravity: 0.85
+  kinematic_viscosity_cS: 120
+pipes:
+  - id: Pipe 1
+    L_m: 1
+    D_mm: 30
+  - id: Pipe 2
+    L_m: 3.85
+    D_mm: 25
+  - id: Pipe 3
+    L_m: 1.40
+    D_mm: 25
+  - id: Pipe 4
+    L_m: 4.50
+    D_mm: 30
+figure:
+  id: Fig. 1
+  labels: [Pipe 1, Pipe 2, Pipe 3, Pipe 4, L1, Elbow, Check Valve, M]
+sensors: []
+timer_s: null
+note: volumetric displacement is the volume of fluid displaced in one rotation of pump or motor

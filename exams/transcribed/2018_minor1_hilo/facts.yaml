@@ -1,0 +1,64 @@
+# Extracted from MCL431_Minor_1-25Aug2018.pdf Q1. No invented answers.
+id: 2018_minor1_hilo
+year: 2018
+paper: MCL431_Minor_1-25Aug2018.pdf
+date: 2018-08-25
+part: Q1
+marks: 60
+marks_split: [20, 15, 15, 10]
+domain: hydraulic
+identifiers:
+  - P1
+  - P2
+sequence:
+  - forming hammer approaches job from 25 cm
+  - deform sheet (6.5 kN)
+cylinders:
+  - role: forming hammer
+    bore_mm: 37.5
+    rod_mm: 12.5
+    force_kn: 6.5
+shape:
+  type: hemispherical cup
+  radius_cm: 10
+  sheet_thickness_mm: 2
+  thickness_note: can be ignored for stroke length
+approach_cm: 25
+pumps: 2
+pump_flow:
+  P1_lpm: 25
+  P2_lpm: 5
+uv_rv_margin_pct: 50
+pump_efficiency_pct: 75
+pipes:
+  diameters_mm:
+    D1: 40
+    D2_to_D8: 25
+  lengths_cm:
+    L1: 50
+    L2: 60
+    L3: 40
+    L4: 60
+    L5: 30
+    L6: 150
+    L7: 100
+    L8: 60
+  flow: laminar
+  ignore_undimensioned_short_pipes: true
+k_factors:
+  tee: 3.5
+  elbow: 2.0
+  check_valve: 3.0
+  dcv: 4.0
+  pressure_relief_valve: 5.0
+fluid:
+  kinematic_viscosity_cS: 120
+  specific_gravity: 0.8
+line_losses:
+  punching: negligibly small
+sensors: []
+timer_s: null
+motor: null
+figure:
+  type: hi-lo double pump forming press
+  labels: [P1, P2, M, 1, 2, 3, 4, 5, 6, 7, 8]

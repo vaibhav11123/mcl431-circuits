@@ -1,0 +1,23 @@
+MCL431: CAM and Automation
+Minor Exam
+[27-Sep-2022]
+MAX MARKS: 80 (Part B) + 20 (Part A)    MAX TIME: 50 min (Part B shown) / 10 min (Part A)
+Source scan: exams/pages/MCL431_minor_p01.png … p04.png
+(Words reconstructed from the four rasters.)
+
+PART-B (p01–p02)
+
+Q1. In an Automated surface grinding machine, a top surface of the cube of edge 40 cm is to be grind by the grinding wheel. The torque required to grind surface is 1.6 kN-cm. The grinding wheel should approach job from a distance of 45 cm. The job is clamped on the machine with the help of hydraulic cylinder HC1 having 50 mm bore dia and 25 mm rod dia. After job is clamped to 2.50 kN force, the feed cylinder HC2 having 40 mm bore dia and 25 mm rod dia will advance to make grinding wheel touching the workpiece top surface. Grinding wheel is made to rotate at 600 RPM by Hydraulic Motor HM1. Frictional resistance in hydraulic cylinders HC1 and HC2 are 1.50 kN. Hydraulic motor HM1 requires minimum 0.40 kN-cm torque to overcome internal frictional resistance during CW and CCW rotations. Volumetric displacement and Volumetric efficiency of Hydraulic Motor HM1 are 5 cm³/rev and 80% respectively. During grinding operation, only pump PB will be operating, relieving pump PA to drain fluid to the reservoir. Ignore all frictional losses in tubings, valves and fittings.
+
+Figure: Automatic Grinding Machine — clamping cylinder HC1, feed cylinder HC2, hydraulic motor HM1, job 40 cm, approach 45 cm.
+Figure 2 (p02): Hydraulic circuit — HC1, HC2, HM1, DCV1, pumps PA and PB driven by motor M, relief valves RV1–RV5.
+
+i) What will be the sequence of operation of HC1, HC2, and HM1 when DCV1 is actuated to left envelope and right envelope respectively? [6 Marks]
+ii) Name different pressure relief valves RV1–RV5 based on their functions. [5 Marks]
+iii) Job is to be ground for 35 seconds, what will be flow rates of pumps PA and PB in cm³/sec to produce 60 components per hour? DCV1 will be controlled manually as desired to complete operations. Assuming no time lost in valve position change. [25 Marks]
+iv) Find the pressure ratings of pumps PA and PB in MPa. [15 Marks]
+v) Find pressure settings of pressure relief valves RV1, RV2, RV3, RV4, RV5. Consider safety PRV will open at 10% higher pressure than the system pressure requirement. [10 Marks]
+vi) Find HP of Electric Motor M required to run the system assuming 90% mechanical efficiency of the electric motor. [15 Marks]
+vii) What will be the Reservoir size for the hydraulic power pack in Litres? [4 Marks]
+
+PART-A (p03–p04) — closed-notes MCQ, 20 questions on valves, DCV ports, meter-in, smart manufacturing, etc. Not a drawing question.

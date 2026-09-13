@@ -1,0 +1,44 @@
+# Extracted from exams/pages/Fall17-Minor2_p01.png (same raster as MCL431_Minor2_2017-18_Sem1).
+id: Fall17-Minor2
+year: 2017
+paper: Minor-2 Exam 07-Oct-2017
+date: 2017-10-07
+readable: true
+same_as: MCL431_Minor2_2017-18_Sem1
+source_page: exams/pages/Fall17-Minor2_p01.png
+domain: pneumatic_plus_electrical
+identifiers: [1A, 2A, 3A, START]
+identifier_style: nA
+sequence:
+  - START and workpiece_detected
+  - position hole 1
+  - 3A+ drill
+  - 3A- retract
+  - position hole 2
+  - 3A+ drill
+  - 3A- retract
+  - position hole 3
+  - 3A+ drill
+  - 3A- retract
+  - position hole 4
+  - 3A+ drill
+  - 3A- retract
+  - return table to hole 1
+hole_order: [1, 2, 3, 4]
+cylinders:
+  1A: { role: index_table }
+  2A: { role: index_table }
+  3A: { role: drill_travel }
+dcv: 5/3 for all 3 actuators
+spindle:
+  on_off: separate relay
+  start: beginning of sequence
+  stop: after all holes drilled
+sensors:
+  - end_positions
+  - workpiece_on_table
+pumps: 0
+timer_s: null
+tags: [indexing_drill, electro_pneumatic, displacement_step, 5_3_dcv]
+marks: 60
+marks_split: [12, 8, 10, 30]

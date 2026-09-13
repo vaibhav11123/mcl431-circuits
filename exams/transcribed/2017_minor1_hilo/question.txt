@@ -1,0 +1,7 @@
+Q1. In a sheet metal punching press, double pump hydraulic system is used. Sheet metal punching operation requires a force of 7800 N. During rapid extension of the cylinder, a frictional pressure loss of 695 kPa occurs in the line from high-flow pump to the blank end of the cylinder. During the same time, a 380 kPa pressure loss occurs in the return line from the rod end of the cylinder to the oil tank. Frictional pressure losses in these lines are negligibly small during the punching operation. Assuming that the unloading valve and relief valve pressure settings (for their full pump flow requirements) should be 48% higher than the pressure required to overcome frictional pressure losses and the cylinder punching load respectively. The linear velocity of Hydraulic cylinder during approach to sheet is 15 cm/sec and deformation will takes place at 1.5 cm/sec. The Cylinder should return with 25 cm/sec. Use 3 position DCV for cylinder control.
+[6 + 4 + 12 + 8]
+Find the following:
+(i) Draw the complete circuit diagram, label all components with correct nomenclature.
+(ii) Hydraulic actuator piston bore and rod dia.
+(iii) Pressure and flow rate of both pumps
+(iv) Pressure settings of unloading valve and pressure relief valve

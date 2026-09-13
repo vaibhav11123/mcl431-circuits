@@ -1,0 +1,215 @@
+# PYQ index — source of truth for how papers ask questions.
+# Wave 2 transcribed entries. Facts only; no solutions.
+version: 1
+questions:
+  - id: 2023_selfstudy_b1
+    file: exams/transcribed/2023_selfstudy_b1
+    source: exams/pyqs/MCL431_SelfStudy_Minor_01July2023.pdf
+    domain: hydraulic_plus_electrical
+    identifiers: [HC1, HC2, HM1, START, JOB]
+    deliverables:
+      sheets: [hydraulic, electrical]
+      calcs: implied
+    pattern_hint: grinding_sequence
+
+  - id: 2017_minor1_hilo
+    file: exams/transcribed/2017_minor1_hilo
+    source: exams/pyqs/MCL431_Minor_1-01Sep2017.pdf
+    domain: hydraulic
+    identifiers: [P1, P2, UV, RV]
+    deliverables:
+      sheets: [hydraulic]
+      calcs:
+        - piston bore and rod dia
+        - pressure and flow of both pumps
+        - unloading valve and relief valve settings
+    pattern_hint: hilo_double_pump
+
+  - id: 2018_minor1_hilo
+    file: exams/transcribed/2018_minor1_hilo
+    source: exams/pyqs/MCL431_Minor_1-25Aug2018.pdf
+    domain: hydraulic
+    identifiers: [P1, P2]
+    deliverables:
+      sheets: []
+      calcs:
+        - pressure rating of P1 and P2
+        - unloading valve and relief valve settings
+        - electric motor HP
+        - maximum production rate
+    pattern_hint: hilo_double_pump
+
+  - id: 2019_minor1_meter
+    file: exams/transcribed/2019_minor1_meter
+    source: exams/pyqs/MCL431_Minor_1-26Aug2019.pdf
+    domain: hydraulic
+    identifiers: []
+    deliverables:
+      sheets: []
+      calcs:
+        - cylinder size
+        - pressure and flow on extend and retract
+        - system efficiency
+        - Case 1 no FCV (compulsory)
+        - Case 2 meter-in (even roll)
+        - Case 3 meter-out (odd roll)
+    pattern_hint: [meter_in, meter_out]
+
+  - id: 2016_minor1_hoist
+    file: exams/transcribed/2016_minor1_hoist
+    source: exams/pyqs/MCL431_Minor-13Dec2020.pdf
+    domain: hydraulic
+    identifiers: []
+    deliverables:
+      sheets: []
+      calcs:
+        - pressure at pump outlet
+        - electric motor RPM and HP
+    pattern_hint: motor_analysis
+
+  - id: 2023_selfstudy_b2
+    file: exams/transcribed/2023_selfstudy_b2
+    source: exams/pyqs/MCL431_SelfStudy_Minor_01July2023.pdf
+    domain: hydraulic
+    identifiers: [P1, P2]
+    deliverables:
+      sheets: []
+      calcs:
+        - head loss in pipes
+        - head loss in valves
+        - head loss in fittings
+    pattern_hint: head_loss
+
+  - id: 2023_minor2_q1
+    file: exams/transcribed/MCL431_Minor2_2022-23
+    source: exams/pyqs/MCL431_Minor2_2022-23.jpeg
+    page: exams/pages/MCL431_Minor2_2022-23_p01.jpeg
+    readable: true
+    domain: pneumatic_plus_electrical
+    identifiers: [1A, 2A, S1, S3]
+    sequence: [1A+, 2A-, 1A-, 2A+]
+    deliverables:
+      sheets: [pneumatic, electrical]
+      calcs: []
+    pattern_hint: sequence_double_solenoid
+    tags: [strip_feed, optical_indicator]
+
+  - id: 2023_minor2_q2
+    file: exams/transcribed/MCL431_Minor2_2022-23
+    source: exams/pyqs/MCL431_Minor2_2022-23.jpeg
+    page: exams/pages/MCL431_Minor2_2022-23_p01.jpeg
+    readable: true
+    domain: plc
+    identifiers: [START, STOP]
+    deliverables:
+      sheets: [plc_connection, plc_ladder]
+      calcs: []
+    pattern_hint: plc_v2_skip
+    tags: [plc_v2, analog_io, conveyor]
+
+  - id: MCL431_Minor2_2022-23
+    file: exams/transcribed/MCL431_Minor2_2022-23
+    source: exams/pyqs/MCL431_Minor2_2022-23.jpeg
+    readable: true
+    domain: pneumatic_plus_electrical
+    identifiers: [1A, 2A, S1, S3]
+    deliverables:
+      sheets: [pneumatic, electrical]
+      calcs: []
+    pattern_hint: sequence_double_solenoid
+    note: paper folder; Q1 strip feed + Q2 PLC
+
+  - id: MCL431_Minor2_2017-18_Sem1
+    file: exams/transcribed/MCL431_Minor2_2017-18_Sem1
+    source: exams/pyqs/MCL431_Minor2_2017-18_Sem1.pdf
+    page: exams/pages/MCL431_Minor2_2017-18_Sem1_p01.png
+    readable: true
+    domain: pneumatic_plus_electrical
+    identifiers: [1A, 2A, 3A, START]
+    sequence: [holes 1-2-3-4, return to 1]
+    deliverables:
+      sheets: [pneumatic, displacement_step, electrical]
+      calcs: []
+    pattern_hint: indexing_drill
+    tags: [electro_pneumatic, 5_3_dcv, workpiece_detect]
+
+  - id: MCL431_minor
+    file: exams/transcribed/MCL431_minor
+    source: exams/pyqs/MCL431_minor.pdf
+    page: exams/pages/MCL431_minor_p01.png
+    readable: true
+    domain: hydraulic
+    identifiers: [HC1, HC2, HM1, DCV1, PA, PB, RV1, RV2, RV3, RV4, RV5]
+    sequence: [HC1+ clamp, HM1 600 RPM, HC2+ 45 cm, grind 35 s]
+    deliverables:
+      sheets: [hydraulic_given]
+      calcs:
+        - DCV1 left/right envelope sequence
+        - name RV1-RV5
+        - PA/PB flow for 60 parts/h
+        - PA/PB pressure MPa
+        - RV settings (10% safety)
+        - motor HP at 90%
+        - reservoir litres
+    pattern_hint: grinding_sequence
+    tags: [grinding_calc, hilo_double_pump, motor_analysis]
+
+  - id: Fall16-Minor1
+    file: exams/transcribed/Fall16-Minor1
+    source: exams/pyqs/[Fall16]-Minor1.pdf
+    page: exams/pages/Fall16-Minor1_p01.png
+    readable: true
+    domain: hydraulic
+    identifiers: []
+    deliverables:
+      sheets: []
+      calcs:
+        - pressure at pump outlet
+        - electric motor RPM and HP
+    pattern_hint: motor_analysis
+    note: Q1 same as 2016_minor1_hoist; Q2 emboss is 2016_minor1_emboss
+
+  - id: 2016_minor1_emboss
+    file: exams/transcribed/Fall16-Minor1
+    source: exams/pyqs/[Fall16]-Minor1.pdf
+    page: exams/pages/Fall16-Minor1_p02.png
+    readable: true
+    domain: pneumatic_plus_electrical
+    identifiers: [1A1, 2A1, S1]
+    sequence: [S1 + proximity, 1A1+, 2A1+, 4 bar, 2A1-, 1A1-]
+    deliverables:
+      sheets: [pneumatic, displacement_step, electrical]
+      calcs: []
+    pattern_hint: emboss_sequence
+    tags: [pressure_switch, proximity_magazine]
+
+  - id: Fall17-Minor1
+    file: exams/transcribed/Fall17-Minor1
+    source: exams/pyqs/[Fall17]-Minor1.pdf
+    page: exams/pages/Fall17-Minor1_p01.png
+    readable: true
+    same_as: 2017_minor1_hilo
+    domain: hydraulic
+    identifiers: []
+    sequence: [approach 15 cm/s, punch 1.5 cm/s, return 25 cm/s]
+    deliverables:
+      sheets: [hydraulic]
+      calcs:
+        - piston bore and rod dia
+        - pressure and flow of both pumps
+        - unloading valve and relief valve settings
+    pattern_hint: hilo_double_pump
+
+  - id: Fall17-Minor2
+    file: exams/transcribed/Fall17-Minor2
+    source: exams/pyqs/[Fall17]-Minor2.pdf
+    page: exams/pages/Fall17-Minor2_p01.png
+    readable: true
+    same_as: MCL431_Minor2_2017-18_Sem1
+    domain: pneumatic_plus_electrical
+    identifiers: [1A, 2A, 3A, START]
+    sequence: [holes 1-2-3-4, return to 1]
+    deliverables:
+      sheets: [pneumatic, displacement_step, electrical]
+      calcs: []
+    pattern_hint: indexing_drill

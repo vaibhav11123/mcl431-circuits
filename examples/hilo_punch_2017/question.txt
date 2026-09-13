@@ -1,0 +1,5 @@
+Q1. In a sheet metal punching press, double pump hydraulic system is used. Sheet metal punching
+operation requires a force of 7800 N. ... Use 3 position DCV for cylinder control.
+Draw the complete circuit diagram, label all components. Find bore/rod, both pump P and Q,
+unloading and relief settings (48% higher than the two bases).
+Source: MCL431 Minor-1, 01-Sep-2017.

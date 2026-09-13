@@ -1,0 +1,19 @@
+Q1. In a Sheet metal forming press, the shape to be formed is hemispherical cup of radius 10 cm in 2 mm thick mild steel sheet (can be ignored for stroke length). The force required to deform sheet is 6.5 kN. The forming hammer should approach job from a distance of 25 cm. Flow rates of Pump P1 and P2 are 25 lpm and 5 lpm respectively. Hydraulic cylinder has 37.5 mm bore dia and 12.5 mm rod dia.
+i) Suggest the pressure rating of Pumps P1 and P2?
+ii) What should be pressure setting of the unloading valve and pressure-relief valve?
+    (Assume that the unloading valve and relief-valve pressure setting (for their full pump flow
+     requirements) should be 50% higher than the pressure required to overcome frictional
+     pressure losses and the cylinder punching load, respectively.)
+iii) Electric motor HP considering 75% efficiency for both pumps.
+(iv) What is the maximum production rate possible?
+[ 20 + 15 + 15 + 10 Marks ]
+
+• Diameters of pipes: D1 = 40 mm, D2-D8 = 25 mm.
+• Length of pipes: L1 = 50 cm, L2 = 60 cm, L3 = 40 cm, L4 = 60 cm, L5 = 30 cm, L6 = 150 cm, L7 = 100 cm, L8 = 60 cm.
+• Consider Laminar flow in pipes.
+• K value of all Tee Joints = 3.5 and Elbow joints = 2.0. K value for Check Valve = 3.0, DCV = 4.0, Pressure Relief valve = 5.0.
+• Hydraulic Fluid: Kinematic viscosity = 120 cS, Sp. gravity = 0.8
+• Frictional pressure losses in pipes, fittings, valves are negligibly small during the punching operation and can be ignored.
+• Ignore small length of pipes for which dimensions are not given.
+
+Figure on paper: labelled hi-lo circuit with P1 and P2 on a common shaft (M), tank lines 1, pump discharge 2, check valve 3, unloading valve, pressure-relief valve, DCV, pipes 4–8 to a vertical forming cylinder.

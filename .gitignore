@@ -1,0 +1,20 @@
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+dist/
+build/
+output/
+.DS_Store
+
+# Full slide / paper rasters (regenerate with: python -m circuit rasterize)
+lecture/pages/
+exams/pages/
+
+# Course PDFs stay on your machine — do not publish IIT lecture or exam scans
+lecture/*.pdf
+exams/pyqs/*.pdf
+exams/pyqs/*.jpeg
+exams/pyqs/*.jpg
+exams/pyqs/*.png

@@ -1,0 +1,15 @@
+# What 2018 Minor-1 Q1 asks to produce. Circuit figure is already on the paper.
+sheets: []
+circuit_figure_on_paper: true
+calcs:
+  - pressure rating of pumps P1 and P2
+  - pressure setting of the unloading valve and pressure-relief valve
+  - electric motor HP considering 75% efficiency for both pumps
+  - maximum production rate possible
+paper_asks:
+  - Suggest the pressure rating of Pumps P1 and P2?
+  - What should be pressure setting of the unloading valve and pressure-relief valve?
+  - Electric motor HP considering 75% efficiency for both pumps.
+  - What is the maximum production rate possible?
+marks: 60
+marks_split: [20, 15, 15, 10]

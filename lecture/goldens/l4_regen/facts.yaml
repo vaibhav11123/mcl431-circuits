@@ -1,0 +1,8 @@
+source: { pdf: MCL431_L4_Circuits.pdf, page: 10 }
+relief_bar: 105
+ap_cm2: 195
+ar_cm2: 65
+qp_m3s: 0.0016
+expected:
+  speed_ratio_ext_to_ret: 2
+  load_ratio_ext_to_ret: 0.5

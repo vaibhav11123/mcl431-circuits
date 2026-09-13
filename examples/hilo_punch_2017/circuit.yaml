@@ -1,0 +1,40 @@
+meta:
+  title: 2017 Minor-1 Hi-Lo punching press
+  domain: hydraulic
+  exam_id: 2017_minor1_hilo
+  patterns:
+    - hilo_double_pump
+    - dac_4_3
+
+sequence:
+  - { action: HC1+, label: approach / punch }
+  - { action: HC1-, label: return }
+
+power:
+  pumps:
+    - { id: P1 }
+    - { id: P2 }
+  relief_valves:
+    - { id: RV1, pump: P1 }
+  tank: TANK
+
+cylinders:
+  HC1:
+    bore_mm: 50
+    rod_mm: 28
+    force_kn: 7.8
+    dcv: 1Y
+    sensors: []
+
+motors: {}
+
+valves:
+  1Y:
+    type: dcv_4_3_closed_center
+    solenoids: [1Y1, 1Y2]
+
+sensors: []
+
+electrical:
+  convention: lecture
+  paths: []

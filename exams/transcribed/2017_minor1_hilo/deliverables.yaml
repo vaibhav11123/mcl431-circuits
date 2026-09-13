@@ -1,0 +1,15 @@
+# What 2017 Minor-1 Q1 asks to produce.
+sheets:
+  - hydraulic
+calcs:
+  - hydraulic actuator piston bore and rod dia
+  - pressure and flow rate of both pumps
+  - pressure settings of unloading valve and pressure relief valve
+paper_asks:
+  - Draw the complete circuit diagram, label all components with correct nomenclature.
+  - Hydraulic actuator piston bore and rod dia.
+  - Pressure and flow rate of both pumps
+  - Pressure settings of unloading valve and pressure relief valve
+  - Use 3 position DCV for cylinder control
+marks: 30
+marks_split: [6, 4, 12, 8]

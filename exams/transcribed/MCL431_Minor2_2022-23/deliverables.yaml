@@ -1,0 +1,18 @@
+questions:
+  - part: Q1
+    sheets: [pneumatic, electrical]
+    calcs: []
+    paper_asks:
+      - Draw pneumatic circuit diagram
+      - Draw electrical circuit diagram
+      - Use suitable sensors
+      - Optical indicator to the press when 2A retracted and 1A released
+    marks: 30
+  - part: Q2
+    sheets: [plc_connection, plc_ladder]
+    calcs: []
+    paper_asks:
+      - Draw PLC connection diagram
+      - Write ladder program for three-speed motor conveyor
+    marks: 30
+    note: v2 PLC item. Do not emit hydraulic/relay drawings for Q2.

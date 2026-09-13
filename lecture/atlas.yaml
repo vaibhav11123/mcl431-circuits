@@ -1,0 +1,570 @@
+# MCL 431 symbol atlas — IDs must cite a lecture PDF page + crop.
+# Hydraulic IDs from L2–L4; electrical / electropneumatic IDs from L7–L10A.
+# Empty crop means no isolated glyph on the cited slide.
+version: 1
+symbols:
+- id: check_valve
+  kind: hydraulic
+  ports:
+  - 1
+  - 2
+  deenergized: true
+  source:
+    pdf: MCL431_L3_ControlValves.pdf
+    page: 2
+  crop: lecture/crops/check_valve.png
+  also:
+  - pdf: MCL431_L2_FluidPower.pdf
+    page: 22
+- id: shuttle
+  kind: hydraulic
+  ports:
+  - 1
+  - 2
+  - A
+  deenergized: true
+  source:
+    pdf: MCL431_L3_ControlValves.pdf
+    page: 13
+  crop: lecture/crops/shuttle.png
+- id: dual_pressure
+  kind: hydraulic
+  ports:
+  - 1
+  - 2
+  - A
+  deenergized: true
+  source:
+    pdf: MCL431_L3_ControlValves.pdf
+    page: 14
+  crop: lecture/crops/dual_pressure.png
+- id: dcv_2_2
+  kind: hydraulic
+  ports:
+  - P
+  - A
+  deenergized: true
+  source:
+    pdf: MCL431_L3_ControlValves.pdf
+    page: 3
+  crop: lecture/crops/dcv_2_2.png
+- id: dcv_3_2_spring_offset
+  kind: hydraulic
+  ports:
+  - P
+  - T
+  - A
+  deenergized: true
+  source:
+    pdf: MCL431_L4_Circuits.pdf
+    page: 4
+  crop: null
+- id: dcv_4_3_closed_center
+  kind: hydraulic
+  ports:
+  - P
+  - T
+  - A
+  - B
+  deenergized: true
+  source:
+    pdf: MCL431_L3_ControlValves.pdf
+    page: 8
+  crop: lecture/crops/dcv_4_3_closed_center.png
+- id: dcv_4_3_tandem
+  kind: hydraulic
+  ports:
+  - P
+  - T
+  - A
+  - B
+  deenergized: true
+  source:
+    pdf: MCL431_L3_ControlValves.pdf
+    page: 9
+  crop: lecture/crops/dcv_4_3_tandem.png
+- id: dcv_4_3_open
+  kind: hydraulic
+  ports:
+  - P
+  - T
+  - A
+  - B
+  deenergized: true
+  source:
+    pdf: MCL431_L3_ControlValves.pdf
+    page: 8
+  crop: lecture/crops/dcv_4_3_open.png
+- id: dcv_4_3_float
+  kind: hydraulic
+  ports:
+  - P
+  - T
+  - A
+  - B
+  deenergized: true
+  source:
+    pdf: MCL431_L3_ControlValves.pdf
+    page: 9
+  crop: lecture/crops/dcv_4_3_float.png
+- id: prv
+  kind: hydraulic
+  ports:
+  - P
+  - T
+  deenergized: true
+  source:
+    pdf: MCL431_L3_ControlValves.pdf
+    page: 17
+  crop: lecture/crops/prv.png
+- id: unloading_valve
+  kind: hydraulic
+  ports:
+  - P
+  - T
+  deenergized: true
+  source:
+    pdf: MCL431_L4_Circuits.pdf
+    page: 11
+  crop: lecture/crops/unloading_valve.png
+- id: sequence_valve
+  kind: hydraulic
+  ports:
+  - P
+  - A
+  deenergized: true
+  source:
+    pdf: MCL431_L4_Circuits.pdf
+    page: 14
+  crop: null
+- id: flow_control
+  kind: hydraulic
+  ports:
+  - 1
+  - 2
+  deenergized: true
+  source:
+    pdf: MCL431_L3_ControlValves.pdf
+    page: 21
+  crop: lecture/crops/flow_control.png
+- id: pump_fixed
+  kind: hydraulic
+  ports:
+  - S
+  - P
+  deenergized: true
+  source:
+    pdf: MCL431_L3_ControlValves.pdf
+    page: 17
+  crop: lecture/crops/pump_fixed.png
+  also:
+  - pdf: MCL431_L2_FluidPower.pdf
+    page: 19
+- id: tank
+  kind: hydraulic
+  ports:
+  - T
+  deenergized: true
+  source:
+    pdf: MCL431_L3_ControlValves.pdf
+    page: 17
+  crop: null
+  also:
+  - pdf: MCL431_L2_FluidPower.pdf
+    page: 19
+- id: cylinder_sa
+  kind: hydraulic
+  ports:
+  - A
+  deenergized: true
+  source:
+    pdf: MCL431_L2_FluidPower.pdf
+    page: 20
+  crop: lecture/crops/cylinder_sa.png
+- id: cylinder_da
+  kind: hydraulic
+  ports:
+  - A
+  - B
+  deenergized: true
+  source:
+    pdf: MCL431_L2_FluidPower.pdf
+    page: 20
+  crop: lecture/crops/cylinder_da.png
+- id: motor_fixed
+  kind: hydraulic
+  ports:
+  - A
+  - B
+  deenergized: true
+  source:
+    pdf: MCL431_L2_FluidPower.pdf
+    page: 20
+  crop: lecture/crops/motor_fixed.png
+- id: meter_in
+  kind: hydraulic
+  ports:
+  - 1
+  - 2
+  deenergized: true
+  source:
+    pdf: MCL431_L3_ControlValves.pdf
+    page: 22
+  crop: null
+- id: meter_out
+  kind: hydraulic
+  ports:
+  - 1
+  - 2
+  deenergized: true
+  source:
+    pdf: MCL431_L3_ControlValves.pdf
+    page: 25
+  crop: null
+- id: bleed_off
+  kind: hydraulic
+  ports:
+  - 1
+  - 2
+  deenergized: true
+  source:
+    pdf: MCL431_L3_ControlValves.pdf
+    page: 28
+  crop: null
+- id: contact_no
+  kind: electrical
+  ports:
+  - 3
+  - 4
+  deenergized: true
+  source:
+    pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf
+    page: 8
+  crop: lecture/crops/contact_no.png
+  naming: relay NO uses sequence+function (11/14, 21/24); L8 p17 function numbers 3,4
+  also:
+  - pdf: MCL431_L7_ElectropneumaticsBasics.pdf
+    page: 10
+  - pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf
+    page: 17
+- id: contact_nc
+  kind: electrical
+  ports:
+  - 1
+  - 2
+  deenergized: true
+  source:
+    pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf
+    page: 8
+  crop: lecture/crops/contact_nc.png
+  naming: L8 p17 function numbers 1,2; delayed NC is 5,6
+  also:
+  - pdf: MCL431_L7_ElectropneumaticsBasics.pdf
+    page: 11
+  - pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf
+    page: 17
+  - pdf: MCL431_L9_ElectropneumaticRelayCircuits.pdf
+    page: 20
+- id: contact_changeover
+  kind: electrical
+  ports:
+  - 1
+  - 2
+  - 4
+  deenergized: true
+  source:
+    pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf
+    page: 8
+  crop: lecture/crops/contact_changeover.png
+  naming: L8 p17 function numbers 1,2,4; delayed CO is 5,6,8
+  also:
+  - pdf: MCL431_L7_ElectropneumaticsBasics.pdf
+    page: 12
+  - pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf
+    page: 17
+- id: pushbutton
+  kind: electrical
+  ports:
+  - 3
+  - 4
+  deenergized: true
+  source:
+    pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf
+    page: 8
+  crop: lecture/crops/pushbutton.png
+  naming: S (manual); L8 p15 S1, S2, S3; L10 START is S5
+  also:
+  - pdf: MCL431_L7_ElectropneumaticsBasics.pdf
+    page: 10
+  - pdf: MCL431_L9_ElectropneumaticRelayCircuits.pdf
+    page: 4
+- id: limit_switch
+  kind: electrical
+  ports:
+  - 3
+  - 4
+  deenergized: true
+  source:
+    pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf
+    page: 8
+  crop: lecture/crops/limit_switch.png
+  naming: nS (1S1, 1S2); L7 p14 usually changeover, wired NO/NC/CO as required
+  also:
+  - pdf: MCL431_L7_ElectropneumaticsBasics.pdf
+    page: 14
+  - pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf
+    page: 13
+  - pdf: MCL431_L9_ElectropneumaticRelayCircuits.pdf
+    page: 27
+- id: proximity
+  kind: electrical
+  ports:
+  - +
+  - '-'
+  - out
+  deenergized: true
+  source:
+    pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf
+    page: 10
+  crop: lecture/crops/proximity.png
+  naming: nB (1B1 retracted, 1B2 extended); reed also B
+  also:
+  - pdf: MCL431_L7_ElectropneumaticsBasics.pdf
+    page: 16
+  - pdf: MCL431_L10_ElectropneumaticSequenceCircuits.pdf
+    page: 5
+  - pdf: MCL431_L10_ElectropneumaticSequenceCircuits.pdf
+    page: 9
+- id: pressure_switch
+  kind: electrical
+  ports:
+  - 1
+  - 2
+  - 4
+  deenergized: true
+  source:
+    pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf
+    page: 8
+  crop: lecture/crops/pressure_switch.png
+  naming: nB; L8 p15 example 1B1; L8 p13 path 5 uses 1B1 >p
+  also:
+  - pdf: MCL431_L7_ElectropneumaticsBasics.pdf
+    page: 27
+  - pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf
+    page: 13
+  - pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf
+    page: 15
+- id: relay_coil
+  kind: electrical
+  ports:
+  - A1
+  - A2
+  deenergized: true
+  source:
+    pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf
+    page: 9
+  crop: lecture/crops/relay_coil.png
+  naming: K (K1); coil terminals A1, A2 (L8 p19)
+  also:
+  - pdf: MCL431_L7_ElectropneumaticsBasics.pdf
+    page: 30
+  - pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf
+    page: 18
+  - pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf
+    page: 19
+  - pdf: MCL431_L9_ElectropneumaticRelayCircuits.pdf
+    page: 5
+- id: solenoid_coil
+  kind: electrical
+  ports:
+  - A1
+  - A2
+  deenergized: true
+  source:
+    pdf: MCL431_L9_ElectropneumaticRelayCircuits.pdf
+    page: 4
+  crop: lecture/crops/solenoid_coil.png
+  naming: nY (1Y1 extend, 1Y2 retract); L8 p15 example 1Y1
+  also:
+  - pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf
+    page: 13
+  - pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf
+    page: 15
+  - pdf: MCL431_L10_ElectropneumaticSequenceCircuits.pdf
+    page: 9
+- id: timer_pull_in
+  kind: electrical
+  ports:
+  - A1
+  - A2
+  deenergized: true
+  source:
+    pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf
+    page: 9
+  crop: lecture/crops/timer_pull_in.png
+  naming: K with pickup/pull-in delay (X in coil box); L9 p27 K2
+  also:
+  - pdf: MCL431_L7_ElectropneumaticsBasics.pdf
+    page: 33
+  - pdf: MCL431_L9_ElectropneumaticRelayCircuits.pdf
+    page: 27
+- id: timer_drop_out
+  kind: electrical
+  ports:
+  - A1
+  - A2
+  deenergized: true
+  source:
+    pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf
+    page: 9
+  crop: lecture/crops/timer_drop_out.png
+  naming: K with dropout/drop-out delay (filled coil box)
+  also:
+  - pdf: MCL431_L7_ElectropneumaticsBasics.pdf
+    page: 33
+- id: lamp
+  kind: electrical
+  ports: []
+  deenergized: true
+  source:
+    pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf
+    page: 7
+  crop: lecture/crops/lamp.png
+  naming: H (H1); L8 p13 path 9
+  also:
+  - pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf
+    page: 13
+  - pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf
+    page: 15
+- id: dcv_5_2_double_solenoid
+  kind: pneumatic
+  ports:
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  deenergized: true
+  source:
+    pdf: MCL431_L10_ElectropneumaticSequenceCircuits.pdf
+    page: 5
+  crop: lecture/crops/dcv_5_2_double_solenoid.png
+  naming: nV valve; solenoids nY1 / nY2; sensors nB1 / nB2
+  also:
+  - pdf: MCL431_L9_ElectropneumaticRelayCircuits.pdf
+    page: 27
+- id: dcv_5_3
+  kind: pneumatic
+  ports:
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  deenergized: true
+  source:
+    pdf: MCL431_L10A_ElectropneumaticRelayLift.pdf
+    page: 16
+  crop: null
+  naming: authorized by L10A drilling problem ('Use 5/3 DCVs'); no isolated glyph on that slide
+  also:
+  - pdf: MCL431_L3_ControlValves.pdf
+    page: 3
+- id: current_path_rail
+  kind: electrical
+  ports:
+  - +24V
+  - 0V
+  deenergized: true
+  source:
+    pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf
+    page: 13
+  crop: lecture/crops/current_path_rail.png
+  naming: paths numbered left to right; L8 p12 paths 1–8 control, 9–10 main
+  also:
+  - pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf
+    page: 12
+  - pdf: MCL431_L9_ElectropneumaticRelayCircuits.pdf
+    page: 4
+naming:
+  cylinder_festo: nA
+  cylinder_exam: HCn / HMn
+  sensor_retracted: nB1
+  sensor_extended: nB2
+  solenoid_extend: nY1
+  solenoid_retract: nY2
+  relay: Kn
+  manual_switch: Sn
+  lamp: Hn
+  l8_example: S1 S2 S3, 1S1 1S2, 1B1 pressure, K1–K4, 1Y1, H1
+  S: manually operated pushbutton / input element (S1); limit switch letter is also S
+  nS: limit switch of drive n (1S1, 1S2)
+  nB: reed, electronic proximity, or pressure switch of drive n (1B1)
+  K: relay or contactor (K1)
+  nY: solenoid coil of a valve for drive n (1Y1)
+  H: indicator / lamp (H1)
+  cylinder: nA or HCn
+  limit_switch: nSn
+  pressure_switch: nBn
+l8_p15_examples:
+  manually_operated_switches:
+  - S1
+  - S2
+  - S3
+  limit_switches:
+  - 1S1
+  - 1S2
+  pressure_switch: 1B1
+  relays:
+  - K1
+  - K2
+  - K3
+  - K4
+  solenoid_coil: 1Y1
+  lamp: H1
+drawing_law:
+  source:
+    pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf
+    page: 11
+  coils_beneath_contacts: true
+  symbols_top_to_bottom_left_to_right: true
+  numbered_current_paths: true
+  control_then_main: true
+  contact_element_table_under_coil: true
+  sheet_deenergized: true
+  actuated_limit_switch_marked_with_arrow: true
+  notes:
+  - 'L8 p11: relay coils and valve coils are always drawn beneath the contacts'
+  - 'L8 p12: current paths drawn alongside each other and numbered consecutively; example paths 1–8 control,
+    9–10 main'
+  - 'L8 p16–19: terminal function numbers; extra contacts get a sequence prefix (K1: A1/A2, 11/14, 21/24)'
+  - 'L8 p20: contact element table sits beneath the current path that contains the relay coil'
+  - 'L8 p23: electrical circuit diagram is shown in the de-energized state; actuated limit switches marked
+    with an arrow'
+terminals:
+  source:
+    pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf
+    page: 17
+  normally_closed:
+  - 1
+  - 2
+  normally_open:
+  - 3
+  - 4
+  normally_closed_delayed:
+  - 5
+  - 6
+  normally_open_delayed:
+  - 7
+  - 8
+  changeover:
+  - 1
+  - 2
+  - 4
+  changeover_delayed:
+  - 5
+  - 6
+  - 8
+  relay_coil:
+  - A1
+  - A2

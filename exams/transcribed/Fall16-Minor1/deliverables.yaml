@@ -1,0 +1,18 @@
+questions:
+  - part: Q1
+    sheets: []
+    calcs:
+      - pressure at pump outlet
+      - electric motor RPM and HP
+    marks: 25
+    marks_split: [15, 10]
+  - part: Q2
+    sheets: [pneumatic, displacement_step, electrical]
+    calcs: []
+    paper_asks:
+      - Draw pneumatic circuit with bill of material
+      - Displacement-step diagram for 1A1 and 2A1
+      - Draw electrical circuit for the embossing machine
+      - Use P/E converter as 4 bar pressure switch
+    marks: 35
+    marks_split: [10, 5, 20]

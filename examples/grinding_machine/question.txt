@@ -1,0 +1,12 @@
+B1. In an Automated surface grinding machine, a top surface of the cube is to be grind by the
+grinding wheel. The grinding wheel should approach job from a distance of 45 cm. On pressing a
+START push button, the job is clamped on the machine with the help of hydraulic cylinder HC1
+having 45 mm bore dia and 22.5 mm rod dia. After job is clamped to 2.5 kN force, the feed
+cylinder HC2 having 40 mm bore dia and 20 mm rod dia will advance to make grinding wheel
+touching the workpiece top surface. Grinding wheel is made to rotate at 400 RPM by Hydraulic
+Motor HM1 before HC2 advance. Cylinder HC2 will retract after 30 sec of grinding and then HC1
+unclamp the job. Draw Electro-pneumatic Circuit Diagram to achieve the above mentioned
+functionality with one hydraulic pump. Use suitable sensors to detect the end position of the
+actuators and presence of the job.
+[15 Marks]
+Source: MCL431 Self Study Minor, 01-July-2023, Part B.

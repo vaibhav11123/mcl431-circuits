@@ -1,0 +1,26 @@
+MCL431: CAM AND AUTOMATION
+Minor 1 Exam (29-Aug-2016)
+Source scan: exams/pages/Fall16-Minor1_p01.png, Fall16-Minor1_p02.png
+Same Q1 as exams/transcribed/2016_minor1_hoist (file on disk MCL431_Minor-13Dec2020.pdf).
+This two-page scan also has Q2 (embossing), which the one-page 13-Dec-2020 file omits.
+
+Q1. A hydraulic system shown in Fig. 1 is designed to lift a load of 5.4 Ton at an average speed of 1300 mm/min using Hydraulic chain hoist driven by a Hydraulic motor having volumetric displacement of 90 cc. Volumetric & Mechanical efficiency of Motor is 92% and 87% respectively. Hoist pulley dia is 250 cm. A Vane pump having volumetric displacement of 170 cc is used to drive the system. Pump has Volumetric & Mechanical efficiency of 83% and 89% respectively. Hydraulic oil: Specific gravity 0.85, Kinematic viscosity 120 cS. Considering losses in hydraulic circuit, calculate the following:
+
+i) Pressure at Pump outlet (15 Marks)
+ii) Electric Motor RPM and HP (10 Marks)
+
+Volumetric displacement is the volume of fluid displaced in one rotation of pump or Motor.
+Pipe 1: L = 1m, D = 30 mm; Pipe 2: L = 3.85m, D = 25 mm; Pipe 3: L = 1.40m, D = 25 mm; Pipe 4: L = 4.50 m, D = 30 mm.
+
+Figure 1: tank; Pipe 1 (0.6 m rise on this scan); motor M; Pipe 2; check valve K = 0.90; elbow K = 0.75; Pipe 3; Pipe 4.
+
+Q2. A workpiece is to be clamped by activating the start push button S1 when workpiece is present in the gravity fed magazine (to be sensed by proximity sensor). When the workpiece is clamped by Cylinder 1A1, cylinder 2A1 extends and embosses the workpiece. Cylinder 2A1 should remain extended till the embossing pressure reaches 4 bar and then retract back. Use Pneumatic-electrical Converter as pressure switch to sense pressure (see Hint at the end of paper). All cylinders should then be at retracted end position before commencement of embossing cycle.
+
+Figure for Q2: vertical clamp 1A1, horizontal emboss 2A1, S1.
+
+Attempt the following:
+a) Draw pneumatic circuit with bill of material listed clearly. (10 Marks)
+b) Draw the Displacement step diagram for cylinders 1A1 and 2A1. (5 Marks)
+c) Draw the Electrical circuit for the embossing machine. (20 Marks)
+
+Hint: Pneumatic Electrical Converter — pressure switch mode, high output on signal pin (BK) when pressure on port P1 is greater than the set pressure. P2 used for vacuum / differential mode. RD +24V, BU GND, BK signal.

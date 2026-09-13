@@ -1,0 +1,65 @@
+meta:
+  title: B1 Automated surface grinding machine
+  domain: hydraulic_plus_electrical
+  exam_id: 2023_selfstudy_b1
+  patterns:
+    - dac_4_3
+    - motor_4_3
+    - sequence_double_solenoid
+    - timer_pull_in
+
+sequence:
+  - { action: HC1+, label: clamp }
+  - { action: HM1_ON, label: grinding motor ON }
+  - { action: HC2+, label: feed }
+  - { action: TIMER, seconds: 30, label: grind }
+  - { action: HC2-, label: retract }
+  - { action: HC1-, label: unclamp }
+
+power:
+  pumps:
+    - { id: P1 }
+  relief_valves:
+    - { id: RV1, pump: P1 }
+  tank: TANK
+
+cylinders:
+  HC1:
+    bore_mm: 45
+    rod_mm: 22.5
+    force_kn: 2.5
+    dcv: 1Y
+    sensors: [1B1, 1B2]
+  HC2:
+    bore_mm: 40
+    rod_mm: 20
+    approach_cm: 45
+    dcv: 2Y
+    sensors: [2B1, 2B2]
+
+motors:
+  HM1:
+    dcv: 3Y
+    rpm: 400
+
+valves:
+  1Y:
+    type: dcv_4_3_closed_center
+    solenoids: [1Y1, 1Y2]
+  2Y:
+    type: dcv_4_3_closed_center
+    solenoids: [2Y1, 2Y2]
+  3Y:
+    type: dcv_4_3_closed_center
+    solenoids: [3Y1]
+
+sensors:
+  - JOB
+  - 1B1
+  - 1B2
+  - 2B1
+  - 2B2
+
+electrical:
+  convention: lecture
+  paths: []

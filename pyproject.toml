@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mcl431-circuit"
+version = "0.1.0"
+description = "MCL 431 lecture-locked hydraulic and electropneumatic circuit drawings"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pymupdf>=1.24",
+    "pydantic>=2.8",
+    "pyyaml>=6.0",
+    "schemdraw>=0.19",
+    "numpy>=1.26",
+    "pillow>=10.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+png = ["cairosvg>=2.7"]
+
+[project.scripts]
+circuit = "circuit.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

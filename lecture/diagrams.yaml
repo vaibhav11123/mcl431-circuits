@@ -1,0 +1,287 @@
+# Every lecture circuit / glyph the drawer is allowed to copy.
+# Crops live in lecture/crops/. Raster pages in lecture/pages/.
+# Rule: never invent a glyph. Stamp the cited crop. Connect only the ports listed.
+
+version: 1
+
+# ---------------------------------------------------------------------------
+# Global drawing law (L3 p5 + L8 p11–23)
+# ---------------------------------------------------------------------------
+law:
+  valves_deenergized: true
+  ports_on_default_envelope: true
+  # 2-position: default = left square. 3-position: default = centre square.
+  hydraulic_sheet: L2-L6
+  electrical_sheet: L7-L10A
+  do_not_mix_sheets: true
+  coils_beneath_contacts: true   # L8 p11
+  numbered_current_paths: true   # L8 p12
+  control_then_main: true
+  sheet_shown_deenergized: true  # L8 p23
+  identifiers: paper_wins        # HC1/HM1 on B1; 1A/2A only if the paper says so
+
+connect:
+  dac_4_3:
+    use: l4_p05_dac
+    A: cylinder.cap
+    B: cylinder.rod
+    P: pump_rail
+    T: tank_rail
+    note: "4/3 spring-centred; ports on the centre envelope (L3 p5/p6)"
+  motor_4_3:
+    use: l5_p10_motor
+    A: motor.A
+    B: motor.B
+    P: pump_rail
+    T: tank_rail
+    note: "closed centre locks the motor (L5 p10)"
+  power_unit:
+    use: l4_p04_sac
+    suction: tank -> filter -> pump.S
+    discharge: pump.P -> tee(PRV.P, DCV.P)
+    relief: PRV.T -> tank
+  ep_dac_5_2:
+    use: l10_p05_two_dac
+    4: cylinder.cap
+    2: cylinder.rod
+    1: supply_dot
+    3: exhaust
+    5: exhaust
+  electrical_path:
+    use: l8_p13_current_paths
+    top: "+24V"
+    bottom: "0V"
+    order: contacts_then_coil
+    coil_ports: [A1, A2]
+
+# ---------------------------------------------------------------------------
+# Hydraulic glyphs (copy these PNGs)
+# ---------------------------------------------------------------------------
+glyphs:
+  - id: dcv_4_2_iso
+    crop: lecture/crops/dcv_4_2_iso.png
+    from: {pdf: MCL431_L3_ControlValves.pdf, page: 4}
+    ports: {A: top-left, B: top-right, P: bottom-left, T: bottom-right}
+    internals: "left X (P–B, A–T); right parallel (P–A, B–T)"
+  - id: dcv_4_3_spring_centered
+    crop: lecture/crops/dcv_4_3_spring_centered.png
+    from: {pdf: MCL431_L3_ControlValves.pdf, page: 6}
+    ports: {A: top-of-centre, B: top-of-centre, P: bottom-of-centre, T: bottom-of-centre}
+    internals: "springs both sides; centre is the rest position"
+  - id: dcv_4_3_closed_center
+    crop: lecture/crops/dcv_4_3_closed_center.png
+    from: {pdf: MCL431_L3_ControlValves.pdf, page: 7}
+    ports: {A: top-left, B: top-right, P: bottom-left, T: bottom-right}
+    internals: "all four ports T-bar blocked"
+    use_when: "hold load / lock motor / pump free for other work"
+  - id: dcv_4_3_open
+    crop: lecture/crops/dcv_4_3_open.png
+    from: {pdf: MCL431_L3_ControlValves.pdf, page: 7}
+    use_when: "unload fixed-volume pump; actuator floats"
+  - id: dcv_4_3_float
+    crop: lecture/crops/dcv_4_3_float.png
+    from: {pdf: MCL431_L3_ControlValves.pdf, page: 7}
+    use_when: "A+B to T; P blocked"
+  - id: dcv_4_3_tandem
+    crop: lecture/crops/dcv_4_3_tandem.png
+    from: {pdf: MCL431_L3_ControlValves.pdf, page: 7}
+    use_when: "P to T; A and B blocked"
+  - id: prv
+    crop: lecture/crops/prv.png
+    from: {pdf: MCL431_L3_ControlValves.pdf, page: 17}
+    ports: {P: pump, T: tank}
+    internals: "box, through-arrow, spring, dashed pilot from P"
+  - id: pump_fixed
+    crop: lecture/crops/pump_fixed.png
+    from: {pdf: MCL431_L3_ControlValves.pdf, page: 17}
+    ports: {P: triangle out, S: down to tank}
+  - id: cylinder_sa
+    crop: lecture/crops/cylinder_sa.png
+    from: {pdf: MCL431_L2_FluidPower.pdf, page: 20}
+    ports: {A: bottom-left cap}
+  - id: cylinder_da
+    crop: lecture/crops/cylinder_da.png
+    from: {pdf: MCL431_L2_FluidPower.pdf, page: 20}
+    ports: {A: bottom-left cap, B: bottom-right rod}
+  - id: motor_fixed
+    crop: lecture/crops/motor_fixed.png
+    from: {pdf: MCL431_L2_FluidPower.pdf, page: 20}
+    ports: {A: one side of circle, B: other side}
+  - id: dcv_5_2_double_solenoid
+    crop: lecture/crops/dcv_5_2_double_solenoid.png
+    from: {pdf: MCL431_L10_ElectropneumaticSequenceCircuits.pdf, page: 5}
+    ports: {1: supply, 2: rod, 3: exhaust, 4: cap, 5: exhaust}
+    layout: "cylinder on top; valve under; filled supply dot"
+  - id: contact_no
+    crop: lecture/crops/contact_no.png
+    from: {pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf, page: 8}
+    ports: [3, 4]
+  - id: contact_nc
+    crop: lecture/crops/contact_nc.png
+    from: {pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf, page: 8}
+    ports: [1, 2]
+  - id: pushbutton
+    crop: lecture/crops/pushbutton.png
+    from: {pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf, page: 8}
+    naming: S
+  - id: limit_switch
+    crop: lecture/crops/limit_switch.png
+    from: {pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf, page: 8}
+    naming: nS
+  - id: solenoid_coil
+    crop: lecture/crops/solenoid_coil.png
+    from: {pdf: MCL431_L9_ElectropneumaticRelayCircuits.pdf, page: 4}
+    naming: nY
+  - id: relay_coil
+    crop: lecture/crops/relay_coil.png
+    from: {pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf, page: 9}
+    ports: [A1, A2]
+    naming: K
+  - id: step_displacement
+    crop: lecture/crops/step_displacement_l10.png
+    from: {pdf: MCL431_L10_ElectropneumaticSequenceCircuits.pdf, page: 4}
+    rules:
+      - "0/1 traces per cylinder; steps on X;  last step = 1 (cycle return)"
+      - "sensor labels at corners (1B2 at extend peak, 1B1 at retract land)"
+      - "start condition above the plot (START ∧ 1B1)"
+
+# ---------------------------------------------------------------------------
+# Circuit templates — copy topology, not just glyphs
+# ---------------------------------------------------------------------------
+templates:
+  - id: l4_p04_sac
+    page: {pdf: MCL431_L4_Circuits.pdf, page: 4}
+    when: single-acting cylinder
+    net:
+      - tank -> filter -> pump.S
+      - pump.P -> PRV.P
+      - PRV.T -> tank
+      - pump.P -> DCV.P
+      - DCV.A -> SAC.A
+      - DCV.T -> tank
+    valve: 3/2 spring-offset (default envelope)
+
+  - id: l4_p05_dac
+    page: {pdf: MCL431_L4_Circuits.pdf, page: 5}
+    when: double-acting cylinder, no extra FCV
+    net:
+      - tank -> filter -> pump.S
+      - pump.P -> check -> DCV.P
+      - pump.P -> PRV.P -> tank
+      - DCV.A -> DAC.cap
+      - DCV.B -> DAC.rod
+      - DCV.T -> tank
+    valve: 4/3 spring-centred
+    do_not: [meter-in, meter-out, lock, second_pump]
+
+  - id: l4_p07_regen
+    page: {pdf: MCL431_L4_Circuits.pdf, page: 7}
+    when: paper asks regenerative
+    extra: "DCV.T has check to tank; on advance rod flow returns into P/cap"
+    identities:
+      Vext: Qp / Ar
+      Vret: Qp / (Ap - Ar)
+
+  - id: l4_p11_unload
+    page: {pdf: MCL431_L4_Circuits.pdf, page: 11}
+    when: paper asks unloading
+    extra: "check between pump and system; external pilot from downstream of check"
+
+  - id: l4_p13_hilo
+    page: {pdf: MCL431_L4_Circuits.pdf, page: 13}
+    when: hi-lo / double pump / punch
+    extra: "pump A unloads in high pressure; relief E is not the unloader"
+
+  - id: l4_p14_sequence
+    page: {pdf: MCL431_L4_Circuits.pdf, page: 14}
+    when: clamp-then-work A+ B+ B- A-
+    extra: "sequence + check bypass on B+ and on A-"
+
+  - id: l5_p10_motor
+    page: {pdf: MCL431_L5_CircuitDesign.pdf, page: 10}
+    when: bidirectional hydraulic motor
+    net:
+      - tank -> strainer -> pump.S
+      - pump.P -> PRV.P -> tank
+      - pump.P -> DCV.P
+      - DCV.A -> motor.A
+      - DCV.B -> motor.B
+      - DCV.T -> tank
+    valve: 4/3 closed-centre (locks motor)
+
+  - id: l9_p04_direct_sac
+    page: {pdf: MCL431_L9_ElectropneumaticRelayCircuits.pdf, page: 4}
+    when: direct control of SAC
+    pneumatic: "1A SAC; 1V 3/2 solenoid+spring; port 2 to cap; 1 and 3 supply/exhaust"
+    electrical: "+24V — path 1 — S1 pushbutton — 1Y1 solenoid — 0V"
+
+  - id: l9_p05_indirect_sac
+    page: {pdf: MCL431_L9_ElectropneumaticRelayCircuits.pdf, page: 5}
+    when: relay between button and solenoid
+    electrical: "path 1 S1->K1; path 2 K1 contact -> 1Y1"
+
+  - id: l10_p04_phase
+    page: {pdf: MCL431_L10_ElectropneumaticSequenceCircuits.pdf, page: 4}
+    when: any sequence question
+    required: true
+
+  - id: l10_p05_two_dac
+    page: {pdf: MCL431_L10_ElectropneumaticSequenceCircuits.pdf, page: 5}
+    when: two DAC + 5/2 double solenoid
+    net:
+      - 1V.4 -> 1A.cap (vertical)
+      - 1V.2 -> 1A.rod (jog)
+      - 1V.1 -> filled_dot -> 2V.1
+      - exhaust triangles on 3 and 5
+    sensors: "1B1 retracted, 1B2 extended on the barrel"
+
+  - id: l8_p13_current_paths
+    page: {pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf, page: 13}
+    when: every electrical sheet
+    layout: "+24V rail, numbered paths, coils at bottom, 0V rail"
+    control_paths: "left group"
+    main_paths: "right group (lamps, solenoids)"
+
+# ---------------------------------------------------------------------------
+# Lecture index — pages that are circuits / glyphs (skip photos & titles)
+# ---------------------------------------------------------------------------
+index:
+  L2:
+    circuits: [10, 11, 12, 15, 16, 17, 18]
+    glyphs: [20, 22]
+    skip: [1, 2, 3, 4, 5, 6, 7, 8, 9, 13, 14, 19, 21]
+  L3:
+    glyphs: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 17]
+    circuits: [18, 21, 22, 23, 24, 25, 26, 27, 28, 29]
+    skip: [1, 12, 15, 16, 19, 20]
+  L4:
+    circuits: [3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
+    formulas: [6]
+    skip: [1]
+  L5:
+    circuits: [10, 12, 13, 16, 17]
+    formulas: [6, 7, 8, 9, 19]
+    skip: [1, 2, 3, 4, 5, 11, 14, 15, 18]
+  L6:
+    circuits: [2, 14, 18, 19, 21]
+    formulas: [3, 5, 6, 7, 8, 9, 10, 12, 15, 16, 17]
+    skip: [1, 4, 11, 13, 20, 22]
+  L7:
+    glyphs: [5, 6, 7, 8, 10, 11, 12, 15, 17, 18, 20, 21, 23, 24, 25, 27, 29, 30, 33]
+    skip: [1, 2, 3, 4, 9, 13, 14, 16, 19, 22, 26, 28, 31, 32]
+  L8:
+    glyphs: [7, 8, 9, 10]
+    law: [11, 12, 16, 17, 18, 19, 20, 23]
+    circuits: [13, 15]
+    skip: [1, 2]
+  L9:
+    circuits: [4, 5, 6, 7, 9, 10, 11, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]
+    skip: [1, 2, 3, 8, 12, 15]
+  L10:
+    circuits: [5, 6, 8, 10, 11, 12, 13]
+    phase: [4]
+    skip: [1, 2, 3, 7, 9]
+  L10A:
+    circuits: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+    law: [16, 17]
+    skip: [1]

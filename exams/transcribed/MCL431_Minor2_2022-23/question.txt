@@ -1,0 +1,17 @@
+MCL431: CAM and Automation
+Minor-2 Exam
+[26-Mar-2023]
+MAX MARKS: 60    MAX TIME: 60 min
+Source scan: exams/pages/MCL431_Minor2_2022-23_p01.jpeg
+(Words reconstructed from the JPEG; original print has no spaces.)
+
+Q1. A sheet metal strip is to be fed from a drum towards the cutting tool. The feed unit may only start when the punch-tool is in the upper position (this signal must be simulated by a push button S3). Cylinder 1A holds the sheet metal strip and cylinder 2A retracts. Cylinder 1A releases the strip and cylinder 2A returns to the forward end position. The sheet metal strip feed unit must be provided with a main switch (S1). When cylinder 2A has retracted and cylinder 1A has released the strip, a signal (optical indicator) is to be passed on to the press for the next part to be punched out. Draw pneumatic and electrical circuit diagrams to accomplish the above mentioned functionality. Use suitable sensors.
+[30 Marks]
+
+Figure: press/punch station with strip feed; cylinder 1A on the strip clamp; cylinder 2A on the feed slide. Student notes on the scan give the motion as 1A+ 2A- 1A- 2A+.
+
+Q2. Draw PLC connection diagram and write Ladder program for speed control of a three-speed motor conveyor system. The system comes equipped with a weight detector and three-speed motor controller. For weight detection, Conveyor Load Cell measuring 0-950 kg is connected to Analog Input (12-bit resolution, Channel-2, Slot-3). Conveyor motor is controlled by Speed controller taking 0-10 V input and controlling RPM of motor (using Analog output, 10-bit resolution, Channel-1 Slot-2) from 0-40000. It is designed to move the conveyor belt at 22500 RPM speed when 470 kg weightage is on the conveyor. If the weight is greater than 580 kg, the conveyor speed increases to 35455 RPM to compensate for the increase in weight. If the weight falls below 220 kg, the conveyor speed is reduced to 11855 RPM to compensate for the decrease in weight. Weight status indicated by the (3 Indicator Lamps). Conveyor shall be started and stopped by START and STOP push buttons respectively.
+[30 Marks]
+
+Student I/O notes on the scan: START I:0.0/0, STOP I:0.0/1, L1 O:0.0/0, L2 O:0.0/1, L3 O:0.0/2; analog PI / AI and DO.
+Note: Q2 is PLC (course v2). Still transcribed; drawing agents should not emit a relay ladder for this item.

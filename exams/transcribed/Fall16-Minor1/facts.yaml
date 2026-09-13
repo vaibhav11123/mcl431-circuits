@@ -1,0 +1,71 @@
+# Extracted from exams/pages/Fall16-Minor1_p01.png and _p02.png. No invented answers.
+id: Fall16-Minor1
+year: 2016
+paper: Minor 1 Exam 29-Aug-2016
+date: 2016-08-29
+readable: true
+source_pages:
+  - exams/pages/Fall16-Minor1_p01.png
+  - exams/pages/Fall16-Minor1_p02.png
+q1_same_as: 2016_minor1_hoist
+questions:
+  - part: Q1
+    marks: 25
+    marks_split: [15, 10]
+    domain: hydraulic
+    identifiers: []
+    identifier_style: none
+    sequence: []
+    load_ton: 5.4
+    average_speed_mm_per_min: 1300
+    hoist:
+      type: hydraulic chain hoist
+      pulley_dia_cm: 250
+    motor:
+      type: hydraulic motor
+      volumetric_displacement_cc: 90
+      volumetric_efficiency_pct: 92
+      mechanical_efficiency_pct: 87
+    pump:
+      type: vane
+      volumetric_displacement_cc: 170
+      volumetric_efficiency_pct: 83
+      mechanical_efficiency_pct: 89
+    pumps: 1
+    fluid:
+      specific_gravity: 0.85
+      kinematic_viscosity_cS: 120
+    pipes:
+      - { id: Pipe 1, L_m: 1, D_mm: 30 }
+      - { id: Pipe 2, L_m: 3.85, D_mm: 25 }
+      - { id: Pipe 3, L_m: 1.40, D_mm: 25 }
+      - { id: Pipe 4, L_m: 4.50, D_mm: 30 }
+    fittings:
+      elbow_K: 0.75
+      check_valve_K: 0.90
+    tags: [motor_analysis, hoist]
+  - part: Q2
+    marks: 35
+    marks_split: [10, 5, 20]
+    domain: pneumatic_plus_electrical
+    identifiers: [1A1, 2A1, S1]
+    identifier_style: nAn
+    sequence:
+      - workpiece in magazine (proximity)
+      - S1
+      - 1A1+ clamp
+      - 2A1+ emboss
+      - wait until 4 bar
+      - 2A1-
+      - 1A1-
+      - both retracted before next cycle
+    cylinders:
+      1A1: { role: clamp }
+      2A1: { role: emboss }
+    sensors:
+      - proximity_magazine
+      - pneumatic_electrical_converter_pressure_switch
+    pressure_bar: 4
+    pumps: 0
+    timer_s: null
+    tags: [emboss_sequence, pressure_switch, displacement_step]

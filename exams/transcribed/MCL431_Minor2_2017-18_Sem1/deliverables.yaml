@@ -1,0 +1,11 @@
+sheets: [pneumatic, displacement_step, electrical]
+calcs: []
+paper_asks:
+  - Draw pneumatic circuit using 5/3 DCVs for all 3 actuators
+  - Step sequence table with columns for each cylinder, enabling condition, and operation comment
+  - Displacement-step diagram
+  - Draw the electrical circuit
+  - Select suitable sensors
+  - Drill spindle ON/OFF by a separate relay
+marks: 60
+marks_split: [12, 8, 10, 30]

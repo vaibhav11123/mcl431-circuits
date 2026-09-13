@@ -1,0 +1,23 @@
+Q1. A Cylinder has to exert a forward thrust of 100 kN and a reverse of 10 kN. The effects of using various methods of regulating the extend speed will be considered. In all cases the retract speed should be approximately 5m/min utilising full pump flow. Relief valve is set at 10% higher pressure. Assume that the maximum pump pressure is 160 bar and the pressure drops over the following components and their associated pipework (where they are used):
+Filter                       = 3 bar
+Directional valve (each flow path) = 2 bar
+Flow control valve (controlled flow) = 10 bar
+Flow control valve (check valve) = 3 bar
+Determine:
+a) Cylinder size(*see bottom for standard sizes) (Assume, Piston Area : Rod Area ~ 2:1)
+b) Pressure and Flow Rate on Extend & Retract stroke
+c) System efficiency (Fluid Power to overcome load on cylinder / Total Power into Fluid)
+when using:
+Case 1 [Compulsory]: No Flow Controls (calculate extend speed)
+[40 Marks]
+Case 2 [EVEN Roll No.]: ‘Meter-in’ flow control of extend speed 0.5 m/min
+[20 Marks]
+Case 3 [ODD Roll No.]: ‘Meter-out’ flow control for extend speed 0.05 m/min
+[20 Marks]
+
+Figure on paper: three labelled circuits — Case 1 No flow controls; Case 2 ‘Meter-in’ flow control; Case 3 ‘Meter-out’ flow control.
+
+*Standard Cylinders (table on paper):
+Piston Dia (mm):     50, 63, 80, 100, 125
+Piston Rod Dia Small (mm): 28, 36, 45, 56, 70
+Piston Rod Dia Large (mm): 36, 45, 56, 70, 90
