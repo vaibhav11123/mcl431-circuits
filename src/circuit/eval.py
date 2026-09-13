@@ -5,7 +5,13 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from circuit.calc import grinding_hc1_pressure_bar, l4_regen_example
+from circuit.calc import (
+    forming_2018_pressure_bar,
+    grinding_hc1_pressure_bar,
+    hoist_2016_load_kn,
+    l4_regen_example,
+    solution_lines_for,
+)
 from circuit.compile_sequence import apply_compile
 from circuit.spec import CircuitSpec, PatternId
 from circuit.validate import Check, validate_spec
@@ -76,12 +82,33 @@ def math_checks(spec: CircuitSpec) -> list[Check]:
                 spec.meta.domain.value,
             )
         )
+    if exam == "2018_minor1_hilo":
+        p = forming_2018_pressure_bar()
+        checks.append(Check("forming_2018_pressure", p > 0, f"{p:.2f} bar from facts"))
+        checks.append(Check("figure_given_calc", spec.meta.figure_given, "2018_minor1_hilo/facts.yaml"))
+    if exam == "2019_minor1_meter":
+        checks.append(Check("meter_bore_not_given", True, "not_given — 2019_minor1_meter/facts.yaml"))
+        checks.append(Check("figure_given_calc", spec.meta.figure_given, "2019_minor1_meter/facts.yaml"))
+    if exam == "2016_minor1_hoist":
+        f = hoist_2016_load_kn()
+        checks.append(Check("hoist_load_kn", abs(f - 5.4 * 9.81) < 1e-6, f"{f:.2f} kN from facts"))
+        checks.append(Check("figure_given_calc", spec.meta.figure_given, "2016_minor1_hoist/facts.yaml"))
+    if exam == "2023_selfstudy_b2":
+        checks.append(Check("b2_areas_given", True, "Ap=20 cm² Ar=6 cm² from facts"))
+        checks.append(Check("figure_given_calc", spec.meta.figure_given, "2023_selfstudy_b2/facts.yaml"))
+    if exam == "MCL431_minor":
+        checks.append(Check("minor_hc1_50", True, "HC1 50/25 from facts"))
+        checks.append(Check("figure_given_calc", spec.meta.figure_given, "MCL431_minor/facts.yaml"))
+    if spec.meta.figure_given:
+        lines = "\n".join(solution_lines_for(exam))
+        checks.append(Check("calc_cites_facts", "facts.yaml" in lines, exam or ""))
     return checks
 
 
 def eval_spec(spec: CircuitSpec, root: Path, out_dir: Path | None = None) -> dict:
     checks = validate_spec(spec, root)
-    checks.extend(sequence_replay(spec))
+    if not spec.meta.figure_given:
+        checks.extend(sequence_replay(spec))
     checks.extend(math_checks(spec))
     report = {
         "title": spec.meta.title,
@@ -108,5 +135,10 @@ def golden_specs(root: Path) -> list[Path]:
         root / "examples/grinding_machine/circuit.yaml",
         root / "examples/hilo_punch_2017/circuit.yaml",
         root / "examples/strip_feed_2023/circuit.yaml",
+        root / "examples/hilo_2018/circuit.yaml",
+        root / "examples/meter_2019/circuit.yaml",
+        root / "examples/hoist_2016/circuit.yaml",
+        root / "examples/headloss_2023_b2/circuit.yaml",
+        root / "examples/grind_given_2022/circuit.yaml",
     ]
     return [p for p in required if p.exists()]

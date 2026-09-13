@@ -92,6 +92,7 @@ class Meta(BaseModel):
     domain: Domain
     patterns: list[PatternId] = Field(default_factory=list)
     exam_id: str | None = None
+    figure_given: bool = False
 
 
 class CircuitSpec(BaseModel):

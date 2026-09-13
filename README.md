@@ -8,9 +8,10 @@ You write a `circuit.yaml`. Python draws the SVGs and checks the spec. It does n
 
 | File | What it is |
 | --- | --- |
-| `output/hydraulic_circuit.svg` | Power unit + actuators + 4/3 valves (lecture glyphs) |
-| `output/electrical_circuit.svg` | +24 V / 0 V, numbered paths, coils at the bottom |
-| `output/step_displacement.svg` | 0/1 traces per actuator (L10 method) |
+| `output/hydraulic_circuit.svg` / `.png` | Power unit + actuators + 4/3 valves (lecture glyphs) |
+| `output/pneumatic_circuit.svg` / `.png` | L10 p5 two DAC + 5/2 (when the domain is pneumatic) |
+| `output/electrical_circuit.svg` / `.png` | +24 V / 0 V, numbered paths, coils at the bottom |
+| `output/step_displacement.svg` / `.png` | 0/1 traces per actuator (L10 method) |
 | `output/solution.txt` | Sequence + lecture-form calculations |
 | `output/eval.json` | Pass/fail checks |
 
@@ -45,24 +46,25 @@ pytest -q
 python -m circuit eval --goldens
 ```
 
-**Covered today (10 unit tests + golden eval):**
+**Covered (`pytest` + `eval --goldens`):**
 
-- B1 spec loads (HC1 45/22.5 mm, HM1 400 rpm, 6-step sequence)
-- Atlas lock: valve types exist, one pump, JOB sensor, no extra FCV
-- Sequence compiles to coils `K_START, 1Y1, 3Y1, 2Y1, T1_30s, 2Y2, 1Y2`
-- Clamp math: \(P = F / (0.1 A_p) = 15.72\) bar
-- L4 regenerative identity: \(A_p = 3 A_r \Rightarrow V_\mathrm{ext}/V_\mathrm{ret} = 2\)
-- Every stamp PNG the drawer uses is present
-- 2017 hi-lo punch golden **validates** (pumps, PRV, coils)
+| Exam | What eval requires | Must not do |
+| --- | --- | --- |
+| 2023 Self-Study B1 grinding | JOB, one pump, 30 s, 15.72 bar, L8 latch, no Y-as-contact | Extra FCV / second pump |
+| 2017 Minor-1 hi-lo punch | P1+P2, UV, RV; bore `not_given` | Invented 50/28 |
+| 2023 Minor-2 Q1 strip feed | Domain pneumatic, two 5/2, coils `1Y1 2Y2 1Y2 2Y1` | Hydraulic 4/3 on a 5/2 paper |
+| 2018 hi-lo / 2019 meter / 2016 hoist / 2023 B2 / 2022 grind-given | `figure_given` calc cites `facts.yaml` | Draw a figure the paper already printed |
+| L4 regen identity | \(A_p = 3 A_r \Rightarrow V_\mathrm{ext}/V_\mathrm{ret} = 2\) | Attach regen math to B1 or hi-lo |
 
-**Not tested (do not treat as exam-ready):**
+Also: every stamp PNG exists; B1 SVG has HC1/HC2/HM1; this Mac writes PNG next to each SVG (`qlmanage`).
 
-- Pixel-perfect match to a slide (no screenshot tests)
-- The other transcribed PYQs — they are indexed and typed, not solved + eval’d
-- Every number in every paper (pump \(Q\) is left `not_given` when the question omits it)
-- Visual layout of every new question you add
+**Skipped:**
 
-A pretty SVG that fails `eval` is not done. A passing `eval` means the **spec** is legal, not that the drawing looks like your handwriting.
+- PLC v2 Minor-2 Q2 (`pattern_hint: plc_v2_skip`)
+- 2017 indexing drill — `dcv_5_3` crop is `null` (`examples/drill_2017/README.md`)
+- Pixel-SSIM against a full lecture slide
+
+A pretty SVG that fails `eval` is not done. A passing `eval` means the **spec is legal for that exam**, not that the sheet looks like handwriting.
 
 ## Solve another question
 
@@ -81,7 +83,7 @@ Paper identifiers win (`HC1` vs `1A`). Hydraulic and electrical stay on **separa
 src/circuit/     # validate, draw, eval, catalog (stamps + port anchors)
 lecture/         # atlas, diagrams, crops/stamps — not the original PDFs
 exams/           # PYQ index + transcriptions — not the scanned papers
-examples/        # B1 grinding + 2017 hi-lo punch
+examples/        # drawing goldens + figure-given calc goldens
 tests/           # pytest
 ```
 

@@ -1,0 +1,23 @@
+meta:
+  title: 2018 Minor-1 hi-lo forming press
+  domain: hydraulic
+  exam_id: 2018_minor1_hilo
+  figure_given: true
+  patterns:
+    - hilo_double_pump
+
+sequence: []
+
+power:
+  pumps:
+    - { id: P1, flow_lpm: 25 }
+    - { id: P2, flow_lpm: 5 }
+  tank: TANK
+
+cylinders: {}
+motors: {}
+valves: {}
+sensors: []
+electrical:
+  convention: lecture
+  paths: []

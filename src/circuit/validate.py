@@ -37,13 +37,15 @@ def validate_spec(spec: CircuitSpec, root: Path | None = None) -> list[Check]:
         Domain.PNEUMATIC,
         Domain.PNEUMATIC_PLUS_ELECTRICAL,
     }
-    if spec.power.pumps:
+    if spec.meta.figure_given:
+        checks.append(Check("figure_given", True, "calc only — circuit is on the paper"))
+    elif spec.power.pumps:
         checks.append(Check("has_pump", True, ",".join(p.id for p in spec.power.pumps)))
     elif pneu:
         checks.append(Check("has_pump", True, "pneumatic — no hydraulic pump"))
     else:
         checks.append(Check("has_pump", False, "no pump"))
-    if hyd:
+    if hyd and not spec.meta.figure_given:
         checks.append(
             Check(
                 "has_prv",
@@ -79,7 +81,7 @@ def validate_spec(spec: CircuitSpec, root: Path | None = None) -> list[Check]:
         elif valve.solenoids:
             checks.append(Check(f"valve_{vid}_solenoids", True, ",".join(valve.solenoids)))
 
-    if PatternId.HILO_DOUBLE_PUMP in spec.meta.patterns:
+    if PatternId.HILO_DOUBLE_PUMP in spec.meta.patterns and not spec.meta.figure_given:
         checks.append(
             Check(
                 "hilo_two_pumps",
@@ -103,6 +105,8 @@ def validate_spec(spec: CircuitSpec, root: Path | None = None) -> list[Check]:
 
     if spec.sequence:
         checks.append(Check("has_sequence", True, f"{len(spec.sequence)} steps"))
+    elif spec.meta.figure_given:
+        checks.append(Check("has_sequence", True, "figure given — no sequence to draw"))
     else:
         checks.append(Check("has_sequence", False, "empty"))
 

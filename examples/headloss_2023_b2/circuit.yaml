@@ -1,0 +1,23 @@
+meta:
+  title: 2023 Self-Study B2 head loss
+  domain: hydraulic
+  exam_id: 2023_selfstudy_b2
+  figure_given: true
+  patterns:
+    - hilo_double_pump
+
+sequence: []
+
+power:
+  pumps:
+    - { id: P1 }
+    - { id: P2 }
+  tank: TANK
+
+cylinders: {}
+motors: {}
+valves: {}
+sensors: []
+electrical:
+  convention: lecture
+  paths: []

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from circuit.calc import solution_lines_grinding, solution_lines_hilo_2017
+from circuit.calc import solution_lines_for
 from circuit.catalog import stamp, stamp_dcv_4_3_closed, stamp_dcv_5_2
 from circuit.compile_sequence import apply_compile
 from circuit.spec import CircuitSpec, Domain, PatternId
@@ -384,10 +384,7 @@ def write_solution(spec: CircuitSpec, dest: Path) -> Path:
         extra = f" ({step.seconds} s)" if step.seconds else ""
         lines.append(f"  {i}. {step.action}{extra} — {step.label}")
     lines += ["", "Calculations (lecture forms; no invented Q)"]
-    if spec.meta.exam_id == "2023_selfstudy_b1":
-        lines.extend(f"  {ln}" for ln in solution_lines_grinding())
-    elif spec.meta.exam_id == "2017_minor1_hilo":
-        lines.extend(f"  {ln}" for ln in solution_lines_hilo_2017())
+    lines.extend(f"  {ln}" for ln in solution_lines_for(spec.meta.exam_id))
     lines += ["", "Components"]
     for p in spec.power.pumps:
         lines.append(f"  pump {p.id}")
@@ -403,8 +400,29 @@ def write_solution(spec: CircuitSpec, dest: Path) -> Path:
     return dest
 
 
+def draw_calc_only(spec: CircuitSpec, dest: Path) -> Path:
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    s = SVG(820, 220)
+    s.text(410, 70, spec.meta.title, 16)
+    s.text(410, 110, "Figure given on the paper — calc only", 14)
+    s.text(410, 150, spec.meta.exam_id or "", 12)
+    dest.write_text(s.tostring())
+    return dest
+
+
 def draw_all(spec: CircuitSpec, out_dir: Path) -> dict[str, Path]:
     out_dir.mkdir(parents=True, exist_ok=True)
+    if spec.meta.figure_given:
+        written = {
+            "calc": draw_calc_only(spec, out_dir / "calc_only.svg"),
+            "solution": write_solution(spec, out_dir / "solution.txt"),
+        }
+        from circuit.png import svg_to_png
+
+        png = svg_to_png(written["calc"])
+        if png is not None:
+            written["calc_png"] = png
+        return written
     pneu = spec.meta.domain in {Domain.PNEUMATIC, Domain.PNEUMATIC_PLUS_ELECTRICAL}
     written: dict[str, Path] = {
         "electrical": draw_electrical(spec, out_dir / "electrical_circuit.svg"),

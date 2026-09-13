@@ -87,3 +87,85 @@ def solution_lines_hilo_2017() -> list[str]:
         "bore not_given — pick from standard table",
         "Q = A·v and UV/RV set-points need bore; not invented.",
     ]
+
+
+def forming_2018_pressure_bar() -> float:
+    return pressure_bar_from_kn(6.5, area_mm2(37.5))
+
+
+def solution_lines_2018_hilo() -> list[str]:
+    p = forming_2018_pressure_bar()
+    return [
+        "figure given — calc only (2018_minor1_hilo/facts.yaml)",
+        "bore 37.5 mm rod 12.5 mm (paper)",
+        "F = 6.5 kN (paper)",
+        f"forming P = F/(0.1 Ap) = {p:.2f} bar",
+        "P1 = 25 L/min, P2 = 5 L/min (paper)",
+        "UV/RV margin = 50% (paper)",
+        "pump η = 75% (paper)",
+        "approach = 25 cm (paper)",
+    ]
+
+
+def solution_lines_2019_meter() -> list[str]:
+    return [
+        "figure given — calc only (2019_minor1_meter/facts.yaml)",
+        "forward thrust 100 kN, reverse 10 kN (paper)",
+        "Ap:Ar ≈ 2:1 (paper)",
+        "retract ≈ 5 m/min on full pump flow (paper)",
+        "RV margin 10%, max pump 160 bar (paper)",
+        "bore not_given — pick from paper table 50/63/80/100/125 mm",
+    ]
+
+
+def hoist_2016_load_kn() -> float:
+    return 5.4 * 9.81
+
+
+def solution_lines_2016_hoist() -> list[str]:
+    f = hoist_2016_load_kn()
+    return [
+        "figure given — calc only (2016_minor1_hoist/facts.yaml)",
+        "load = 5.4 ton (paper)",
+        f"F = 5.4 × 9.81 = {f:.2f} kN",
+        "v_avg = 1300 mm/min (paper)",
+        "motor 90 cm³/rev, ηv=92%, ηm=87% (paper)",
+        "pump 170 cm³/rev, ηv=83%, ηm=89% (paper)",
+        "pulley dia = 250 cm (paper)",
+    ]
+
+
+def solution_lines_2023_b2() -> list[str]:
+    return [
+        "figure given — calc only (2023_selfstudy_b2/facts.yaml)",
+        "Ap = 20 cm², Ar = 6 cm² (paper)",
+        "F_deform = 6 kN, packing friction = 1.3 kN (paper)",
+        "P1 = 400 cm³/s, P2 = 70 cm³/s (paper)",
+        "approach = 11 cm, cup R = 19 cm (paper)",
+        "K tee/elbow/check/DCV and pipe lengths from facts — no invented Q",
+    ]
+
+
+def solution_lines_mcl431_minor() -> list[str]:
+    p = pressure_bar_from_kn(2.50 + 1.50, area_mm2(50))
+    return [
+        "figure given — calc only (MCL431_minor/facts.yaml)",
+        "HC1 50/25 mm clamp 2.50 kN + friction 1.50 kN (paper)",
+        f"HC1 P = (2.50+1.50) kN / (0.1 Ap) = {p:.2f} bar",
+        "HC2 40/25 mm approach 45 cm (paper)",
+        "HM1 600 rpm, 5 cm³/rev, ηv=80% (paper)",
+        "grind 35 s, 60 parts/h, RV margin 10% (paper)",
+        "PA unloaded during grind; only PB working (paper)",
+    ]
+
+
+def solution_lines_for(exam_id: str | None) -> list[str]:
+    return {
+        "2023_selfstudy_b1": solution_lines_grinding(),
+        "2017_minor1_hilo": solution_lines_hilo_2017(),
+        "2018_minor1_hilo": solution_lines_2018_hilo(),
+        "2019_minor1_meter": solution_lines_2019_meter(),
+        "2016_minor1_hoist": solution_lines_2016_hoist(),
+        "2023_selfstudy_b2": solution_lines_2023_b2(),
+        "MCL431_minor": solution_lines_mcl431_minor(),
+    }.get(exam_id or "", [])

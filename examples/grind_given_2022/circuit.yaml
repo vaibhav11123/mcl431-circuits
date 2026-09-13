@@ -1,0 +1,24 @@
+meta:
+  title: 2022 Minor grind-on-given hi-lo
+  domain: hydraulic
+  exam_id: MCL431_minor
+  figure_given: true
+  patterns:
+    - hilo_double_pump
+    - motor_4_3
+
+sequence: []
+
+power:
+  pumps:
+    - { id: PA }
+    - { id: PB }
+  tank: TANK
+
+cylinders: {}
+motors: {}
+valves: {}
+sensors: []
+electrical:
+  convention: lecture
+  paths: []
