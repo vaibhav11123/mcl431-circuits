@@ -18,9 +18,9 @@ def _hop_over(s: SVG, x: float, y: float, hop: float = 8) -> None:
 
 def draw_hydraulic(spec: CircuitSpec, dest: Path) -> Path:
     dest.parent.mkdir(parents=True, exist_ok=True)
-    s = SVG(1520, 840)
-    s.text(760, 22, spec.meta.title, 18)
-    s.text(760, 42, "Hydraulic circuit  ·  lecture L2–L4 stamps  ·  de-energized", 12)
+    s = SVG(1680, 800)
+    s.text(840, 22, spec.meta.title, 18)
+    s.text(840, 42, "Hydraulic circuit  ·  lecture L2–L5 stamps  ·  de-energized", 12)
 
     px, py = 100, 620
     p_rail_y, t_rail_y = 450, 530
@@ -55,11 +55,11 @@ def draw_hydraulic(spec: CircuitSpec, dest: Path) -> Path:
     for mid, mot in spec.motors.items():
         cols.append((mid, mot, spec.valves[mot.dcv].solenoids, "mot"))
 
-    x0, span = 460, 380
+    x0, span = 380, 420
     last_p, last_t = px, px
     for i, (name, obj, sols, kind) in enumerate(cols):
         cx = x0 + i * span
-        ports = stamp_dcv_4_3_closed(s, cx, 350, obj.dcv, list(sols))
+        ports = stamp_dcv_4_3_closed(s, cx, 300, obj.dcv, list(sols))
         s.text(ports["A"][0] - 12, ports["A"][1] - 6, "A", 10)
         s.text(ports["B"][0] + 12, ports["B"][1] - 6, "B", 10)
         s.text(ports["P"][0] - 12, ports["P"][1] + 14, "P", 10)
@@ -68,29 +68,30 @@ def draw_hydraulic(spec: CircuitSpec, dest: Path) -> Path:
         if kind == "cyl":
             b1 = obj.sensors[0] if obj.sensors else "B1"
             b2 = obj.sensors[1] if len(obj.sensors) > 1 else "B2"
-            cyl_w, cyl_h = 210.0, 86.0
-            cports = stamp(s, "cylinder_l10", cx - 40, 70, cyl_w, cyl_h)
-            s.text(cx - 52, 108, name, 12, "end")
-            s.text(cports["cap"][0], 64, b1, 11)
-            s.text(cports["rod"][0], 64, b2, 11)
+            cyl_w, cyl_h = 200.0, 80.0
+            cports = stamp(s, "cylinder_l10", cx - 70, 58, cyl_w, cyl_h)
+            s.text(cx - 86, 98, name, 13, "end")
+            s.text(cports["cap"][0], 52, b1, 11)
+            s.text(cports["rod"][0], 52, b2, 11)
             s.line(ports["A"][0], ports["A"][1], ports["A"][0], cports["cap"][1])
             s.line(ports["A"][0], cports["cap"][1], cports["cap"][0], cports["cap"][1])
             s.dot(*cports["cap"])
-            mid_y = 220
-            s.line(ports["B"][0], ports["B"][1], ports["B"][0], mid_y)
-            s.line(ports["B"][0], mid_y, cports["rod"][0], mid_y)
-            s.line(cports["rod"][0], mid_y, cports["rod"][0], cports["rod"][1])
+            jog_y = 200
+            s.line(ports["B"][0], ports["B"][1], ports["B"][0], jog_y)
+            s.line(ports["B"][0], jog_y, cports["rod"][0], jog_y)
+            s.line(cports["rod"][0], jog_y, cports["rod"][0], cports["rod"][1])
             s.dot(*cports["rod"])
+            if name == "HC1" and spec.sensors and "JOB" in spec.sensors:
+                stamp(s, "limit_switch", cports["cap"][0] - 28, 48, anchor="center")
+                s.text(cports["cap"][0] - 44, 36, "JOB", 10, "end")
         else:
-            mports = stamp(s, "motor_fixed", cx + 10, 108, anchor="center")
-            s.text(cx + 64, 90, name, 13, "start")
+            mports = stamp(s, "motor_fixed", cx, 100, anchor="center")
+            s.text(cx + 58, 88, name, 13, "start")
             s.line(ports["A"][0], ports["A"][1], ports["A"][0], mports["A"][1])
             s.line(ports["A"][0], mports["A"][1], mports["A"][0], mports["A"][1])
             s.dot(*mports["A"])
-            mid_y = 220
-            s.line(ports["B"][0], ports["B"][1], ports["B"][0], mid_y)
-            s.line(ports["B"][0], mid_y, mports["B"][0], mid_y)
-            s.line(mports["B"][0], mid_y, mports["B"][0], mports["B"][1])
+            s.line(ports["B"][0], ports["B"][1], ports["B"][0], mports["B"][1])
+            s.line(ports["B"][0], mports["B"][1], mports["B"][0], mports["B"][1])
             s.dot(*mports["B"])
 
         s.line(last_p, p_rail_y, ports["P"][0], p_rail_y)
@@ -106,11 +107,6 @@ def draw_hydraulic(spec: CircuitSpec, dest: Path) -> Path:
 
     s.line(last_p, p_rail_y, last_p + 30, p_rail_y)
     s.line(last_t, t_rail_y, last_t + 30, t_rail_y)
-
-    if spec.sensors and "JOB" in spec.sensors:
-        job = stamp(s, "limit_switch", 48, 780, anchor="center")
-        s.text(job["out"][0] + 16, job["out"][1] - 8, "JOB", 12, "start")
-        s.text(job["out"][0] + 16, job["out"][1] + 8, "job presence", 10, "start")
 
     dest.write_text(s.tostring())
     return dest
@@ -242,7 +238,11 @@ def draw_phase(spec: CircuitSpec, dest: Path) -> Path:
             x2 = left + (i + 1) * step_w
             yc = y0 if cur == 0 else y1
             yn = y0 if nxt == 0 else y1
-            s.line(x1, yc, x2, yn, 2.4, color)
+            if act in spec.motors and nxt != cur:
+                s.line(x1, yc, x1, yn, 2.4, color)
+                s.line(x1, yn, x2, yn, 2.4, color)
+            else:
+                s.line(x1, yc, x2, yn, 2.4, color)
             if nxt != cur:
                 tag = _sensor_at_edge(spec, act, nxt)
                 if tag:

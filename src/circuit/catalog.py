@@ -53,7 +53,7 @@ GLYPHS: dict[str, Glyph] = {
         "motor_fixed.png",
         96,
         92,
-        {"A": (0.48, 0.02), "B": (0.48, 0.98)},
+        {"A": (0.28, 1.00), "B": (0.72, 1.00)},
     ),
     "pump_fixed": Glyph(
         "pump_fixed.png",
@@ -172,6 +172,7 @@ def stamp_dcv_4_3_closed(
     total = 3 * env_w
     x0 = cx - total / 2
     y_env = cy - env_h / 2
+    svg.rect(x0, y_env, total, env_h, 1.8)
 
     stamp(svg, "envelope_cross", x0, y_env, env_w, env_h)
     ports = stamp(svg, "envelope_closed", x0 + env_w, y_env, env_w, env_h)
