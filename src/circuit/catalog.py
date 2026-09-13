@@ -122,6 +122,18 @@ GLYPHS: dict[str, Glyph] = {
         44,
         {"in": (0.72, 0.00), "out": (0.72, 1.00)},
     ),
+    "unloading_valve": Glyph(
+        "unloading_valve.png",
+        110,
+        78,
+        {"P": (0.50, 0.02), "T": (0.50, 0.98)},
+    ),
+    "check_valve": Glyph(
+        "check_valve.png",
+        56,
+        44,
+        {"1": (0.00, 0.50), "2": (1.00, 0.50)},
+    ),
 }
 
 

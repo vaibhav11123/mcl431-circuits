@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from circuit.calc import solution_lines_grinding
+from circuit.calc import solution_lines_grinding, solution_lines_hilo_2017
 from circuit.catalog import stamp, stamp_dcv_4_3_closed
 from circuit.compile_sequence import apply_compile
-from circuit.spec import CircuitSpec
+from circuit.spec import CircuitSpec, PatternId
 from circuit.svgdraw import SVG
 
 
@@ -16,15 +16,10 @@ def _hop_over(s: SVG, x: float, y: float, hop: float = 8) -> None:
     s.polyline([(x, y - hop), (x + hop, y), (x, y + hop)])
 
 
-def draw_hydraulic(spec: CircuitSpec, dest: Path) -> Path:
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    s = SVG(1680, 800)
-    s.text(840, 22, spec.meta.title, 18)
-    s.text(840, 42, "Hydraulic circuit  ·  lecture L2–L5 stamps  ·  de-energized", 12)
-
+def _draw_single_pump(s: SVG, spec: CircuitSpec) -> tuple[float, float, float, float, float]:
+    """One pump + PRV. Returns last_p, last_t, p_rail_y, t_rail_y, x0."""
     px, py = 100, 620
     p_rail_y, t_rail_y = 450, 530
-
     pump = stamp(s, "pump_fixed", px, py, anchor="center")
     s.text(px + 48, py + 6, spec.power.pumps[0].id, 14, "start")
     filt = stamp(s, "filter", px, py + 62, anchor="center")
@@ -42,12 +37,82 @@ def draw_hydraulic(spec: CircuitSpec, dest: Path) -> Path:
     s.line(px, p_rail_y, prv["P"][0], p_rail_y)
     s.dot(prv["P"][0], p_rail_y)
     s.line(prv["P"][0], p_rail_y, prv["P"][0], prv["P"][1])
-    # L4: PRV.T returns to tank, not through the DCV T rail
     s.line(prv["T"][0], prv["T"][1], prv["T"][0], tank["T"][1])
     s.line(prv["T"][0], tank["T"][1], tank["T"][0], tank["T"][1])
     s.dot(prv["T"][0], tank["T"][1])
     s.line(px, tank["T"][1], px, t_rail_y)
     s.dot(px, t_rail_y)
+    return px, px, p_rail_y, t_rail_y, 380.0
+
+
+def _draw_hilo_power(s: SVG, spec: CircuitSpec) -> tuple[float, float, float, float, float]:
+    """L4 p13: P1 (large) + check + UV; P2 (small) + RV; join to system."""
+    p1x, p2x, py = 160, 400, 620
+    p_rail_y, t_rail_y = 340, 530
+    check_y = 400
+    tank_x, tank_y = 280, 742
+    tank = stamp(s, "tank", tank_x, tank_y, anchor="center")
+    s.text(tank_x + 36, 748, "tank", 12, "start")
+
+    def _pump_stack(px: float, pid: str) -> dict[str, tuple[float, float]]:
+        pump = stamp(s, "pump_fixed", px, py, anchor="center")
+        s.text(px + 48, py + 6, pid, 14, "start")
+        filt = stamp(s, "filter", px, py + 62, anchor="center")
+        s.line(pump["S"][0], pump["S"][1], filt["in"][0], filt["in"][1])
+        s.line(filt["out"][0], filt["out"][1], filt["out"][0], tank["T"][1])
+        s.line(filt["out"][0], tank["T"][1], tank["T"][0], tank["T"][1])
+        s.dot(filt["out"][0], tank["T"][1])
+        s.line(pump["P"][0], pump["P"][1], px, check_y)
+        return pump
+
+    pids = [p.id for p in spec.power.pumps]
+    _pump_stack(p1x, pids[0] if pids else "P1")
+    _pump_stack(p2x, pids[1] if len(pids) > 1 else "P2")
+
+    cv = stamp(s, "check_valve", (p1x + p2x) / 2, check_y, anchor="center")
+    s.text((p1x + p2x) / 2, check_y - 28, "CV", 11)
+    s.line(p1x, check_y, cv["1"][0], check_y)
+    s.dot(p1x, check_y)
+    s.line(cv["2"][0], check_y, p2x, check_y)
+    s.dot(p2x, check_y)
+    s.line(p2x, check_y, p2x, p_rail_y)
+    s.dot(p2x, p_rail_y)
+
+    uv = stamp(s, "unloading_valve", 70, 470, anchor="center")
+    s.text(70, 422, "UV", 12)
+    s.line(p1x, check_y, p1x, uv["P"][1])
+    s.line(p1x, uv["P"][1], uv["P"][0], uv["P"][1])
+    s.dot(p1x, uv["P"][1])
+    s.line(uv["T"][0], uv["T"][1], uv["T"][0], tank["T"][1])
+    s.line(uv["T"][0], tank["T"][1], tank["T"][0], tank["T"][1])
+    s.dot(uv["T"][0], tank["T"][1])
+
+    prv_id = spec.power.relief_valves[0].id if spec.power.relief_valves else "RV"
+    prv = stamp(s, "prv", 560, 380, anchor="center")
+    s.text(560, 334, prv_id, 12)
+    s.line(p2x, p_rail_y, prv["P"][0], p_rail_y)
+    s.dot(prv["P"][0], p_rail_y)
+    s.line(prv["P"][0], p_rail_y, prv["P"][0], prv["P"][1])
+    s.line(prv["T"][0], prv["T"][1], prv["T"][0], tank["T"][1])
+    s.line(prv["T"][0], tank["T"][1], tank["T"][0], tank["T"][1])
+    s.dot(prv["T"][0], tank["T"][1])
+
+    s.line(p1x, tank["T"][1], p1x, t_rail_y)
+    s.dot(p1x, t_rail_y)
+    return p2x, p1x, p_rail_y, t_rail_y, 820.0
+
+
+def draw_hydraulic(spec: CircuitSpec, dest: Path) -> Path:
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    s = SVG(1680, 800)
+    s.text(840, 22, spec.meta.title, 18)
+    s.text(840, 42, "Hydraulic circuit  ·  lecture L2–L5 stamps  ·  de-energized", 12)
+
+    if PatternId.HILO_DOUBLE_PUMP in spec.meta.patterns:
+        last_p, last_t, p_rail_y, t_rail_y, x0 = _draw_hilo_power(s, spec)
+    else:
+        last_p, last_t, p_rail_y, t_rail_y, x0 = _draw_single_pump(s, spec)
+    span = 420.0
 
     cols: list[tuple[str, object, list[str], str]] = []
     for cid, cyl in spec.cylinders.items():
@@ -55,8 +120,6 @@ def draw_hydraulic(spec: CircuitSpec, dest: Path) -> Path:
     for mid, mot in spec.motors.items():
         cols.append((mid, mot, spec.valves[mot.dcv].solenoids, "mot"))
 
-    x0, span = 380, 420
-    last_p, last_t = px, px
     for i, (name, obj, sols, kind) in enumerate(cols):
         cx = x0 + i * span
         ports = stamp_dcv_4_3_closed(s, cx, 300, obj.dcv, list(sols))
@@ -66,13 +129,13 @@ def draw_hydraulic(spec: CircuitSpec, dest: Path) -> Path:
         s.text(ports["T"][0] + 12, ports["T"][1] + 14, "T", 10)
 
         if kind == "cyl":
-            b1 = obj.sensors[0] if obj.sensors else "B1"
-            b2 = obj.sensors[1] if len(obj.sensors) > 1 else "B2"
             cyl_w, cyl_h = 200.0, 80.0
             cports = stamp(s, "cylinder_l10", cx - 70, 58, cyl_w, cyl_h)
             s.text(cx - 86, 98, name, 13, "end")
-            s.text(cports["cap"][0], 52, b1, 11)
-            s.text(cports["rod"][0], 52, b2, 11)
+            if obj.sensors:
+                s.text(cports["cap"][0], 52, obj.sensors[0], 11)
+                if len(obj.sensors) > 1:
+                    s.text(cports["rod"][0], 52, obj.sensors[1], 11)
             s.line(ports["A"][0], ports["A"][1], ports["A"][0], cports["cap"][1])
             s.line(ports["A"][0], cports["cap"][1], cports["cap"][0], cports["cap"][1])
             s.dot(*cports["cap"])
@@ -273,13 +336,17 @@ def write_solution(spec: CircuitSpec, dest: Path) -> Path:
     lines += ["", "Calculations (lecture forms; no invented Q)"]
     if spec.meta.exam_id == "2023_selfstudy_b1":
         lines.extend(f"  {ln}" for ln in solution_lines_grinding())
+    elif spec.meta.exam_id == "2017_minor1_hilo":
+        lines.extend(f"  {ln}" for ln in solution_lines_hilo_2017())
     lines += ["", "Components"]
     for p in spec.power.pumps:
         lines.append(f"  pump {p.id}")
     for r in spec.power.relief_valves:
         lines.append(f"  relief {r.id}")
     for cid, cyl in spec.cylinders.items():
-        lines.append(f"  {cid} bore {cyl.bore_mm} rod {cyl.rod_mm} dcv {cyl.dcv}")
+        bore = "not_given" if cyl.bore_mm is None else cyl.bore_mm
+        rod = "not_given" if cyl.rod_mm is None else cyl.rod_mm
+        lines.append(f"  {cid} bore {bore} rod {rod} dcv {cyl.dcv}")
     for mid, mot in spec.motors.items():
         lines.append(f"  {mid} rpm {mot.rpm} dcv {mot.dcv}")
     dest.write_text("\n".join(lines) + "\n")

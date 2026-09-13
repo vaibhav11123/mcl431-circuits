@@ -101,6 +101,13 @@ def main() -> None:
     _save(p08.crop((880, 1480, 1040, 1760)), "limit_switch.png")
     _save(p08.crop((1980, 680, 2260, 960)), "pushbutton.png")
 
+    # L4 p11 boxed unloader (P top, T tank, dashed pilot); drop leftover check
+    uv = Image.open(CROPS / "unloading_valve.png")
+    _save(uv.crop((170, 50, 540, 390)), "unloading_valve.png")
+    # L3 teaching crop: ISO check only (drop FreeFlow labels)
+    cv = Image.open(CROPS / "check_valve.png")
+    _save(cv.crop((330, 5, 580, 320)), "check_valve.png")
+
 
 if __name__ == "__main__":
     main()

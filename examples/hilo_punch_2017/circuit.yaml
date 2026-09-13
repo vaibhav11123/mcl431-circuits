@@ -15,13 +15,13 @@ power:
     - { id: P1 }
     - { id: P2 }
   relief_valves:
-    - { id: RV1, pump: P1 }
+    - { id: RV, pump: P2 }
   tank: TANK
 
 cylinders:
   HC1:
-    bore_mm: 50
-    rod_mm: 28
+    bore_mm: null
+    rod_mm: null
     force_kn: 7.8
     dcv: 1Y
     sensors: []
@@ -32,6 +32,10 @@ valves:
   1Y:
     type: dcv_4_3_closed_center
     solenoids: [1Y1, 1Y2]
+  UV:
+    type: unloading_valve
+  CV:
+    type: check_valve
 
 sensors: []
 

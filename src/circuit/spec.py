@@ -41,8 +41,8 @@ class SeqStep(BaseModel):
 
 
 class Cylinder(BaseModel):
-    bore_mm: float
-    rod_mm: float
+    bore_mm: float | None = None
+    rod_mm: float | None = None
     dcv: str
     sensors: list[str] = Field(default_factory=list)
     force_kn: float | None = None

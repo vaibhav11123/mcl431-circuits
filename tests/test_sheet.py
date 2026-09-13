@@ -30,3 +30,12 @@ def test_b1_electrical_svg_has_latch_and_l8_terminals(tmp_path: Path) -> None:
     assert "3Y1" in svg
     # solenoid id appears as a coil label, not as a lone contact token next to 13/14
     assert svg.count("3Y1") == 1
+
+
+def test_hilo_hydraulic_svg_has_p1_p2_uv(tmp_path: Path) -> None:
+    spec = CircuitSpec.from_yaml(ROOT / "examples/hilo_punch_2017/circuit.yaml")
+    dest = tmp_path / "hydraulic_circuit.svg"
+    draw_hydraulic(spec, dest)
+    svg = dest.read_text()
+    for token in ("P1", "P2", "UV", "RV", "HC1"):
+        assert token in svg, token

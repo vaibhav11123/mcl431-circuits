@@ -73,3 +73,17 @@ def solution_lines_grinding() -> list[str]:
         "HM1 400 rpm stated; pump Q not given — not invented.",
         "Timer T1 = 30 s (question).",
     ]
+
+
+def solution_lines_hilo_2017() -> list[str]:
+    """2017 Minor-1 Q1 — paper numbers only. Bore is not in the paper."""
+    return [
+        "F = 7800 N (paper)",
+        "v_approach = 15 cm/s; v_punch = 1.5 cm/s; v_return = 25 cm/s (paper)",
+        "UV/RV margin = 48% (paper)",
+        "line loss rapid-extend high-flow to blank = 695 kPa (paper)",
+        "line loss rapid-extend rod-end to tank = 380 kPa (paper)",
+        "punching line losses negligibly small (paper)",
+        "bore not_given — pick from standard table",
+        "Q = A·v and UV/RV set-points need bore; not invented.",
+    ]

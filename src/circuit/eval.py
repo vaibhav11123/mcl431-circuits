@@ -61,6 +61,11 @@ def math_checks(spec: CircuitSpec) -> list[Check]:
         checks.append(Check("job_sensor", "JOB" in spec.sensors, "JOB"))
         checks.append(Check("one_pump", len(spec.power.pumps) == 1, str(len(spec.power.pumps))))
         checks.append(Check("timer_30", any(s.seconds == 30 for s in spec.sequence), "30"))
+    if exam == "2017_minor1_hilo":
+        invented = any(c.bore_mm is not None or c.rod_mm is not None for c in spec.cylinders.values())
+        checks.append(Check("hilo_bore_not_given", not invented, "bore not_given"))
+        force = next((c.force_kn for c in spec.cylinders.values() if c.force_kn), None)
+        checks.append(Check("hilo_force_7800", force is not None and abs(force * 1000 - 7800) < 1, str(force)))
     return checks
 
 
@@ -88,6 +93,9 @@ def format_report(report: dict) -> str:
 
 
 def golden_specs(root: Path) -> list[Path]:
-    """Required goldens. Hi-lo joins after W5; until then B1 only."""
-    required = [root / "examples/grinding_machine/circuit.yaml"]
+    """Required goldens: B1 grinding and 2017 hi-lo."""
+    required = [
+        root / "examples/grinding_machine/circuit.yaml",
+        root / "examples/hilo_punch_2017/circuit.yaml",
+    ]
     return [p for p in required if p.exists()]
