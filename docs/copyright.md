@@ -13,9 +13,9 @@ Code in this repo is **MIT** ([LICENSE](../LICENSE)). Lecture slides and exam pa
 
 Lecture decks and PYQ scans are **not in this repo** (gitignored on purpose). Do not add them.
 
-- `lecture/*.pdf`
-- `exams/pyqs/` (pdf / jpeg / png)
-- rasters in `lecture/pages/` and `exams/pages/` (rebuild locally with `python -m circuit rasterize` if you have the PDFs)
+- lecture decks (pdf)
+- exam papers under `exams/pyqs/`
+- slide and paper rasters (rebuild locally with `python -m circuit rasterize` if you have the files)
 
 The stamps already in the repo are enough to draw. You do not need to publish course files to use the tool.
 
