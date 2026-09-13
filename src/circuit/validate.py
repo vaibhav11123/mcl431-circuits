@@ -68,10 +68,22 @@ def validate_spec(spec: CircuitSpec, root: Path | None = None) -> list[Check]:
             )
         else:
             checks.append(Check(f"valve_{vid}_typed", bool(valve.type), valve.type))
-        if not valve.solenoids:
+        needs_y = valve.type.startswith("dcv") or "solenoid" in valve.type
+        if needs_y and not valve.solenoids:
             checks.append(Check(f"valve_{vid}_solenoids", False, "missing Y tags"))
-        else:
+        elif valve.solenoids:
             checks.append(Check(f"valve_{vid}_solenoids", True, ",".join(valve.solenoids)))
+
+    if PatternId.HILO_DOUBLE_PUMP in spec.meta.patterns:
+        checks.append(
+            Check(
+                "hilo_two_pumps",
+                len(spec.power.pumps) >= 2,
+                f"pumps={len(spec.power.pumps)}",
+            )
+        )
+        has_uv = any(v.type == "unloading_valve" for v in spec.valves.values())
+        checks.append(Check("hilo_has_uv", has_uv, "unloading_valve required (L4 p13)"))
 
     extra_flow = PatternId.METER_IN in spec.meta.patterns or PatternId.METER_OUT in spec.meta.patterns
     if not extra_flow:

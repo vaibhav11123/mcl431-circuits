@@ -67,7 +67,7 @@ def compile_paths(spec: CircuitSpec) -> list[CurrentPath]:
             if cyl and cyl.sensors:
                 prev_contacts = [cyl.sensors[-1] if step.action.endswith("+") else cyl.sensors[0]]
             elif cid in spec.motors:
-                prev_contacts = [coil]
+                prev_contacts = ["K_START"]
     return paths
 
 

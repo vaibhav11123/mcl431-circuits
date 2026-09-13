@@ -68,15 +68,10 @@ def main(argv: list[str] | None = None) -> int:
         from circuit.eval import eval_spec, format_report
 
         if getattr(args, "goldens", False):
-            specs = [
-                ROOT / "examples/grinding_machine/circuit.yaml",
-                ROOT / "examples/hilo_punch_2017/circuit.yaml",
-            ]
+            from circuit.eval import golden_specs
+
             ok = True
-            for path in specs:
-                if not path.exists():
-                    print(f"SKIP missing {path}")
-                    continue
+            for path in golden_specs(ROOT):
                 s = CircuitSpec.from_yaml(path)
                 report = eval_spec(s, ROOT, out_dir)
                 print(format_report(report))
