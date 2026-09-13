@@ -277,9 +277,21 @@ def write_solution(spec: CircuitSpec, dest: Path) -> Path:
 
 def draw_all(spec: CircuitSpec, out_dir: Path) -> dict[str, Path]:
     out_dir.mkdir(parents=True, exist_ok=True)
-    return {
+    written: dict[str, Path] = {
         "hydraulic": draw_hydraulic(spec, out_dir / "hydraulic_circuit.svg"),
         "electrical": draw_electrical(spec, out_dir / "electrical_circuit.svg"),
         "phase": draw_phase(spec, out_dir / "step_displacement.svg"),
         "solution": write_solution(spec, out_dir / "solution.txt"),
     }
+    from circuit.png import svg_to_png
+
+    pngs: dict[str, Path] = {}
+    for key in ("hydraulic", "electrical", "phase"):
+        png = svg_to_png(written[key])
+        if png is not None:
+            pngs[f"{key}_png"] = png
+    if not pngs:
+        print("PNG skipped: install librsvg or use macOS")
+    written.update(pngs)
+    return written
+
