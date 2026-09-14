@@ -41,6 +41,7 @@ sensors:
   - 1B2
   - 2B1
   - 2B2
+  - H1
 
 electrical:
   convention: lecture

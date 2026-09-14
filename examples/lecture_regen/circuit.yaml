@@ -1,0 +1,36 @@
+meta:
+  title: L4 p7 regenerative DAC
+  domain: hydraulic
+  exam_id: l4_regen
+  patterns:
+    - dac_4_3
+    - regen
+
+sequence:
+  - { action: 1A+, label: regen extend }
+  - { action: 1A-, label: retract }
+
+power:
+  pumps:
+    - { id: P1 }
+  relief_valves:
+    - { id: RV1, pump: P1 }
+  tank: TANK
+
+cylinders:
+  1A:
+    dcv: 1V
+    sensors: [1B1, 1B2]
+
+motors: {}
+
+valves:
+  1V:
+    type: dcv_4_3_closed_center
+    solenoids: [1Y1, 1Y2]
+
+sensors: [1B1, 1B2]
+
+electrical:
+  convention: lecture
+  paths: []

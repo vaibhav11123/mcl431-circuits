@@ -21,6 +21,16 @@ def test_grinding_has_no_solenoid_as_contact() -> None:
     assert row["ok"], row
 
 
+def test_solenoid_nc_interlock_is_allowed() -> None:
+    spec = CircuitSpec.from_yaml(ROOT / "examples/grinding_machine/circuit.yaml")
+    spec.electrical.paths = [
+        CurrentPath(number=1, kind="main", contacts=["K1", "!1Y2"], coil="1Y1"),
+    ]
+    report = eval_spec(spec, ROOT)
+    row = next(c for c in report["checks"] if c["name"] == "no_solenoid_as_contact")
+    assert row["ok"], row
+
+
 def test_solenoid_as_contact_fails() -> None:
     spec = CircuitSpec.from_yaml(ROOT / "examples/grinding_machine/circuit.yaml")
     spec.electrical.paths = [
