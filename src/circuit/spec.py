@@ -2,12 +2,16 @@
 
 from __future__ import annotations
 
+import re
 from enum import Enum
 from pathlib import Path
 from typing import Any
 
 import yaml
 from pydantic import BaseModel, Field
+
+_SLUG_RE = re.compile(r"[^A-Za-z0-9._-]+")
+_GENERIC_PARENTS = {"examples", "lecture", "goldens", "output", "exams"}
 
 
 class Domain(str, Enum):
@@ -112,3 +116,24 @@ class CircuitSpec(BaseModel):
 
     def to_yaml(self) -> str:
         return yaml.safe_dump(self.model_dump(mode="json"), sort_keys=False)
+
+    def output_slug(self, spec_path: Path | str | None = None) -> str:
+        """Folder name under output/ — exam_id, else YAML parent, else title."""
+        raw = (self.meta.exam_id or "").strip()
+        if not raw and spec_path is not None:
+            parent = Path(spec_path).resolve().parent.name
+            if parent and parent.lower() not in _GENERIC_PARENTS:
+                raw = parent
+        if not raw:
+            raw = self.meta.title or "untitled"
+        slug = _SLUG_RE.sub("_", raw).strip("._-")
+        return slug or "untitled"
+
+
+def question_output_dir(
+    root: Path,
+    spec: CircuitSpec,
+    spec_path: Path | str | None = None,
+) -> Path:
+    """Per-question drawings: output/<exam_id>/."""
+    return Path(root) / "output" / spec.output_slug(spec_path)

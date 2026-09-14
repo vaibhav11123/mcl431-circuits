@@ -40,7 +40,7 @@ python -m circuit draw examples/grinding_machine/circuit.yaml
 python -m circuit eval examples/grinding_machine/circuit.yaml
 ```
 
-Open the sheets under `output/` after draw.
+Open the sheets under `output/<exam_id>/` after draw (B1 → `output/2023_selfstudy_b1/`). Each question gets its own folder.
 
 ## What papers
 

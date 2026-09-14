@@ -43,10 +43,10 @@ def main(argv: list[str] | None = None) -> int:
     spec_path = Path(args.spec) if getattr(args, "spec", None) else (
         ROOT / "examples/grinding_machine/circuit.yaml"
     )
-    from circuit.spec import CircuitSpec
+    from circuit.spec import CircuitSpec, question_output_dir
 
     spec = CircuitSpec.from_yaml(spec_path)
-    out_dir = ROOT / "output"
+    out_dir = question_output_dir(ROOT, spec, spec_path)
 
     if args.cmd == "validate":
         from circuit.validate import all_ok, validate_spec
@@ -73,7 +73,8 @@ def main(argv: list[str] | None = None) -> int:
             ok = True
             for path in golden_specs(ROOT):
                 s = CircuitSpec.from_yaml(path)
-                report = eval_spec(s, ROOT, out_dir)
+                golden_out = question_output_dir(ROOT, s, path)
+                report = eval_spec(s, ROOT, golden_out)
                 print(format_report(report))
                 ok = ok and report["pass"]
             return 0 if ok else 1
