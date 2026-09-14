@@ -23,4 +23,4 @@ Never invent a symbol ID. Never skip `eval`. Hydraulic and electrical are separa
 
 ## Solve a question
 
-Follow `.cursor/skills/generate-circuit/SKILL.md`. Fan out four subagents (parser, hydraulic, electrical, calc), merge YAML, then validate → draw → eval.
+Follow `.cursor/skills/generate-circuit/SKILL.md`. Fan out four subagents (parser, hydraulic, electrical, calc), merge YAML, then validate → draw → eval. Sheets land in `output/<exam_id>/`.

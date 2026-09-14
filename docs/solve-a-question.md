@@ -24,7 +24,7 @@ python -m circuit draw path/to/circuit.yaml
 python -m circuit eval path/to/circuit.yaml
 ```
 
-Open the files under `output/` (gitignored). A pretty SVG that fails eval is not done.
+Open the files under `output/<exam_id>/` (gitignored). Draw and eval write that folder only — they do not overwrite another question. A pretty SVG that fails eval is not done.
 
 Worked start: [`examples/grinding_machine/circuit.yaml`](../examples/grinding_machine/circuit.yaml).
 

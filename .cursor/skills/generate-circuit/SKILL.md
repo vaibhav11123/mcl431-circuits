@@ -28,7 +28,7 @@ python -m circuit eval <spec.yaml>
 ```
 
 6. If eval fails, launch **one** fixer with `eval.json` (max two rounds), then stop and report what the atlas is missing.
-7. Reply with the SVG paths, `solution.txt`, and the eval report.
+7. Reply with the SVG paths under `output/<exam_id>/`, `solution.txt`, and the eval report. Draw never dumps every question into a shared `output/` root.
 
 ## Hard rules
 
