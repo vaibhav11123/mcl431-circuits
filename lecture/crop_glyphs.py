@@ -15,7 +15,7 @@ BOXES = [
     ("MCL431_L3_ControlValves_p04", 980, 1180, 1860, 1780, "dcv_4_2_iso.png"),
     # L3 p6 — ISO glyphs sit left of the cutaways, not on the hardware.
     ("MCL431_L3_ControlValves_p06", 40, 500, 720, 760, "dcv_4_2_spring_offset.png"),
-    ("MCL431_L3_ControlValves_p06", 40, 1160, 780, 1420, "dcv_4_3_spring_centered.png"),
+    ("MCL431_L3_ControlValves_p06", 760, 1288, 1510, 1548, "dcv_4_3_spring_centered.png"),
     # L3 p7 — four centre-condition boxes
     ("MCL431_L3_ControlValves_p07", 140, 500, 520, 860, "dcv_4_3_closed_center.png"),
     ("MCL431_L3_ControlValves_p07", 1480, 500, 1860, 860, "dcv_4_3_float.png"),

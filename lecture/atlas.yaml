@@ -59,6 +59,18 @@ symbols:
     pdf: MCL431_L4_Circuits.pdf
     page: 4
   crop: null
+- id: dcv_4_3_spring_centered
+  kind: hydraulic
+  ports:
+  - P
+  - T
+  - A
+  - B
+  deenergized: true
+  source:
+    pdf: MCL431_L3_ControlValves.pdf
+    page: 6
+  crop: lecture/crops/dcv_4_3_spring_centered.png
 - id: dcv_4_3_closed_center
   kind: hydraulic
   ports:

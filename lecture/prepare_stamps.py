@@ -73,6 +73,9 @@ def main() -> None:
     _save(Image.open(CROPS / "relay_coil.png"), "relay_coil.png")
     _save(Image.open(CROPS / "pushbutton.png"), "pushbutton.png")
     _save(Image.open(CROPS / "limit_switch.png"), "limit_switch.png")
+    _save(Image.open(CROPS / "lamp.png"), "lamp.png")
+    _save(Image.open(CROPS / "dcv_4_3_spring_centered.png"), "dcv_4_3_spring_centered.png")
+    _save(Image.open(CROPS / "flow_control.png"), "flow_control.png")
 
     coil = Image.open(CROPS / "solenoid_coil.png")
     # 480×340: box + triangle sit on the right; 1Y1 is to the left

@@ -1,4 +1,4 @@
-"""Eval gates: spec (always), math (exam-owned), sequence (no Y-as-contact)."""
+"""Eval gates: spec (always), math (exam-owned), sequence (no solenoid NO as logic)."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from circuit.calc import (
     l4_regen_example,
     solution_lines_for,
 )
-from circuit.compile_sequence import apply_compile
+from circuit.compile_sequence import apply_compile, bare
 from circuit.spec import CircuitSpec, PatternId
 from circuit.validate import Check, validate_spec
 
@@ -37,7 +37,9 @@ def sequence_replay(spec: CircuitSpec) -> list[Check]:
     bad = []
     for path in compiled.electrical.paths:
         for c in path.contacts or []:
-            if _is_solenoid_tag(c):
+            # NC of an opposing solenoid is interlocking. A NO Y contact used
+            # as sequence logic (e.g. 3Y1 → 2Y1) is not.
+            if not c.startswith("!") and _is_solenoid_tag(c):
                 bad.append(c)
     checks.append(
         Check(
@@ -47,6 +49,78 @@ def sequence_replay(spec: CircuitSpec) -> list[Check]:
         )
     )
     return checks
+
+
+def _grinding_ladder_checks(spec: CircuitSpec) -> list[Check]:
+    """B1: HC2 waits for HM1; double-solenoid pairs never share an ON command."""
+    compiled = apply_compile(spec)
+    paths = compiled.electrical.paths
+
+    def raw(coil: str) -> list[str]:
+        out: list[str] = []
+        for p in paths:
+            if p.coil == coil:
+                out.extend(p.contacts or [])
+        return out
+
+    def tags(coil: str) -> set[str]:
+        return {bare(c) for c in raw(coil)}
+
+    feed = tags("K3")
+    y1 = raw("1Y1")
+    y2_adv = raw("2Y1")
+    y2_ret = raw("2Y2")
+    unclamp = raw("1Y2")
+    motor = tags("3Y1")
+    n_done = sum(1 for p in paths if p.coil == "K4")
+    n_feed = sum(1 for p in paths if p.coil == "K3")
+    return [
+        Check(
+            "hc2_waits_for_hm1",
+            "K2" in feed and "2B1" in feed,
+            f"K3={sorted(feed)}",
+        ),
+        Check(
+            "2y1_not_kstart",
+            "K1" not in tags("2Y1"),
+            f"2Y1={sorted(tags('2Y1'))}",
+        ),
+        Check(
+            "1y1_interlock",
+            "!K4" in y1 and "!1Y2" in y1,
+            f"1Y1={y1}",
+        ),
+        Check(
+            "2y1_interlock",
+            "!K4" in y2_adv and "!2Y2" in y2_adv,
+            f"2Y1={y2_adv}",
+        ),
+        Check(
+            "2y2_interlock",
+            "K4" in tags("2Y2") and "!2Y1" in y2_ret,
+            f"2Y2={y2_ret}",
+        ),
+        Check(
+            "1y2_after_grind",
+            "K4" in tags("1Y2") and "2B1" in tags("1Y2") and "!1Y1" in unclamp,
+            f"1Y2={unclamp}",
+        ),
+        Check(
+            "one_k_done_coil",
+            n_done == 1,
+            str(n_done),
+        ),
+        Check(
+            "one_k_feed_coil",
+            n_feed == 1,
+            str(n_feed),
+        ),
+        Check(
+            "hm1_drops_at_timer",
+            "K2" in motor and "K4" in motor,
+            f"3Y1={sorted(motor)}",
+        ),
+    ]
 
 
 def math_checks(spec: CircuitSpec) -> list[Check]:
@@ -67,6 +141,7 @@ def math_checks(spec: CircuitSpec) -> list[Check]:
         checks.append(Check("job_sensor", "JOB" in spec.sensors, "JOB"))
         checks.append(Check("one_pump", len(spec.power.pumps) == 1, str(len(spec.power.pumps))))
         checks.append(Check("timer_30", any(s.seconds == 30 for s in spec.sequence), "30"))
+        checks.extend(_grinding_ladder_checks(spec))
     if exam == "2017_minor1_hilo":
         invented = any(c.bore_mm is not None or c.rod_mm is not None for c in spec.cylinders.values())
         checks.append(Check("hilo_bore_not_given", not invented, "bore not_given"))
@@ -140,5 +215,11 @@ def golden_specs(root: Path) -> list[Path]:
         root / "examples/hoist_2016/circuit.yaml",
         root / "examples/headloss_2023_b2/circuit.yaml",
         root / "examples/grind_given_2022/circuit.yaml",
+        root / "examples/lecture_dac_spring/circuit.yaml",
+        root / "examples/lecture_regen/circuit.yaml",
+        root / "examples/lecture_unload/circuit.yaml",
+        root / "examples/lecture_meter_in/circuit.yaml",
+        root / "examples/lecture_meter_out/circuit.yaml",
+        root / "examples/lecture_bleed_off/circuit.yaml",
     ]
     return [p for p in required if p.exists()]

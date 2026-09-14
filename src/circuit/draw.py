@@ -5,376 +5,22 @@ from __future__ import annotations
 from pathlib import Path
 
 from circuit.calc import solution_lines_for
-from circuit.catalog import stamp, stamp_dcv_4_3_closed, stamp_dcv_5_2
-from circuit.compile_sequence import apply_compile
-from circuit.spec import CircuitSpec, Domain, PatternId
+from circuit.draw_electrical import draw_electrical
+from circuit.draw_hydraulic import draw_hydraulic
+from circuit.draw_phase import draw_phase
+from circuit.draw_pneumatic import draw_pneumatic
+from circuit.spec import CircuitSpec, Domain
 from circuit.svgdraw import SVG
 
-
-def _hop_over(s: SVG, x: float, y: float, hop: float = 8) -> None:
-    """ISO 1219: crossing without a junction — no filled dot."""
-    s.polyline([(x, y - hop), (x + hop, y), (x, y + hop)])
-
-
-def _draw_single_pump(s: SVG, spec: CircuitSpec) -> tuple[float, float, float, float, float]:
-    """One pump + PRV. Returns last_p, last_t, p_rail_y, t_rail_y, x0."""
-    px, py = 100, 620
-    p_rail_y, t_rail_y = 450, 530
-    pump = stamp(s, "pump_fixed", px, py, anchor="center")
-    s.text(px + 48, py + 6, spec.power.pumps[0].id, 14, "start")
-    filt = stamp(s, "filter", px, py + 62, anchor="center")
-    tank = stamp(s, "tank", px, 742, anchor="center")
-    s.text(px + 32, 748, "tank", 12, "start")
-    s.line(pump["S"][0], pump["S"][1], filt["in"][0], filt["in"][1])
-    s.line(filt["out"][0], filt["out"][1], tank["T"][0], tank["T"][1])
-    s.line(pump["P"][0], pump["P"][1], px, p_rail_y)
-    s.dot(px, p_rail_y)
-
-    prv_id = spec.power.relief_valves[0].id if spec.power.relief_valves else "RV1"
-    rvx, rvy = px + 130, py + 8
-    prv = stamp(s, "prv", rvx, rvy, anchor="center")
-    s.text(rvx, rvy - 46, prv_id, 12)
-    s.line(px, p_rail_y, prv["P"][0], p_rail_y)
-    s.dot(prv["P"][0], p_rail_y)
-    s.line(prv["P"][0], p_rail_y, prv["P"][0], prv["P"][1])
-    s.line(prv["T"][0], prv["T"][1], prv["T"][0], tank["T"][1])
-    s.line(prv["T"][0], tank["T"][1], tank["T"][0], tank["T"][1])
-    s.dot(prv["T"][0], tank["T"][1])
-    s.line(px, tank["T"][1], px, t_rail_y)
-    s.dot(px, t_rail_y)
-    return px, px, p_rail_y, t_rail_y, 380.0
-
-
-def _draw_hilo_power(s: SVG, spec: CircuitSpec) -> tuple[float, float, float, float, float]:
-    """L4 p13: P1 (large) + check + UV; P2 (small) + RV; join to system."""
-    p1x, p2x, py = 160, 400, 620
-    p_rail_y, t_rail_y = 340, 530
-    check_y = 400
-    tank_x, tank_y = 280, 742
-    tank = stamp(s, "tank", tank_x, tank_y, anchor="center")
-    s.text(tank_x + 36, 748, "tank", 12, "start")
-
-    def _pump_stack(px: float, pid: str) -> dict[str, tuple[float, float]]:
-        pump = stamp(s, "pump_fixed", px, py, anchor="center")
-        s.text(px + 48, py + 6, pid, 14, "start")
-        filt = stamp(s, "filter", px, py + 62, anchor="center")
-        s.line(pump["S"][0], pump["S"][1], filt["in"][0], filt["in"][1])
-        s.line(filt["out"][0], filt["out"][1], filt["out"][0], tank["T"][1])
-        s.line(filt["out"][0], tank["T"][1], tank["T"][0], tank["T"][1])
-        s.dot(filt["out"][0], tank["T"][1])
-        s.line(pump["P"][0], pump["P"][1], px, check_y)
-        return pump
-
-    pids = [p.id for p in spec.power.pumps]
-    _pump_stack(p1x, pids[0] if pids else "P1")
-    _pump_stack(p2x, pids[1] if len(pids) > 1 else "P2")
-
-    cv = stamp(s, "check_valve", (p1x + p2x) / 2, check_y, anchor="center")
-    s.text((p1x + p2x) / 2, check_y - 28, "CV", 11)
-    s.line(p1x, check_y, cv["1"][0], check_y)
-    s.dot(p1x, check_y)
-    s.line(cv["2"][0], check_y, p2x, check_y)
-    s.dot(p2x, check_y)
-    s.line(p2x, check_y, p2x, p_rail_y)
-    s.dot(p2x, p_rail_y)
-
-    uv = stamp(s, "unloading_valve", 70, 470, anchor="center")
-    s.text(70, 422, "UV", 12)
-    s.line(p1x, check_y, p1x, uv["P"][1])
-    s.line(p1x, uv["P"][1], uv["P"][0], uv["P"][1])
-    s.dot(p1x, uv["P"][1])
-    s.line(uv["T"][0], uv["T"][1], uv["T"][0], tank["T"][1])
-    s.line(uv["T"][0], tank["T"][1], tank["T"][0], tank["T"][1])
-    s.dot(uv["T"][0], tank["T"][1])
-
-    prv_id = spec.power.relief_valves[0].id if spec.power.relief_valves else "RV"
-    prv = stamp(s, "prv", 560, 380, anchor="center")
-    s.text(560, 334, prv_id, 12)
-    s.line(p2x, p_rail_y, prv["P"][0], p_rail_y)
-    s.dot(prv["P"][0], p_rail_y)
-    s.line(prv["P"][0], p_rail_y, prv["P"][0], prv["P"][1])
-    s.line(prv["T"][0], prv["T"][1], prv["T"][0], tank["T"][1])
-    s.line(prv["T"][0], tank["T"][1], tank["T"][0], tank["T"][1])
-    s.dot(prv["T"][0], tank["T"][1])
-
-    s.line(p1x, tank["T"][1], p1x, t_rail_y)
-    s.dot(p1x, t_rail_y)
-    return p2x, p1x, p_rail_y, t_rail_y, 820.0
-
-
-def draw_hydraulic(spec: CircuitSpec, dest: Path) -> Path:
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    s = SVG(1680, 800)
-    s.text(840, 22, spec.meta.title, 18)
-    s.text(840, 42, "Hydraulic circuit  ·  lecture L2–L5 stamps  ·  de-energized", 12)
-
-    if PatternId.HILO_DOUBLE_PUMP in spec.meta.patterns:
-        last_p, last_t, p_rail_y, t_rail_y, x0 = _draw_hilo_power(s, spec)
-    else:
-        last_p, last_t, p_rail_y, t_rail_y, x0 = _draw_single_pump(s, spec)
-    span = 420.0
-
-    cols: list[tuple[str, object, list[str], str]] = []
-    for cid, cyl in spec.cylinders.items():
-        cols.append((cid, cyl, spec.valves[cyl.dcv].solenoids, "cyl"))
-    for mid, mot in spec.motors.items():
-        cols.append((mid, mot, spec.valves[mot.dcv].solenoids, "mot"))
-
-    for i, (name, obj, sols, kind) in enumerate(cols):
-        cx = x0 + i * span
-        ports = stamp_dcv_4_3_closed(s, cx, 300, obj.dcv, list(sols))
-        s.text(ports["A"][0] - 12, ports["A"][1] - 6, "A", 10)
-        s.text(ports["B"][0] + 12, ports["B"][1] - 6, "B", 10)
-        s.text(ports["P"][0] - 12, ports["P"][1] + 14, "P", 10)
-        s.text(ports["T"][0] + 12, ports["T"][1] + 14, "T", 10)
-
-        if kind == "cyl":
-            cyl_w, cyl_h = 200.0, 80.0
-            cports = stamp(s, "cylinder_l10", cx - 70, 58, cyl_w, cyl_h)
-            s.text(cx - 86, 98, name, 13, "end")
-            if obj.sensors:
-                s.text(cports["cap"][0], 52, obj.sensors[0], 11)
-                if len(obj.sensors) > 1:
-                    s.text(cports["rod"][0], 52, obj.sensors[1], 11)
-            s.line(ports["A"][0], ports["A"][1], ports["A"][0], cports["cap"][1])
-            s.line(ports["A"][0], cports["cap"][1], cports["cap"][0], cports["cap"][1])
-            s.dot(*cports["cap"])
-            jog_y = 200
-            s.line(ports["B"][0], ports["B"][1], ports["B"][0], jog_y)
-            s.line(ports["B"][0], jog_y, cports["rod"][0], jog_y)
-            s.line(cports["rod"][0], jog_y, cports["rod"][0], cports["rod"][1])
-            s.dot(*cports["rod"])
-            if name == "HC1" and spec.sensors and "JOB" in spec.sensors:
-                stamp(s, "limit_switch", cports["cap"][0] - 28, 48, anchor="center")
-                s.text(cports["cap"][0] - 44, 36, "JOB", 10, "end")
-        else:
-            mports = stamp(s, "motor_fixed", cx, 100, anchor="center")
-            s.text(cx + 58, 88, name, 13, "start")
-            s.line(ports["A"][0], ports["A"][1], ports["A"][0], mports["A"][1])
-            s.line(ports["A"][0], mports["A"][1], mports["A"][0], mports["A"][1])
-            s.dot(*mports["A"])
-            s.line(ports["B"][0], ports["B"][1], ports["B"][0], mports["B"][1])
-            s.line(ports["B"][0], mports["B"][1], mports["B"][0], mports["B"][1])
-            s.dot(*mports["B"])
-
-        s.line(last_p, p_rail_y, ports["P"][0], p_rail_y)
-        s.dot(ports["P"][0], p_rail_y)
-        s.line(ports["P"][0], p_rail_y, ports["P"][0], ports["P"][1])
-        s.line(last_t, t_rail_y, ports["T"][0], t_rail_y)
-        s.dot(ports["T"][0], t_rail_y)
-        hop = 8
-        s.line(ports["T"][0], ports["T"][1], ports["T"][0], p_rail_y - hop)
-        _hop_over(s, ports["T"][0], p_rail_y, hop)
-        s.line(ports["T"][0], p_rail_y + hop, ports["T"][0], t_rail_y)
-        last_p, last_t = ports["P"][0], ports["T"][0]
-
-    s.line(last_p, p_rail_y, last_p + 30, p_rail_y)
-    s.line(last_t, t_rail_y, last_t + 30, t_rail_y)
-
-    dest.write_text(s.tostring())
-    return dest
-
-
-def draw_pneumatic(spec: CircuitSpec, dest: Path) -> Path:
-    """L10 p5: cylinders on top, 5/2 under, filled supply dot, exhaust on the stamp."""
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    s = SVG(1200, 720)
-    s.text(600, 22, spec.meta.title, 18)
-    s.text(600, 42, "Pneumatic circuit  ·  lecture L10 p5 stamps  ·  de-energized", 12)
-
-    supply_y = 560
-    cols = list(spec.cylinders.items())
-    x0, span = 280, 420
-    first_1: tuple[float, float] | None = None
-    for i, (name, cyl) in enumerate(cols):
-        cx = x0 + i * span
-        sols = spec.valves[cyl.dcv].solenoids
-        ports = stamp_dcv_5_2(s, cx, 360, cyl.dcv, list(sols))
-        for pid in ("4", "2", "1"):
-            if pid in ports:
-                s.text(ports[pid][0] + (8 if pid != "1" else 12), ports[pid][1] + (0 if pid != "1" else 14), pid, 10, "start")
-        cports = stamp(s, "cylinder_l10", cx - 70, 70, 200, 80)
-        s.text(cx - 86, 110, name, 13, "end")
-        if cyl.sensors:
-            s.text(cports["cap"][0], 64, cyl.sensors[0], 11)
-            if len(cyl.sensors) > 1:
-                s.text(cports["rod"][0], 64, cyl.sensors[1], 11)
-        s.line(ports["4"][0], ports["4"][1], ports["4"][0], cports["cap"][1])
-        s.line(ports["4"][0], cports["cap"][1], cports["cap"][0], cports["cap"][1])
-        s.dot(*cports["cap"])
-        jog_y = 220
-        s.line(ports["2"][0], ports["2"][1], ports["2"][0], jog_y)
-        s.line(ports["2"][0], jog_y, cports["rod"][0], jog_y)
-        s.line(cports["rod"][0], jog_y, cports["rod"][0], cports["rod"][1])
-        s.dot(*cports["rod"])
-        s.line(ports["1"][0], ports["1"][1], ports["1"][0], supply_y)
-        if first_1 is None:
-            first_1 = (ports["1"][0], supply_y)
-            s.dot(*first_1)
-        else:
-            s.line(first_1[0], supply_y, ports["1"][0], supply_y)
-            s.dot(ports["1"][0], supply_y)
-
-    if first_1:
-        sx, sy = first_1
-        s.line(sx, sy, sx, sy + 50)
-        s.triangle([(sx - 10, sy + 50), (sx + 10, sy + 50), (sx, sy + 72)])
-        s.text(sx + 18, sy + 66, "supply", 11, "start")
-
-    dest.write_text(s.tostring())
-    return dest
-
-
-def _contact_glyph(tag: str) -> str:
-    upper = tag.upper()
-    if upper in {"START", "S1", "S3"}:
-        return "pushbutton"
-    if "B" in upper or upper == "JOB":
-        return "limit_switch"
-    return "contact_no"
-
-
-def _coil_glyph(tag: str) -> str:
-    if "Y" in tag:
-        return "solenoid_coil"
-    if tag.startswith("T1"):
-        return "timer_pull_in"
-    return "relay_coil"
-
-
-def draw_electrical(spec: CircuitSpec, dest: Path) -> Path:
-    spec = apply_compile(spec)
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    paths = spec.electrical.paths
-    n = max(len(paths), 1)
-    col_w = 140
-    width = max(90 + n * col_w + 50, 720)
-    s = SVG(width, 580)
-    s.text(width / 2, 18, "Electrical control circuit  ·  lecture L8 stamps  ·  de-energized", 14)
-    y24, y0 = 48, 500
-    s.line(36, y24, width - 16, y24, 2)
-    s.line(36, y0, width - 16, y0, 2)
-    s.circle(36, y24, 3.5)
-    s.circle(36, y0, 3.5)
-    s.text(28, y24 + 4, "+24 V", 12, "end")
-    s.text(28, y0 + 4, "0 V", 12, "end")
-
-    for i, path in enumerate(paths):
-        x = 88 + i * col_w
-        s.text(x, 40, str(path.number), 13)
-        s.dot(x, y24)
-        s.line(x, y24, x, 88)
-        y = 118
-        prev_bottom = 88
-        for c in path.contacts or []:
-            gid = _contact_glyph(c)
-            g = stamp(s, gid, x, y, anchor="center")
-            top_y = g.get("in", (x, y - 18))[1]
-            bot_y = g.get("out", (x, y + 18))[1]
-            s.line(x, prev_bottom, x, top_y)
-            s.text(x + 18, y + 4, c, 11, "start")
-            if gid in {"contact_no", "pushbutton", "limit_switch"}:
-                s.text(x - 12, top_y + 8, "13", 8, "end")
-                s.text(x - 12, bot_y + 2, "14", 8, "end")
-            prev_bottom = bot_y
-            y += 62
-        coil_y = 430
-        s.line(x, prev_bottom, x, coil_y - 14)
-        if path.coil:
-            gid = _coil_glyph(path.coil)
-            coil = stamp(s, gid, x, coil_y, anchor="center")
-            label = path.coil
-            if gid == "timer_pull_in":
-                s.text(x + 36, coil_y + 5, label, 10, "start")
-            else:
-                s.text(x + 28, coil_y + 5, label, 10, "start")
-            a1 = coil.get("A1", (x, coil_y - 12))
-            a2 = coil.get("A2", (x, coil_y + 12))
-            s.text(a1[0] - 10, a1[1] + 8, "A1", 8, "end")
-            s.text(a2[0] - 10, a2[1] + 2, "A2", 8, "end")
-            s.line(x, a2[1], x, y0)
-        else:
-            s.line(x, coil_y - 14, x, y0)
-        s.dot(x, y0)
-        s.text(x, 548, "main" if path.kind == "main" else "control", 9)
-
-    n_control = sum(1 for p in paths if p.kind != "main")
-    if 0 < n_control < len(paths):
-        split_x = 88 + n_control * col_w - col_w / 2 + 70
-        s.line(split_x, 56, split_x, y0 + 8, 0.8, "#888888")
-        s.text((88 + (n_control - 1) * col_w + 88) / 2, 568, "control", 11)
-        s.text((88 + n_control * col_w + 88 + (len(paths) - 1) * col_w) / 2, 568, "main", 11)
-
-    dest.write_text(s.tostring())
-    return dest
-
-
-def _next_state(action: str, act: str, cur: int) -> int:
-    if action in {f"{act}+", f"{act}_ON"}:
-        return 1
-    if action == f"{act}-":
-        return 0
-    return cur
-
-
-def _sensor_at_edge(spec: CircuitSpec, act: str, going_to: int) -> str:
-    cyl = spec.cylinders.get(act)
-    if not cyl or not cyl.sensors:
-        return ""
-    return cyl.sensors[-1] if going_to == 1 else cyl.sensors[0]
-
-
-def draw_phase(spec: CircuitSpec, dest: Path) -> Path:
-    """L10 p4 method: 0/1 traces. Sequence is arbitrary, so this stays vector."""
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    steps = spec.sequence
-    actuators = list(spec.cylinders) + list(spec.motors)
-    colors = ["#c0392b", "#2471a3", "#1e8449", "#7d3c98"]
-    left, row_h, step_w = 110, 110, 110
-    n = len(steps)
-    s = SVG(140 + n * step_w + 90, 100 + row_h * len(actuators))
-    s.text(s.w / 2, 22, "Step-displacement diagram  ·  lecture L10", 16)
-    s.text(left, 46, "START  ∧  JOB  ∧  1B1  ∧  2B1", 12, "start")
-
-    for i, st in enumerate(steps):
-        x = left + i * step_w
-        label = f"{i + 1}=1" if i == n - 1 else str(i + 1)
-        s.text(x, 68, label, 13)
-        s.text(x + 8, 86, st.action, 10, "start")
-
-    for ti, act in enumerate(actuators):
-        color = colors[ti % len(colors)]
-        y1 = 120 + ti * row_h
-        y0 = y1 + 44
-        s.text(12, (y1 + y0) / 2 + 4, act, 14, "start", color)
-        s.text(84, y1 + 4, "1", 10, "end")
-        s.text(84, y0 + 4, "0", 10, "end")
-        for i in range(n + 1):
-            x = left + i * step_w
-            s.line(x, y1 - 6, x, y0 + 8, 0.8, "#bbbbbb")
-        s.line(left, y1, left + n * step_w, y1, 0.8, "#bbbbbb")
-        s.line(left, y0, left + n * step_w, y0, 0.8, "#bbbbbb")
-
-        cur = 0
-        for i, st in enumerate(steps):
-            nxt = _next_state(st.action, act, cur)
-            x1 = left + i * step_w
-            x2 = left + (i + 1) * step_w
-            yc = y0 if cur == 0 else y1
-            yn = y0 if nxt == 0 else y1
-            if act in spec.motors and nxt != cur:
-                s.line(x1, yc, x1, yn, 2.4, color)
-                s.line(x1, yn, x2, yn, 2.4, color)
-            else:
-                s.line(x1, yc, x2, yn, 2.4, color)
-            if nxt != cur:
-                tag = _sensor_at_edge(spec, act, nxt)
-                if tag:
-                    s.text(x2 + 2, yn - 6 if nxt == 1 else yn + 14, tag, 10, "start", color)
-            cur = nxt
-
-    dest.write_text(s.tostring())
-    return dest
+__all__ = [
+    "draw_all",
+    "draw_calc_only",
+    "draw_electrical",
+    "draw_hydraulic",
+    "draw_phase",
+    "draw_pneumatic",
+    "write_solution",
+]
 
 
 def write_solution(spec: CircuitSpec, dest: Path) -> Path:
@@ -385,6 +31,14 @@ def write_solution(spec: CircuitSpec, dest: Path) -> Path:
         lines.append(f"  {i}. {step.action}{extra} — {step.label}")
     lines += ["", "Calculations (lecture forms; no invented Q)"]
     lines.extend(f"  {ln}" for ln in solution_lines_for(spec.meta.exam_id))
+    if spec.meta.exam_id == "2023_selfstudy_b1":
+        lines += [
+            "",
+            "Electrical notes (L8)",
+            "  2Y1 = K2 AND 2B1 (latched on K3), not K1",
+            "  HM1 OFF at T1 (K4) before HC2 retracts",
+            "  1Y1 NC-interlocked with K4; 2Y1 NC-interlocked with K4 / K3",
+        ]
     lines += ["", "Components"]
     for p in spec.power.pumps:
         lines.append(f"  pump {p.id}")
@@ -423,12 +77,17 @@ def draw_all(spec: CircuitSpec, out_dir: Path) -> dict[str, Path]:
         if png is not None:
             written["calc_png"] = png
         return written
+    ep = spec.meta.domain in {
+        Domain.HYDRAULIC_PLUS_ELECTRICAL,
+        Domain.PNEUMATIC_PLUS_ELECTRICAL,
+    }
     pneu = spec.meta.domain in {Domain.PNEUMATIC, Domain.PNEUMATIC_PLUS_ELECTRICAL}
     written: dict[str, Path] = {
-        "electrical": draw_electrical(spec, out_dir / "electrical_circuit.svg"),
-        "phase": draw_phase(spec, out_dir / "step_displacement.svg"),
         "solution": write_solution(spec, out_dir / "solution.txt"),
     }
+    if ep:
+        written["electrical"] = draw_electrical(spec, out_dir / "electrical_circuit.svg")
+        written["phase"] = draw_phase(spec, out_dir / "step_displacement.svg")
     if pneu:
         written["pneumatic"] = draw_pneumatic(spec, out_dir / "pneumatic_circuit.svg")
     else:
@@ -446,4 +105,3 @@ def draw_all(spec: CircuitSpec, out_dir: Path) -> dict[str, Path]:
         print("PNG skipped: install librsvg or use macOS")
     written.update(pngs)
     return written
-

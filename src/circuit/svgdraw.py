@@ -67,6 +67,22 @@ class SVG:
         d = " ".join(f"{x:.1f},{y:.1f}" for x, y in pts)
         self.parts.append(f'<polygon points="{d}" fill="{fill}" stroke="#000" stroke-width="1"/>')
 
+    def g_open(self, **attrs: str) -> None:
+        bits = []
+        for key, val in attrs.items():
+            name = key.replace("_", "-")
+            escaped = (
+                str(val)
+                .replace("&", "&amp;")
+                .replace('"', "&quot;")
+                .replace("<", "&lt;")
+            )
+            bits.append(f'{name}="{escaped}"')
+        self.parts.append("<g" + ((" " + " ".join(bits)) if bits else "") + ">")
+
+    def g_close(self) -> None:
+        self.parts.append("</g>")
+
     def dot(self, x: float, y: float, r: float = 3.2) -> None:
         self.circle(x, y, r, fill="#000")
 

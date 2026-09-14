@@ -8,6 +8,20 @@ import yaml
 
 from circuit.spec import CircuitSpec, Domain, PatternId
 
+DRAWABLE = {
+    PatternId.DAC_4_3,
+    PatternId.HILO_DOUBLE_PUMP,
+    PatternId.MOTOR_4_3,
+    PatternId.SEQUENCE_DOUBLE_SOLENOID,
+    PatternId.TIMER_PULL_IN,
+    PatternId.EP_DAC_5_2,
+    PatternId.UNLOAD,
+    PatternId.REGEN,
+    PatternId.METER_IN,
+    PatternId.METER_OUT,
+    PatternId.BLEED_OFF,
+}
+
 
 class Check:
     def __init__(self, name: str, ok: bool, detail: str = "") -> None:
@@ -24,10 +38,16 @@ def load_atlas_ids(root: Path) -> set[str]:
     return {s["id"] for s in atlas.get("symbols") or [] if "id" in s}
 
 
+def load_atlas_crops(root: Path) -> dict[str, str | None]:
+    atlas = yaml.safe_load((root / "lecture" / "atlas.yaml").read_text()) or {}
+    return {s["id"]: s.get("crop") for s in atlas.get("symbols") or [] if "id" in s}
+
+
 def validate_spec(spec: CircuitSpec, root: Path | None = None) -> list[Check]:
     root = root or Path(__file__).resolve().parents[2]
     checks: list[Check] = []
     atlas = load_atlas_ids(root)
+    crops = load_atlas_crops(root)
 
     hyd = spec.meta.domain in {
         Domain.HYDRAULIC,
@@ -73,6 +93,14 @@ def validate_spec(spec: CircuitSpec, root: Path | None = None) -> list[Check]:
                     valve.type,
                 )
             )
+            if valve.type in crops and not crops[valve.type]:
+                checks.append(
+                    Check(
+                        f"valve_{vid}_crop",
+                        False,
+                        f"atlas crop missing: {valve.type}",
+                    )
+                )
         else:
             checks.append(Check(f"valve_{vid}_typed", bool(valve.type), valve.type))
         needs_y = valve.type.startswith("dcv") or "solenoid" in valve.type
@@ -93,15 +121,31 @@ def validate_spec(spec: CircuitSpec, root: Path | None = None) -> list[Check]:
         checks.append(Check("hilo_has_uv", has_uv, "unloading_valve required (L4 p13)"))
 
     extra_flow = PatternId.METER_IN in spec.meta.patterns or PatternId.METER_OUT in spec.meta.patterns
+    if not spec.meta.figure_given and spec.meta.patterns:
+        bad = [p.value for p in spec.meta.patterns if p not in DRAWABLE]
+        checks.append(
+            Check("pattern_drawable", not bad, ",".join(bad) if bad else "ok")
+        )
     if not extra_flow:
         sneaky = [v for v in spec.valves.values() if "flow" in v.type or "meter" in v.type]
         checks.append(Check("no_extra_fcv", not sneaky, "question did not ask for FCV"))
 
     coils = [s for v in spec.valves.values() for s in v.solenoids]
-    path_coils = [p.coil for p in spec.electrical.paths if p.coil]
-    if path_coils:
+    paths = spec.electrical.paths
+    if not paths and coils and not spec.meta.figure_given:
+        from circuit.compile_sequence import apply_compile
+
+        paths = apply_compile(spec).electrical.paths
+    path_coils = [p.coil for p in paths if p.coil]
+    if coils and not spec.meta.figure_given:
         missing = [c for c in coils if c not in path_coils]
-        checks.append(Check("coil_tag_bijection", not missing, ",".join(missing)))
+        checks.append(
+            Check(
+                "coil_tag_bijection",
+                not missing,
+                ",".join(missing) if missing else "ok",
+            )
+        )
 
     if spec.sequence:
         checks.append(Check("has_sequence", True, f"{len(spec.sequence)} steps"))
