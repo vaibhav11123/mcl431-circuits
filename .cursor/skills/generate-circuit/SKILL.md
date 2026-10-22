@@ -7,7 +7,9 @@ description: Turn an MCL 431 exam question into lecture-locked hydraulic/electri
 
 ## Do this every time
 
-1. Read the question and `exams/index.yaml`. If a transcribed PYQ matches, start from that golden.
+1. Read the question and `exams/index.yaml`.
+   - **Index hit:** start from that transcribed folder (`facts.yaml`, `deliverables.yaml`). Do not run ingest.
+   - **No index hit, and the user handed a local PDF or scan:** run `python -m circuit ingest <path>` first (needs `pip install -e ".[ingest]"`). The parser may read `exams/ingest/<stem>/document.md` and `draft.yaml` (or `lecture/ingest/` for notes). Copy identifiers, tables, quantities, and sequence tokens (`1A+`, including prose-inferred motions). Do not promote `domain_guess` to `meta.domain` unless the question text says the domain. Do not turn a figure note or bbox into an atlas id. Run `python -m circuit promote <ingest_dir>` for a `proposal/` checklist; promoting into `exams/transcribed/` or the atlas is still a human edit.
 2. Read `lecture/atlas.yaml`. You may only use those symbol IDs.
 3. Launch **four parallel** Cursor Task subagents in one turn. They return YAML fragments only. They must not draw and must not invent atlas IDs.
 
@@ -46,6 +48,9 @@ Eval PASS is not handwriting. After draw, check the sheet as an exam marker woul
 - **L8:** coils at the bottom of numbered current paths; sheet drawn de-energized.
 - **Hydraulic:** ISO hop (polyline, no filled dot) at P/T crossings; B1 uses `cylinder_da`, not the L10 air cylinder; RV1 setpoint on B1 is **15.72 bar** (2.5 kN is the relief setting, not a pressure switch).
 - Hydraulic-only papers skip electrical/phase sheets; electro papers write both.
+- PLC papers write `plc_connection.svg` + `plc_ladder.svg` (analog CMP/MOV), not an L8 relay sheet.
 - Outputs go to `output/<exam_id>/`.
 - **Strip-feed:** H1 lamp on a main path; start contacts S1/S3, not JOB.
+- **Emboss:** PS≥4 bar holds 2A1; do not retract on 2B2.
+- **Pneumatic air (notes p6, p14, p22):** 5/2 for air (4/2 is hydraulics). Port 1 = P supply, 2/4 = actuator, 3/5 = exhaust with open triangles and no continuing pipe. Cylinder over the valve; cap → 4, rod jog → 2. Solenoid boxes flush on the envelopes (no stem). Label contacts with the tag (`K5`), not `!K5`. FRL is on the supply path but has no atlas glyph — name it in the BOM, do not invent a stamp.
 - Missing atlas crop (`dcv_5_3` etc.) → stop. Do not draw a generic ISO box.

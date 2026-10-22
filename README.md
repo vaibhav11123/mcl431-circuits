@@ -44,9 +44,8 @@ Open the sheets under `output/<exam_id>/` after draw (B1 → `output/2023_selfst
 
 ## What papers
 
-- **Draw:** 2023 B1 grinding, 2017 hi-lo punch, 2023 Minor-2 strip feed
+- **Draw:** 2023 B1 grinding, 2017 hi-lo punch, 2023 Minor-2 strip feed, 2023 Minor-2 PLC conveyor, 2017 5/3 drill
 - **Calc only** (figure already on the paper): 2018 hi-lo, 2019 meter-in/out, 2016 hoist, 2023 B2 head loss, 2022 grind-given
-- **Skipped:** PLC Minor-2 Q2; 2017 5/3 drill (no lecture crop)
 
 Full gates: [docs/eval.md](docs/eval.md).
 

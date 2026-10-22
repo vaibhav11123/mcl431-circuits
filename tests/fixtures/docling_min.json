@@ -1,0 +1,38 @@
+{
+  "name": "fixture",
+  "pages": [{"page_no": 1}, {"page_no": 2}],
+  "texts": [
+    {
+      "label": "text",
+      "text": "Conveyor motor 0-4000 RPM; at 470 kg use 2250 RPM; above 580 kg use 3545 RPM; below 220 kg use 1185 RPM. Load cell 0-950 kg.",
+      "prov": [{"page_no": 1, "bbox": {"l": 10, "t": 20, "r": 400, "b": 80}}]
+    },
+    {
+      "label": "text",
+      "text": "Q1 Cylinder 1A+ then 2A- [30 Marks]",
+      "prov": [{"page_no": 1, "bbox": {"l": 10, "t": 90, "r": 300, "b": 120}}]
+    },
+    {
+      "label": "formula",
+      "text": "P = F/A",
+      "prov": [{"page_no": 2, "bbox": {"l": 10, "t": 10, "r": 100, "b": 40}}]
+    }
+  ],
+  "tables": [
+    {
+      "prov": [{"page_no": 2, "bbox": {"l": 0, "t": 50, "r": 200, "b": 150}}],
+      "data": {
+        "grid": [
+          ["Piston Dia (mm)", "50", "63", "80"],
+          ["Rod Dia Small (mm)", "28", "36", "45"]
+        ]
+      }
+    }
+  ],
+  "pictures": [
+    {
+      "captions": ["ISO 4/3 spring-centered valve"],
+      "prov": [{"page_no": 2, "bbox": {"l": 50, "t": 200, "r": 180, "b": 280}}]
+    }
+  ]
+}

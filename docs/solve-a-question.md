@@ -6,6 +6,22 @@ You write a `circuit.yaml`. Python draws and checks. It does not invent extra va
 
 Open [`exams/index.yaml`](../exams/index.yaml). If a transcribed PYQ matches, start from that folder under [`exams/transcribed/`](../exams/transcribed/) (`facts.yaml`, `deliverables.yaml`). Use the paper’s identifiers (`HC1` vs `1A`), not a default guess.
 
+If the paper is not in the index and you have a local PDF or scan, run ingest first (optional install):
+
+```bash
+pip install -e ".[ingest]"
+python -m circuit ingest exams/pyqs/SomePaper.pdf
+# or: python -m circuit ingest lecture/SomeNotes.pdf
+```
+
+Drafts land under `exams/ingest/` or `lecture/ingest/` (gitignored). They are not `circuit.yaml`. Sequence tokens may be inferred from cylinder motion prose (`holds`/`retracts`); notes phrase checks may union Docling text with local page OCR. To stage a human review folder without touching locks:
+
+```bash
+python -m circuit promote exams/ingest/<stem>
+```
+
+That writes `proposal/` only. Copy into `exams/transcribed/` or the atlas by hand before drawing.
+
 ## 2. Lock symbols to the lecture atlas
 
 Only use IDs in [`lecture/atlas.yaml`](../lecture/atlas.yaml). Ports and rest position are in [`lecture/diagrams.yaml`](../lecture/diagrams.yaml). If an atlas crop is missing, stop — do not substitute a generic box.
@@ -14,7 +30,7 @@ Only use IDs in [`lecture/atlas.yaml`](../lecture/atlas.yaml). Ports and rest po
 
 Copy a close golden from [`examples/`](../examples/) (B1 grinding, 2017 hi-lo, 2023 strip-feed). Preserve the stated sequence. Valves are drawn de-energized.
 
-Hydraulic and electrical stay on **separate sheets**. Pneumatic papers use the L10 5/2 sheet, not a hydraulic 4/3.
+Hydraulic and electrical stay on **separate sheets**. Pneumatic papers use the L10 5/2 sheet, not a hydraulic 4/3. PLC papers (2023 Minor-2 Q2) write a connection diagram and analog ladder — not L8 coils.
 
 ## 4. Validate, draw, eval
 

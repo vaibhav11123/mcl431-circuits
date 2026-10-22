@@ -1,4 +1,4 @@
-"""CLI: validate, draw, eval, rasterize."""
+"""CLI: validate, draw, eval, rasterize, ingest."""
 
 from __future__ import annotations
 
@@ -30,6 +30,36 @@ def main(argv: list[str] | None = None) -> int:
     rast.add_argument("--dpi", type=int, default=200)
     rast.add_argument("--only", choices=["lecture", "exams", "all"], default="all")
 
+    ing = sub.add_parser(
+        "ingest",
+        help="Draft exam/lecture text from a local PDF or scan (needs .[ingest])",
+    )
+    ing.add_argument(
+        "paths",
+        nargs="*",
+        help="local pdf/jpeg/png/tif, or a directory of those files",
+    )
+    ing.add_argument(
+        "--formula",
+        action="store_true",
+        help="enable Docling formula enrichment (off by default)",
+    )
+    ing.add_argument(
+        "--no-ocr",
+        action="store_true",
+        help="skip OCR even on image scans",
+    )
+
+    prom = sub.add_parser(
+        "promote",
+        help="Write a proposal/ review folder from an ingest draft (never edits locks)",
+    )
+    prom.add_argument(
+        "paths",
+        nargs="*",
+        help="exams/ingest/<stem> or lecture/ingest/<stem> directories",
+    )
+
     args = parser.parse_args(argv)
     if not args.cmd:
         parser.print_help()
@@ -39,6 +69,21 @@ def main(argv: list[str] | None = None) -> int:
         from circuit.rasterize import rasterize_all
 
         return rasterize_all(ROOT, dpi=args.dpi, only=args.only)
+
+    if args.cmd == "ingest":
+        from circuit.ingest import main as ingest_main
+
+        return ingest_main(
+            ROOT,
+            [Path(p) for p in (args.paths or [])],
+            formula=bool(getattr(args, "formula", False)),
+            no_ocr=bool(getattr(args, "no_ocr", False)),
+        )
+
+    if args.cmd == "promote":
+        from circuit.ingest_promote import main as promote_main
+
+        return promote_main(ROOT, [Path(p) for p in (args.paths or [])])
 
     spec_path = Path(args.spec) if getattr(args, "spec", None) else (
         ROOT / "examples/grinding_machine/circuit.yaml"
