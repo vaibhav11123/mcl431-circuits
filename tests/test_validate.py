@@ -36,10 +36,30 @@ def test_meter_2019_figure_given_skips_drawable() -> None:
     assert all_ok(checks)
 
 
-def test_dcv_5_3_refuses_without_crop() -> None:
-    spec = CircuitSpec.from_yaml(ROOT / "examples/strip_feed_2023/circuit.yaml")
-    spec.valves["1V"].type = "dcv_5_3"
+def test_drill_2017_5_3_crop_present() -> None:
+    spec = CircuitSpec.from_yaml(ROOT / "examples/drill_2017/circuit.yaml")
     checks = validate_spec(spec, ROOT)
-    row = next(c for c in checks if c.name == "valve_1V_crop")
-    assert not row.ok
-    assert "atlas crop missing: dcv_5_3" in row.detail
+    failed = [c for c in checks if not c.ok]
+    assert not failed, [f"{c.name}: {c.detail}" for c in failed]
+    assert (ROOT / "lecture/crops/dcv_5_3.png").is_file()
+    assert (ROOT / "lecture/crops/stamps/dcv_5_3.png").is_file()
+    assert all(c.name.endswith("_crop") is False or c.ok for c in checks)
+
+
+def test_strip_feed_5_2_crop_present() -> None:
+    spec = CircuitSpec.from_yaml(ROOT / "examples/strip_feed_2023/circuit.yaml")
+    checks = validate_spec(spec, ROOT)
+    failed = [c for c in checks if not c.ok]
+    assert not failed, [f"{c.name}: {c.detail}" for c in failed]
+    assert (ROOT / "lecture/crops/dcv_5_2.png").is_file()
+    assert (ROOT / "lecture/crops/stamps/dcv_5_2.png").is_file()
+
+
+def test_emboss_2016_validates() -> None:
+    spec = CircuitSpec.from_yaml(ROOT / "examples/emboss_2016/circuit.yaml")
+    checks = validate_spec(spec, ROOT)
+    failed = [c for c in checks if not c.ok]
+    assert not failed, [f"{c.name}: {c.detail}" for c in failed]
+    assert spec.cylinders["1A1"].dcv == "1V"
+    assert "PS" in spec.sensors
+    assert "S0" in spec.sensors

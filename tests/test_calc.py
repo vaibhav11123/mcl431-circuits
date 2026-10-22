@@ -4,6 +4,7 @@ from circuit.calc import (
     area_mm2,
     grinding_hc1_pressure_bar,
     l4_regen_example,
+    plc_2023_q2_scaling,
     solution_lines_for,
     solution_lines_hilo_2017,
 )
@@ -37,6 +38,24 @@ def test_hilo_2017_does_not_invent_bore() -> None:
     assert "not_given" in lines
     assert "50" not in lines
     assert "28" not in lines
+
+
+def test_plc_2023_q2_scaling_counts() -> None:
+    s = plc_2023_q2_scaling()
+    assert s == {
+        "ai_220": 948,
+        "ai_220_cmp": 949,
+        "ai_580": 2500,
+        "ao_1185": 303,
+        "ao_2250": 575,
+        "ao_3545": 907,
+    }
+    lines = "\n".join(solution_lines_for("2023_minor2_q2"))
+    assert "948" in lines
+    assert "949" in lines
+    assert "907" in lines
+    assert "4000" in lines
+    assert "40000" not in lines
 
 
 @pytest.mark.parametrize(

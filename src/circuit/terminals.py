@@ -22,8 +22,10 @@ def contact_kind(tag: str) -> str:
         return "contact_no"
     if _HOME_B1.fullmatch(name):
         return "contact_nc"
-    if _EXTEND_B2.fullmatch(name) or name == "JOB":
+    if _EXTEND_B2.fullmatch(name) or name in {"JOB", "S0"}:
         return "limit_switch"
+    if name == "PS":
+        return "pressure_switch"
     if name == "T1":
         return "contact_no"
     return "contact_no"
@@ -42,6 +44,8 @@ def contact_terminals(tag: str, k_index: int = 0) -> tuple[str, str]:
         return ("1", "2")
     if kind == "limit_switch":
         return ("13", "14")
+    if kind == "pressure_switch":
+        return ("1", "4")
     if name == "T1":
         return ("7", "8")
     return ("13", "14")

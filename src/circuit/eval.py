@@ -10,10 +10,11 @@ from circuit.calc import (
     grinding_hc1_pressure_bar,
     hoist_2016_load_kn,
     l4_regen_example,
+    plc_2023_q2_scaling,
     solution_lines_for,
 )
-from circuit.compile_sequence import apply_compile, bare
-from circuit.spec import CircuitSpec, PatternId
+from circuit.compile_sequence import apply_compile, bare, is_wait_step
+from circuit.spec import CircuitSpec, Domain, PatternId
 from circuit.validate import Check, validate_spec
 
 
@@ -24,7 +25,7 @@ def _is_solenoid_tag(tag: str) -> bool:
 def sequence_replay(spec: CircuitSpec) -> list[Check]:
     compiled = apply_compile(spec)
     coils = [p.coil for p in compiled.electrical.paths if p.coil]
-    actuator_steps = [s for s in spec.sequence if s.action != "TIMER"]
+    actuator_steps = [s for s in spec.sequence if not is_wait_step(s.action)]
     y_coils = [c for c in coils if c and _is_solenoid_tag(c)]
     ok = len(y_coils) >= len(actuator_steps)
     timer_ok = (
@@ -157,6 +158,56 @@ def math_checks(spec: CircuitSpec) -> list[Check]:
                 spec.meta.domain.value,
             )
         )
+    if exam == "2016_minor1_emboss":
+        n52 = sum(1 for v in spec.valves.values() if "5_2" in v.type)
+        compiled = apply_compile(spec)
+        y2_ret = next((p.contacts or [] for p in compiled.electrical.paths if p.coil == "2Y2"), [])
+        y2_adv = next((p.contacts or [] for p in compiled.electrical.paths if p.coil == "2Y1"), [])
+        k1_set = next(
+            (p.contacts or [] for p in compiled.electrical.paths if p.coil == "K1" and "S1" in (p.contacts or [])),
+            [],
+        )
+        checks.append(Check("two_5_2", n52 == 2, str(n52)))
+        checks.append(
+            Check(
+                "domain_pneumatic",
+                "pneumatic" in spec.meta.domain.value,
+                spec.meta.domain.value,
+            )
+        )
+        checks.append(Check("workpiece_s0", "S0" in spec.sensors, "S0"))
+        checks.append(Check("pressure_switch_ps", "PS" in spec.sensors, "PS"))
+        checks.append(
+            Check(
+                "hold_until_4_bar",
+                any(s.action == "PS" for s in spec.sequence),
+                ",".join(s.action for s in spec.sequence),
+            )
+        )
+        checks.append(
+            Check(
+                "start_homes_and_s0",
+                all(t in k1_set for t in ("S1", "S0", "1B1", "2B1")),
+                ",".join(k1_set),
+            )
+        )
+        checks.append(
+            Check(
+                "2y2_waits_for_ps_not_2b2",
+                "PS" in {bare(c) for p in compiled.electrical.paths for c in (p.contacts or [])}
+                and "2B2" not in y2_ret
+                and "K4" in y2_ret
+                and "!2Y1" in y2_ret,
+                f"2Y2={y2_ret}",
+            )
+        )
+        checks.append(
+            Check(
+                "2y1_not_on_2b2",
+                "2B2" not in y2_adv,
+                f"2Y1={y2_adv}",
+            )
+        )
     if exam == "2018_minor1_hilo":
         p = forming_2018_pressure_bar()
         checks.append(Check("forming_2018_pressure", p > 0, f"{p:.2f} bar from facts"))
@@ -174,6 +225,37 @@ def math_checks(spec: CircuitSpec) -> list[Check]:
     if exam == "MCL431_minor":
         checks.append(Check("minor_hc1_50", True, "HC1 50/25 from facts"))
         checks.append(Check("figure_given_calc", spec.meta.figure_given, "MCL431_minor/facts.yaml"))
+    if exam in {"Fall17-Minor2", "MCL431_Minor2_2017-18_Sem1"}:
+        n53 = sum(1 for v in spec.valves.values() if v.type == "dcv_5_3")
+        checks.append(Check("three_5_3", n53 == 3, str(n53)))
+        checks.append(Check("workpiece_s0", "S0" in spec.sensors, "S0"))
+        checks.append(Check("twelve_motions", len(spec.sequence) == 12, str(len(spec.sequence))))
+        compiled = apply_compile(spec)
+        coils = [p.coil for p in compiled.electrical.paths if p.coil]
+        checks.append(Check("spindle_km", "KM" in coils, ",".join(c for c in coils if c)))
+    if exam == "2023_minor2_q2":
+        s = plc_2023_q2_scaling()
+        checks.append(Check("plc_domain", spec.meta.domain == Domain.PLC, spec.meta.domain.value))
+        checks.append(Check("plc_ai_220", s["ai_220"] == 948, str(s["ai_220"])))
+        checks.append(Check("plc_ai_220_cmp", s["ai_220_cmp"] == 949, str(s["ai_220_cmp"])))
+        checks.append(Check("plc_ai_580", s["ai_580"] == 2500, str(s["ai_580"])))
+        checks.append(Check("plc_ao_1185", s["ao_1185"] == 303, str(s["ao_1185"])))
+        checks.append(Check("plc_ao_2250", s["ao_2250"] == 575, str(s["ao_2250"])))
+        checks.append(Check("plc_ao_3545", s["ao_3545"] == 907, str(s["ao_3545"])))
+        checks.append(
+            Check(
+                "plc_start_stop",
+                "START" in spec.sensors and "STOP" in spec.sensors,
+                ",".join(spec.sensors),
+            )
+        )
+        checks.append(
+            Check(
+                "plc_three_lamps",
+                all(t in spec.sensors for t in ("L1", "L2", "L3")),
+                ",".join(spec.sensors),
+            )
+        )
     if spec.meta.figure_given:
         lines = "\n".join(solution_lines_for(exam))
         checks.append(Check("calc_cites_facts", "facts.yaml" in lines, exam or ""))
@@ -182,7 +264,7 @@ def math_checks(spec: CircuitSpec) -> list[Check]:
 
 def eval_spec(spec: CircuitSpec, root: Path, out_dir: Path | None = None) -> dict:
     checks = validate_spec(spec, root)
-    if not spec.meta.figure_given:
+    if not spec.meta.figure_given and spec.meta.domain != Domain.PLC:
         checks.extend(sequence_replay(spec))
     checks.extend(math_checks(spec))
     report = {
@@ -221,5 +303,8 @@ def golden_specs(root: Path) -> list[Path]:
         root / "examples/lecture_meter_in/circuit.yaml",
         root / "examples/lecture_meter_out/circuit.yaml",
         root / "examples/lecture_bleed_off/circuit.yaml",
+        root / "examples/drill_2017/circuit.yaml",
+        root / "examples/plc_conveyor_2023/circuit.yaml",
+        root / "examples/emboss_2016/circuit.yaml",
     ]
     return [p for p in required if p.exists()]

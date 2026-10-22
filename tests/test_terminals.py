@@ -46,6 +46,18 @@ def test_job_limit_13_14_not_actuated() -> None:
     assert contact_actuated("JOB") is False
 
 
+def test_s0_workpiece_is_limit_like_job() -> None:
+    assert contact_kind("S0") == "limit_switch"
+    assert contact_terminals("S0") == ("13", "14")
+    assert contact_actuated("S0") is False
+
+
+def test_ps_pressure_switch_1_4_not_actuated() -> None:
+    assert contact_kind("PS") == "pressure_switch"
+    assert contact_terminals("PS") == ("1", "4")
+    assert contact_actuated("PS") is False
+
+
 def test_t1_contact_delayed_7_8() -> None:
     assert contact_kind("T1") == "contact_no"
     assert contact_terminals("T1") == ("7", "8")

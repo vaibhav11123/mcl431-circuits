@@ -39,9 +39,9 @@ GLYPHS: dict[str, Glyph] = {
     ),
     "cylinder_l10": Glyph(
         "cylinder_l10.png",
-        210,
-        86,
-        {"cap": (0.38, 0.98), "rod": (0.84, 0.98)},
+        240,
+        76,
+        {"cap": (0.051, 0.99), "rod": (0.846, 0.99)},
     ),
     "cylinder_da": Glyph(
         "cylinder_da.png",
@@ -136,21 +136,37 @@ GLYPHS: dict[str, Glyph] = {
     ),
     "dcv_5_2": Glyph(
         "dcv_5_2.png",
-        220,
-        72,
+        200,
+        151,
         {
-            "4": (0.42, 0.06),
-            "2": (0.58, 0.06),
-            "1": (0.52, 1.00),
-            "5": (0.48, 0.88),
-            "3": (0.60, 0.88),
+            "4": (0.660, 0.038),
+            "2": (0.840, 0.038),
+            "1": (0.750, 0.962),
+            "5": (0.660, 0.962),
+            "3": (0.840, 0.962),
+        },
+    ),
+    "dcv_5_3": Glyph(
+        "dcv_5_3.png",
+        280,
+        146,
+        {
+            "4": (0.44, 0.02),
+            "2": (0.56, 0.02),
+            "1": (0.50, 1.00),
+            "5": (0.44, 0.98),
+            "3": (0.56, 0.98),
         },
     ),
     "pressure_switch": Glyph(
         "pressure_switch.png",
-        64,
-        40,
-        {"in": (0.78, 0.00), "out": (0.78, 1.00)},
+        72,
+        69,
+        {
+            "in": (0.80, 0.10),
+            "out": (0.84, 0.92),
+            "P": (0.10, 0.52),
+        },
     ),
     "lamp": Glyph("lamp.png", 69, 103, {"A1": (0.50, 0.00), "A2": (0.50, 1.00)}),
     "dcv_4_3_spring_centered": Glyph(
@@ -241,6 +257,27 @@ def stamp_dcv_4_3_closed(
     return ports
 
 
+def _stamp_solenoid_operators(
+    svg: SVG,
+    x0: float,
+    cy: float,
+    body_w: float,
+    solenoids: list[str],
+    *,
+    sol_h: float = 42.0,
+) -> None:
+    """Lecture solenoid_box flush on the envelopes (notes p22, L10 p5)."""
+    sol_w = sol_h * 1.75
+    left = x0 - sol_w + 4
+    right = x0 + body_w - 4
+    if solenoids:
+        stamp(svg, "solenoid_box", left, cy - sol_h / 2, sol_w, sol_h)
+        svg.text(left + sol_w / 2, cy + sol_h / 2 + 14, solenoids[0], 11)
+    if len(solenoids) > 1:
+        stamp(svg, "solenoid_box", right, cy - sol_h / 2, sol_w, sol_h, flip_x=True)
+        svg.text(right + sol_w / 2, cy + sol_h / 2 + 14, solenoids[1], 11)
+
+
 def stamp_dcv_5_2(
     svg: SVG,
     cx: float,
@@ -248,11 +285,29 @@ def stamp_dcv_5_2(
     tag: str,
     solenoids: list[str],
 ) -> dict[str, tuple[float, float]]:
-    """L10 p5: 5/2 double solenoid, ports 4/2 top, 1 supply, 3/5 exhaust."""
-    ports = stamp(svg, "dcv_5_2", cx, cy, anchor="center")
-    svg.text(cx - 118, cy - 8, tag, 12, "end")
-    if solenoids:
-        svg.text(cx - 118, cy + 18, solenoids[0], 11, "end")
-    if len(solenoids) > 1:
-        svg.text(cx + 118, cy + 18, solenoids[1], 11, "start")
+    """ISO 1219-1 5/2; ports on the rest (right) envelope. Lecture solenoid_box."""
+    g = glyph("dcv_5_2")
+    body_w, body_h = g.w, g.h
+    ports = stamp(svg, "dcv_5_2", cx, cy, body_w, body_h, anchor="center")
+    x0 = cx - body_w / 2
+    y_env = cy - body_h / 2
+    _stamp_solenoid_operators(svg, x0, cy, body_w, solenoids, sol_h=42.0)
+    svg.text(x0 - 4, y_env - 10, tag, 12, "start")
+    return ports
+
+
+def stamp_dcv_5_3(
+    svg: SVG,
+    cx: float,
+    cy: float,
+    tag: str,
+    solenoids: list[str],
+) -> dict[str, tuple[float, float]]:
+    """ISO 1219-1 closed-centre 5/3; ports on the rest (centre) envelope."""
+    body_w, body_h = 280.0, 146.0
+    ports = stamp(svg, "dcv_5_3", cx, cy, body_w, body_h, anchor="center")
+    x0 = cx - body_w / 2
+    y_env = cy - body_h / 2
+    _stamp_solenoid_operators(svg, x0, cy, body_w, solenoids, sol_h=44.0)
+    svg.text(x0 - 4, y_env - 10, tag, 12, "start")
     return ports
