@@ -6,6 +6,8 @@ Cursor-only. You interpret the question; `python -m circuit` draws.
 
 ```bash
 python -m circuit rasterize
+python -m circuit ingest <local.pdf|jpeg>   # needs pip install -e ".[ingest]"
+python -m circuit promote <exams|lecture>/ingest/<stem>  # proposal/ only; never edits locks
 python -m circuit validate <spec.yaml>
 python -m circuit draw <spec.yaml>
 python -m circuit eval <spec.yaml>

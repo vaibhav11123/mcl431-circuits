@@ -10,7 +10,10 @@ output/
 
 # Full slide / paper rasters (regenerate with: python -m circuit rasterize)
 lecture/pages/
+lecture/notes_wa0000/
+lecture/ingest/
 exams/pages/
+exams/ingest/
 
 # Course PDFs stay on your machine — do not publish IIT lecture or exam scans
 lecture/*.pdf

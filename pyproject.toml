@@ -20,6 +20,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest>=8.0"]
 png = ["cairosvg>=2.7"]
+ingest = ["docling>=2.141", "ocrmac>=1.0; platform_system=='Darwin'"]
 
 [project.scripts]
 circuit = "circuit.cli:main"
