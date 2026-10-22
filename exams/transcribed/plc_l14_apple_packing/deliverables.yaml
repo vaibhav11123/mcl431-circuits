@@ -1,0 +1,8 @@
+questions:
+  - part: Q1
+    sheets: [plc_connection, plc_ladder]
+    calcs: []
+    paper_asks:
+      - Identify I/O and assign suitable addresses
+      - Draw PLC circuit / connection diagram
+      - Draw ladder (12 apples, TON 5 s delay)

@@ -1,0 +1,26 @@
+exam: plc_l14_counter_eject
+source: lecture/MCL431_L14_PLC_Problems.pdf
+pages: [2]
+domain: plc
+course_version: v2
+identifier_style: plc
+identifiers: [S1, S2]
+questions:
+  - part: Q1
+    domain: plc
+    identifiers: [S1, S2]
+    identifier_style: plc
+    sequence: []
+    plc:
+      counter:
+        type: CTU
+        preset: 15
+        reset: S2
+      cycle: advance_eject_retract_on_S1
+      io:
+        - { address: I0.0, device: S1, function: "Advance / eject (NO)" }
+        - { address: I0.1, device: S2, function: "Counter reset (NO)" }
+        - { address: Q0.0, device: Y1, function: "Cylinder advance" }
+        - { address: Q0.1, device: Y2, function: "Cylinder retract" }
+    tags: [plc_v2, discrete, ctu]
+    note: Y2 retract path for dual-solenoid cycle; Micrologix-style tags (paper did not fix bits).

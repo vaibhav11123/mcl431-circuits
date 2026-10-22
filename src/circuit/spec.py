@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 _SLUG_RE = re.compile(r"[^A-Za-z0-9._-]+")
 _GENERIC_PARENTS = {"examples", "lecture", "goldens", "output", "exams"}
@@ -100,6 +100,79 @@ class Meta(BaseModel):
     figure_given: bool = False
 
 
+class PlcIoRow(BaseModel):
+    address: str
+    device: str
+    function: str = ""
+
+
+class PlcFieldBox(BaseModel):
+    title: str
+    lines: list[str] = Field(default_factory=list)
+
+
+class PlcScalingChannel(BaseModel):
+    eng_max: float
+    bits: int
+    slot: int | None = None
+    channel: int | None = None
+    unit: str = ""
+    eng_min: float = 0.0
+
+
+class PlcScaling(BaseModel):
+    ai: PlcScalingChannel | None = None
+    ao: PlcScalingChannel | None = None
+    checkpoints: dict[str, float] = Field(default_factory=dict)
+    counts: dict[str, int] = Field(default_factory=dict)
+
+
+class PlcElement(BaseModel):
+    kind: str
+    tag: str = ""
+    label: str = ""
+    sense: str = "NO"
+    op: str = ""
+    left: str = ""
+    right: str = ""
+    right_from: str = ""
+    value: str | int | float | None = None
+    value_from: str = ""
+    dest: str = ""
+    preset: int | float | None = None
+    text: str = ""
+
+    @field_validator("sense", mode="before")
+    @classmethod
+    def _yaml_no_is_false(cls, v: object) -> str:
+        # PyYAML parses bare NO as False
+        if v is False or v is None:
+            return "NO"
+        if v is True:
+            return "NO"
+        return str(v)
+
+
+class PlcRung(BaseModel):
+    id: int | str
+    caption: str = ""
+    series: list[PlcElement] = Field(default_factory=list)
+    branch: list[PlcElement] = Field(default_factory=list)
+    output: PlcElement | None = None
+
+
+class PlcBlock(BaseModel):
+    io: list[PlcIoRow] = Field(default_factory=list)
+    field: list[PlcFieldBox] = Field(default_factory=list)
+    notes: list[str] = Field(default_factory=list)
+    subtitle_connection: str = "PLC connection diagram"
+    subtitle_ladder: str = "PLC ladder"
+    scaling: PlcScaling | None = None
+    scale_table: list[list[str]] = Field(default_factory=list)
+    scale_headers: list[str] = Field(default_factory=list)
+    rungs: list[PlcRung] = Field(default_factory=list)
+
+
 class CircuitSpec(BaseModel):
     meta: Meta
     sequence: list[SeqStep]
@@ -109,6 +182,7 @@ class CircuitSpec(BaseModel):
     valves: dict[str, Valve] = Field(default_factory=dict)
     sensors: list[str] = Field(default_factory=list)
     electrical: Electrical = Field(default_factory=Electrical)
+    plc: PlcBlock | None = None
 
     @classmethod
     def from_yaml(cls, path: Path | str) -> CircuitSpec:

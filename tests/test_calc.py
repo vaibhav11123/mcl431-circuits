@@ -5,6 +5,7 @@ from circuit.calc import (
     grinding_hc1_pressure_bar,
     l4_regen_example,
     plc_2023_q2_scaling,
+    plc_fan_l14_scaling,
     solution_lines_for,
     solution_lines_hilo_2017,
 )
@@ -56,6 +57,16 @@ def test_plc_2023_q2_scaling_counts() -> None:
     assert "907" in lines
     assert "4000" in lines
     assert "40000" not in lines
+
+
+def test_plc_fan_l14_scaling_counts() -> None:
+    s = plc_fan_l14_scaling()
+    assert s["ao_200"] == 205
+    assert s["ao_500"] == 512
+    assert s["ao_800"] == 818
+    assert s["t_50"] == 32768
+    lines = "\n".join(solution_lines_for("plc_l14_fan_controller"))
+    assert "205" in lines
 
 
 @pytest.mark.parametrize(

@@ -24,3 +24,101 @@ sensors:
 electrical:
   convention: plc
   paths: []
+
+plc:
+  subtitle_connection: "PLC connection diagram  ·  analog I/O  ·  30 marks"
+  subtitle_ladder: "PLC ladder  ·  three-speed conveyor  ·  M0.0 = RUN"
+  notes:
+    - "Compare AI < {ai_220_cmp} (W<220 kg) and AI > {ai_580} (W>580 kg). STOP writes AO = 0."
+    - "Only one lamp ON at a time. Rung 5 zeros AO on STOP so the speed controller does not hold voltage."
+  io:
+    - { address: I0.0, device: START PB, function: "Start conveyor (NO)" }
+    - { address: I0.1, device: STOP PB, function: "Stop conveyor (NC in ladder)" }
+    - { address: "AI Slot-3 Ch-2", device: Load cell, function: "Weight 0–950 kg, 12-bit" }
+    - { address: "AO Slot-2 Ch-1", device: Speed controller, function: "0–10 V → 0–4000 RPM, 10-bit" }
+    - { address: Q0.0, device: L1 LOW, function: "W < 220 kg" }
+    - { address: Q0.1, device: L2 NORMAL, function: "220 ≤ W ≤ 580 kg (includes 470 kg)" }
+    - { address: Q0.2, device: L3 HIGH, function: "W > 580 kg" }
+  field:
+    - title: Weight detector
+      lines: ["Load cell 0–950 kg", "Assumed 0–10 V", "(paper: type not given)"]
+    - title: PLC
+      lines:
+        - "I0.0  START"
+        - "I0.1  STOP"
+        - "AI Slot-3 Ch-2  load cell"
+        - "AO Slot-2 Ch-1  speed cmd"
+        - "Q0.0  L1 LOW"
+        - "Q0.1  L2 NORMAL"
+        - "Q0.2  L3 HIGH"
+    - title: Speed controller
+      lines: ["0–10 V input", "Motor 0–4000 RPM", "AO Channel-1 Slot-2"]
+  scaling:
+    ai: { eng_max: 950, bits: 12, slot: 3, channel: 2, unit: kg }
+    ao: { eng_max: 4000, bits: 10, slot: 2, channel: 1, unit: rpm }
+    checkpoints:
+      ai_220: 220
+      ai_580: 580
+      ao_1185: 1185
+      ao_2250: 2250
+      ao_3545: 3545
+    counts:
+      ai_220_cmp: 949
+  scale_headers: ["Condition", "AI counts", "Speed", "AO counts", "Voltage", "Lamp"]
+  scale_table:
+    - ["W < 220 kg", "AI < {ai_220_cmp}", "1185 RPM", "{ao_1185}", "2.9625 V", "L1"]
+    - ["220–580 kg", "{ai_220_cmp}–{ai_580}", "2250 RPM", "{ao_2250}", "5.625 V", "L2"]
+    - ["W > 580 kg", "AI > {ai_580}", "3545 RPM", "{ao_3545}", "8.8625 V", "L3"]
+    - ["STOP", "—", "0 RPM", "0", "0 V", "OFF"]
+  rungs:
+    - id: 1
+      caption: Start/stop latch
+      series:
+        - { kind: contact, tag: I0.0, label: "I0.0 START", sense: "NO" }
+        - { kind: contact, tag: I0.1, label: "I0.1 STOP", sense: "NC" }
+      branch:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+      output: { kind: coil, tag: M0.0, label: "M0.0 RUN" }
+    - id: 2
+      caption: "Low weight  W < 220 kg"
+      series:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+        - { kind: cmp, op: "<", left: AI, right_from: ai_220_cmp }
+      output: { kind: mov, dest: AO, value_from: ao_1185 }
+    - id: 3
+      caption: "Normal  220 ≤ W ≤ 580 kg  (470 kg → 2250 RPM)"
+      series:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+        - { kind: cmp, op: "≥", left: AI, right_from: ai_220_cmp }
+        - { kind: cmp, op: "≤", left: AI, right_from: ai_580 }
+      output: { kind: mov, dest: AO, value_from: ao_2250 }
+    - id: 4
+      caption: "High weight  W > 580 kg"
+      series:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+        - { kind: cmp, op: ">", left: AI, right_from: ai_580 }
+      output: { kind: mov, dest: AO, value_from: ao_3545 }
+    - id: 5
+      caption: "Stopped — zero the analog output"
+      series:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NC" }
+      output: { kind: mov, dest: AO, value: 0 }
+    - id: 6
+      caption: L1 LOW
+      series:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+        - { kind: cmp, op: "<", left: AI, right_from: ai_220_cmp }
+      output: { kind: coil, tag: Q0.0, label: "Q0.0 L1" }
+    - id: 7
+      caption: L2 NORMAL
+      series:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+        - { kind: cmp, op: "≥", left: AI, right_from: ai_220_cmp }
+        - { kind: cmp, op: "≤", left: AI, right_from: ai_580 }
+      output: { kind: coil, tag: Q0.1, label: "Q0.1 L2" }
+    - id: 8
+      caption: L3 HIGH
+      series:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+        - { kind: cmp, op: ">", left: AI, right_from: ai_580 }
+      output: { kind: coil, tag: Q0.2, label: "Q0.2 L3" }

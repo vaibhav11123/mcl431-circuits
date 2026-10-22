@@ -1,0 +1,36 @@
+exam: plc_l14_stamping
+source: lecture/MCL431_L14_PLC_Problems.pdf
+pages: [3, 4]
+domain: plc
+course_version: v2
+identifier_style: plc
+identifiers: [START, STOP, LS1, LS2, LS3, LSUP, LSDN, Up, Dn]
+questions:
+  - part: Q1
+    domain: plc
+    identifiers: [START, STOP, LS1, LS2, LS3, LSUP, LSDN, Up, Dn]
+    identifier_style: plc
+    sequence:
+      - part_at_1_moves_to_2
+      - stamp_at_2
+      - move_to_3_manual_remove
+    plc:
+      lamps: [Power, Go, Stop]
+      conveyor_relay: true
+      start_stop: true
+      io:
+        - { address: I0.0, device: START, function: "Start process (NO)" }
+        - { address: I0.1, device: STOP, function: "Stop / fault (NC in ladder)" }
+        - { address: I0.2, device: LS1, function: "Part at position 1" }
+        - { address: I0.3, device: LS2, function: "Part at position 2 (stamp)" }
+        - { address: I0.4, device: LS3, function: "Part at position 3" }
+        - { address: I0.5, device: LSUP, function: "Stamper up" }
+        - { address: I0.6, device: LSDN, function: "Stamper down" }
+        - { address: Q0.0, device: Up, function: "Stamp cylinder up solenoid" }
+        - { address: Q0.1, device: Dn, function: "Stamp cylinder down solenoid" }
+        - { address: Q0.2, device: CONV, function: "Conveyor motor relay" }
+        - { address: Q0.3, device: Power, function: "Power ON lamp" }
+        - { address: Q0.4, device: Go, function: "Part in process lamp" }
+        - { address: Q0.5, device: Stop, function: "Process stopped lamp" }
+    tags: [plc_v2, discrete, sequence, stamping]
+    note: START/STOP + Micrologix-style bits; Sanfoundry twin for sequence. Paper named devices without fixed bits.

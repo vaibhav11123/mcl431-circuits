@@ -107,6 +107,54 @@ questions:
     pattern_hint: plc_analog_conveyor
     tags: [plc_v2, analog_io, conveyor]
 
+  - id: plc_l14_counter_eject
+    file: exams/transcribed/plc_l14_counter_eject
+    source: lecture/MCL431_L14_PLC_Problems.pdf
+    readable: true
+    domain: plc
+    identifiers: [S1, S2]
+    deliverables:
+      sheets: [plc_connection, plc_ladder]
+      calcs: []
+    pattern_hint: plc_ctu_eject
+    tags: [plc_v2, discrete, ctu]
+
+  - id: plc_l14_stamping
+    file: exams/transcribed/plc_l14_stamping
+    source: lecture/MCL431_L14_PLC_Problems.pdf
+    readable: true
+    domain: plc
+    identifiers: [LS1, LS2, LS3, LSUP, LSDN, Up, Dn]
+    deliverables:
+      sheets: [plc_connection, plc_ladder]
+      calcs: []
+    pattern_hint: plc_stamping_sequence
+    tags: [plc_v2, discrete, sequence]
+
+  - id: plc_l14_apple_packing
+    file: exams/transcribed/plc_l14_apple_packing
+    source: lecture/MCL431_L14_PLC_Problems.pdf
+    readable: true
+    domain: plc
+    identifiers: [START, STOP]
+    deliverables:
+      sheets: [plc_connection, plc_ladder]
+      calcs: []
+    pattern_hint: plc_apple_packing
+    tags: [plc_v2, ton, ctu]
+
+  - id: plc_l14_fan_controller
+    file: exams/transcribed/plc_l14_fan_controller
+    source: lecture/MCL431_L14_PLC_Problems.pdf
+    readable: true
+    domain: plc
+    identifiers: [PB, L1, L2, L3]
+    deliverables:
+      sheets: [plc_connection, plc_ladder]
+      calcs: [analog counts for zone thresholds and AO rpm]
+    pattern_hint: plc_fan_analog
+    tags: [plc_v2, analog_io, cmp, mov]
+
   - id: MCL431_Minor2_2022-23
     file: exams/transcribed/MCL431_Minor2_2022-23
     source: exams/pyqs/MCL431_Minor2_2022-23.jpeg

@@ -1,0 +1,135 @@
+meta:
+  title: L14 Fan Controller PLC
+  domain: plc
+  exam_id: plc_l14_fan_controller
+  patterns: []
+
+sequence: []
+power: { pumps: [], tank: "" }
+cylinders: {}
+motors: {}
+valves: {}
+sensors: [PB, L1, L2, L3]
+electrical: { convention: plc, paths: [] }
+
+plc:
+  subtitle_connection: "PLC connection  ·  fan T/RH analog  ·  L14"
+  subtitle_ladder: "PLC ladder  ·  shared ONS pulse  ·  zone bits → MOV/lamps"
+  notes:
+    - "PB→ONS→M0.1 pulse; M0.5=RUN snap then pulse OTL/OTU (no same-scan race). Zones→AO+lamps."
+    - "AO 205/512/818 (10-bit). !Z1·!Z2·!Z3→MOV 0. Lamps share full T+RH zone bits."
+  io:
+    - { address: I0.0, device: PB, function: "Alternate START/STOP" }
+    - { address: "AI Slot-2 Ch-0", device: Temperature, function: "0–100 °C, 16-bit" }
+    - { address: "AI Slot-2 Ch-1", device: Humidity, function: "0–100 %RH, 16-bit" }
+    - { address: "AO Slot-1 Ch-0", device: Fan AO, function: "0–10 V → 100–1000 rpm, 10-bit" }
+    - { address: Q0.0, device: L1, function: "Speed 1 lamp (200 rpm)" }
+    - { address: Q0.1, device: L2, function: "Speed 2 lamp (500 rpm)" }
+    - { address: Q0.2, device: L3, function: "Speed 3 lamp (800 rpm)" }
+  field:
+    - title: Sensors
+      lines: ["T 0–100 °C → AI Ch-0", "RH 0–100% → AI Ch-1", "Slot 2, 16-bit"]
+    - title: PLC
+      lines: ["I0.0 PB", "AI Slot-2 Ch-0/1", "AO Slot-1 Ch-0", "Q0.0–Q0.2 lamps"]
+    - title: Fan drive
+      lines: ["AO 10-bit Slot 1", "100 rpm @ 1 V", "1000 rpm @ 10 V"]
+  scaling:
+    counts:
+      t_30: 19660
+      t_40: 26214
+      t_50: 32768
+      rh_40: 26214
+      rh_50: 32768
+      ao_200: 205
+      ao_500: 512
+      ao_800: 818
+  scale_headers: ["Zone", "Condition", "RPM", "AO counts", "Lamp"]
+  scale_table:
+    - ["1", "30<T<40 & RH>50", "200", "{ao_200}", "L1"]
+    - ["2", "40<T<50 & 40<RH<50", "500", "{ao_500}", "L2"]
+    - ["3", "T>50 & RH<40", "800", "{ao_800}", "L3"]
+  rungs:
+    - id: 1
+      caption: Snapshot RUN → M0.5 (stable for toggle)
+      series:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+      output: { kind: coil, tag: M0.5, label: "M0.5 run_snap" }
+    - id: 2
+      caption: PB rising edge → shared pulse M0.1
+      series:
+        - { kind: contact, tag: I0.0, label: "I0.0 PB", sense: "NO" }
+        - { kind: ons, tag: B3:0/0, label: "ONS" }
+      output: { kind: coil, tag: M0.1, label: "M0.1 pulse" }
+    - id: 3
+      caption: Pulse latches RUN when snap was off
+      series:
+        - { kind: contact, tag: M0.1, label: "M0.1 pulse", sense: "NO" }
+        - { kind: contact, tag: M0.5, label: "M0.5 run_snap", sense: "NC" }
+      output: { kind: otl, tag: M0.0, label: "(L) M0.0 RUN" }
+    - id: 4
+      caption: Pulse unlatches RUN when snap was on
+      series:
+        - { kind: contact, tag: M0.1, label: "M0.1 pulse", sense: "NO" }
+        - { kind: contact, tag: M0.5, label: "M0.5 run_snap", sense: "NO" }
+      output: { kind: otu, tag: M0.0, label: "(U) M0.0 RUN" }
+    - id: 5
+      caption: "Zone1 bit — 30<T<40 & RH>50"
+      series:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+        - { kind: cmp, op: ">", left: T, right_from: t_30 }
+        - { kind: cmp, op: "<", left: T, right_from: t_40 }
+        - { kind: cmp, op: ">", left: RH, right_from: rh_50 }
+      output: { kind: coil, tag: M0.2, label: "M0.2 Z1" }
+    - id: 6
+      caption: "Zone2 bit — 40<T<50 & 40<RH<50"
+      series:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+        - { kind: cmp, op: ">", left: T, right_from: t_40 }
+        - { kind: cmp, op: "<", left: T, right_from: t_50 }
+        - { kind: cmp, op: ">", left: RH, right_from: rh_40 }
+        - { kind: cmp, op: "<", left: RH, right_from: rh_50 }
+      output: { kind: coil, tag: M0.3, label: "M0.3 Z2" }
+    - id: 7
+      caption: "Zone3 bit — T>50 & RH<40"
+      series:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+        - { kind: cmp, op: ">", left: T, right_from: t_50 }
+        - { kind: cmp, op: "<", left: RH, right_from: rh_40 }
+      output: { kind: coil, tag: M0.4, label: "M0.4 Z3" }
+    - id: 8
+      caption: "Z1 → MOV 200 rpm"
+      series:
+        - { kind: contact, tag: M0.2, label: "M0.2 Z1", sense: "NO" }
+      output: { kind: mov, dest: AO, value_from: ao_200 }
+    - id: 9
+      caption: "Z2 → MOV 500 rpm"
+      series:
+        - { kind: contact, tag: M0.3, label: "M0.3 Z2", sense: "NO" }
+      output: { kind: mov, dest: AO, value_from: ao_500 }
+    - id: 10
+      caption: "Z3 → MOV 800 rpm"
+      series:
+        - { kind: contact, tag: M0.4, label: "M0.4 Z3", sense: "NO" }
+      output: { kind: mov, dest: AO, value_from: ao_800 }
+    - id: 11
+      caption: "No zone (or stopped) → AO zero"
+      series:
+        - { kind: contact, tag: M0.2, label: "M0.2 Z1", sense: "NC" }
+        - { kind: contact, tag: M0.3, label: "M0.3 Z2", sense: "NC" }
+        - { kind: contact, tag: M0.4, label: "M0.4 Z3", sense: "NC" }
+      output: { kind: mov, dest: AO, value: 0 }
+    - id: 12
+      caption: L1 — same zone as 200 rpm
+      series:
+        - { kind: contact, tag: M0.2, label: "M0.2 Z1", sense: "NO" }
+      output: { kind: coil, tag: Q0.0, label: "Q0.0 L1" }
+    - id: 13
+      caption: L2 — same zone as 500 rpm
+      series:
+        - { kind: contact, tag: M0.3, label: "M0.3 Z2", sense: "NO" }
+      output: { kind: coil, tag: Q0.1, label: "Q0.1 L2" }
+    - id: 14
+      caption: L3 — same zone as 800 rpm
+      series:
+        - { kind: contact, tag: M0.4, label: "M0.4 Z3", sense: "NO" }
+      output: { kind: coil, tag: Q0.2, label: "Q0.2 L3" }

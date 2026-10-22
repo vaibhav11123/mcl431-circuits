@@ -1,0 +1,84 @@
+meta:
+  title: L14 Apple Packing PLC
+  domain: plc
+  exam_id: plc_l14_apple_packing
+  patterns: []
+
+sequence: []
+power: { pumps: [], tank: "" }
+cylinders: {}
+motors: {}
+valves: {}
+sensors: [START, STOP, BOX, APPLE]
+electrical: { convention: plc, paths: [] }
+
+plc:
+  subtitle_connection: "PLC connection  ·  apple packing  ·  L14"
+  subtitle_ladder: "PLC ladder  ·  ONS+CTU=12  ·  TON 5 s"
+  notes:
+    - "START/STOP latch. Bring box, ONS+CTU=12, TON 5 s, single BOX_CONV coil, RES after leave."
+    - "M0.1 bring_box OR T4:0/DN → one Q0.0 (no dual BOX_CONV coil)."
+  io:
+    - { address: I0.0, device: START, function: "Start packing (NO)" }
+    - { address: I0.1, device: STOP, function: "Stop packing (NC in ladder)" }
+    - { address: I0.2, device: BOX, function: "Box at apple drop position" }
+    - { address: I0.3, device: APPLE, function: "Apple drop / count pulse" }
+    - { address: Q0.0, device: BOX_CONV, function: "Box conveyor motor" }
+    - { address: Q0.1, device: APPLE_CONV, function: "Apple conveyor motor" }
+  field:
+    - title: Operator
+      lines: ["START / STOP PBs"]
+    - title: PLC
+      lines: ["I0.0–I0.3", "Q0.0 box conv", "Q0.1 apple conv", "C5:0 PV=12", "T4:0 PT=5s"]
+    - title: Line
+      lines: ["Box conveyor", "Apple conveyor", "12 apples / box"]
+  rungs:
+    - id: 1
+      caption: START/STOP latch
+      series:
+        - { kind: contact, tag: I0.0, label: "I0.0 START", sense: "NO" }
+        - { kind: contact, tag: I0.1, label: "I0.1 STOP", sense: "NC" }
+      branch:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+      output: { kind: coil, tag: M0.0, label: "M0.0 RUN" }
+    - id: 2
+      caption: bring_box memory — empty box to drop
+      series:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+        - { kind: contact, tag: I0.2, label: "I0.2 BOX", sense: "NC" }
+        - { kind: contact, tag: "C5:0/DN", label: "C5:0/DN", sense: "NC" }
+      output: { kind: coil, tag: M0.1, label: "M0.1 bring_box" }
+    - id: 3
+      caption: Apple count — ONS edge into CTU (PV=12)
+      series:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+        - { kind: contact, tag: I0.2, label: "I0.2 BOX", sense: "NO" }
+        - { kind: contact, tag: "C5:0/DN", label: "C5:0/DN", sense: "NC" }
+        - { kind: contact, tag: I0.3, label: "I0.3 APPLE", sense: "NO" }
+        - { kind: ons, tag: B3:0/2, label: "ONS" }
+      output: { kind: ctu, tag: C5:0, preset: 12 }
+    - id: 4
+      caption: Apple conveyor motor
+      series:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+        - { kind: contact, tag: I0.2, label: "I0.2 BOX", sense: "NO" }
+        - { kind: contact, tag: "C5:0/DN", label: "C5:0/DN", sense: "NC" }
+      output: { kind: coil, tag: Q0.1, label: "Q0.1 APPLE_CONV" }
+    - id: 5
+      caption: "TON 5 s after count done"
+      series:
+        - { kind: contact, tag: "C5:0/DN", label: "C5:0/DN", sense: "NO" }
+      output: { kind: ton, tag: T4:0, preset: 5 }
+    - id: 6
+      caption: Single BOX_CONV — bring empty OR move filled
+      series:
+        - { kind: contact, tag: M0.1, label: "M0.1 bring_box", sense: "NO" }
+      branch:
+        - { kind: contact, tag: "T4:0/DN", label: "T4:0/DN", sense: "NO" }
+      output: { kind: coil, tag: Q0.0, label: "Q0.0 BOX_CONV" }
+    - id: 7
+      caption: Reset counter after box leaves
+      series:
+        - { kind: contact, tag: "T4:0/DN", label: "T4:0/DN", sense: "NO" }
+        - { kind: contact, tag: I0.2, label: "I0.2 BOX", sense: "NC" }
+      output: { kind: res, tag: C5:0, label: "RES C5:0" }

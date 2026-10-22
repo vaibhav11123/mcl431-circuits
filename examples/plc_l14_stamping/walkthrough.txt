@@ -1,0 +1,22 @@
+L14 Stamping — rung-by-rung walkthrough
+I/O: START I0.0, STOP I0.1, LS1–3 I0.2–4, LSUP I0.5, LSDN I0.6
+     Up Q0.0, Dn Q0.1, CONV Q0.2, Power Q0.3, Go Q0.4, Stop Q0.5
+
+Memory: M0.0 RUN, M0.1 to_stamp, M0.2 stamped, M0.3 conv_1to2, M0.4 conv_2to3
+
+Rung 1  START/STOP seal-in → RUN (M0.0)
+Rung 2  RUN → Power lamp
+Rung 3  to_stamp: (RUN·LS1) OR hold; drop when LS2 or stamped
+Rung 4  M0.3 = to_stamp · !LS2   (feed for 1→2 move)
+Rung 5  Dn at LS2 until LSDN; !Up interlock
+Rung 6  stamped: LSDN OR hold; clear at LS3
+Rung 7  Up until LSUP; !Dn interlock
+Rung 8  M0.4 = stamped · LSUP · !LS3   (feed for 2→3 move)
+Rung 9  CONV = M0.3 OR M0.4   (single Q0.2 coil — no dual-coil conflict)
+Rung 10 Go = RUN · !LS3
+Rung 11 Stop = LS3
+
+Sequence: START → LS1 → CONV → LS2 → Dn → LSDN → Up → LSUP → CONV → LS3 → Stop
+
+Exam tip: internal bits remember stages; LSUP/LSDN are position feedback;
+stop CONV at LS2 while stamping; restart CONV only after LSUP.

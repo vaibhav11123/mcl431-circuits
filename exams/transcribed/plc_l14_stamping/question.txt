@@ -1,0 +1,15 @@
+L14 Stamping Problem (MCL431_L14_PLC_Problems.pdf)
+
+- List the input and output devices in the system.
+- Draw the PLC connection diagram showing connection of all Input and Output devices to PLC I/Os.
+- Draw ladder diagram for the operation control.
+
+Sequence:
+- When a part is placed on the conveyor at position 1, it automatically moves to position 2.
+- Upon reaching position 2, it stops and is stamped.
+- After stamping, it automatically moves to position 3. It stops at 3, where the part is removed manually from the conveyor. Assume that only one part is on the conveyor at a time.
+- The three visual indicators are showing status of the system, Light: Power ON, Go: Part is in process, Stop: Process stopped.
+- LS1, LS2, and LS3 are magnetic proximity switches.
+- LSUP and LSDN are two limit switch to sense the position of stamper.
+- Up & Dn are two solenoids to control operation of double acting stamping cylinder.
+- Conveyor motor is controlled by an external ON/OFF relay to get the desired conveyor movement.

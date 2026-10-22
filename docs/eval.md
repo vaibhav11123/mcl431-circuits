@@ -21,7 +21,11 @@ A passing `eval` means the **spec is legal for that exam**. It does not mean the
 | 2022 grind-on-given hi-lo | `figure_given`; HC1 50/25 from facts | Redraw the given figure |
 | 2017 Minor-2 indexing drill | Three `dcv_5_3`, S0, 12 motions, KM | Stamp a 5/2 or invent a 5/3 box |
 | 2016 Minor-1 Q2 emboss | Two `dcv_5_2`, S0, PS 4 bar; `2Y2` from K4/PS not 2B2 | Retract 2A1 on 2B2; closed-centre 5/3 |
-| 2023 Minor-2 Q2 PLC conveyor | Domain `plc`; AI 948 / cmp 949 / 2500; AO 303/575/907; START/STOP + L1–L3 | L8 relay sheet or hydraulic pumps |
+| 2023 Minor-2 Q2 PLC conveyor | Domain `plc`; `plc:` IR; AI 948 / cmp 949 / 2500; AO 303/575/907; START/STOP + L1–L3 | L8 relay sheet or hydraulic pumps |
+| L14 fan controller | AO 205/512/818; PB + L1–L3; CMP/MOV zones | Invent rpm outside paper table |
+| L14 counter eject | CTU PV=15 + RES | Allow S1 after DN without reset story |
+| L14 stamping | Full LS1–3 / LSUP / LSDN / Up / Dn / CONV / lamps I/O | Drop lamp addresses |
+| L14 apple packing | CTU=12 + TON 5 s | Skip delay or wrong count |
 
 Also: every stamp PNG the drawer uses must exist. B1 SVG must name HC1, HC2, HM1.
 

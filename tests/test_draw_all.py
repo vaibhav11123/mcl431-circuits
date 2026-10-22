@@ -80,7 +80,8 @@ def test_plc_draw_all_has_connection_and_ladder(tmp_path: Path) -> None:
     lad = (tmp_path / "plc_ladder.svg").read_text()
     for token in ("Slot-3", "Slot-2", "I0.0", "I0.1", "Q0.0", "949", "2500", "0–10 V"):
         assert token in conn, token
-    for token in ("MOV 303", "MOV 575", "MOV 907", "MOV 0", "M0.0", "L1", "L2", "L3"):
+    # Instruction blocks draw kind on one text node and operands on the next.
+    for token in ("MOV", "303 → AO", "575 → AO", "907 → AO", "0 → AO", "M0.0", "L1", "L2", "L3"):
         assert token in lad, token
     sol = (tmp_path / "solution.txt").read_text()
     assert "MOV 0 AO" in sol

@@ -1,0 +1,17 @@
+L14 Apple Packing — rung-by-rung walkthrough
+I/O: START I0.0, STOP I0.1, BOX I0.2, APPLE I0.3
+     BOX_CONV Q0.0, APPLE_CONV Q0.1
+Internal: C5:0 CTU PRE=12, T4:0 TON PRE=5 s, M0.0 RUN, M0.1 bring_box
+
+Rung 1  START/STOP seal-in → RUN
+Rung 2  M0.1 bring_box = RUN · !BOX · !C5:0/DN
+Rung 3  Count: RUN · BOX · !DN · APPLE · ONS → CTU C5:0 PV=12
+Rung 4  APPLE_CONV = RUN · BOX · !DN
+Rung 5  TON T4:0 PT=5 s on C5:0/DN
+Rung 6  BOX_CONV = bring_box OR T4:0/DN   (single Q0.0 — no dual-coil)
+Rung 7  RES C5:0 when T4:0/DN · !BOX
+
+Keywords: LATCH → BOX → COUNT → APPLE → TIMER → MOVE → RESET
+Sequence: START → box arrives → count 12 → wait 5 s → move filled → reset → repeat
+
+ONS = one pulse per apple edge. RES clears ACC, not PRE.

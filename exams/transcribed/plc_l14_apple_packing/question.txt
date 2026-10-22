@@ -1,0 +1,7 @@
+L14 Apple Packing Problem (MCL431_L14_PLC_Problems.pdf)
+
+- Figure shows process of packing apples in the boxes.
+- By pressing START push button, the process of packing apples in the boxes will start and run continuously till stop push button is pressed.
+- The Packing cycle consists of movement of box conveyor till box reached in front of apple conveyor, start apple conveyor and drop 12 apples in the box, finally move filled box on the conveyor and repeat the same for next box.
+- Give 5 seconds delay between stop of apple conveyor and movement of filled box.
+- Identify all input and output elements in the systems and assign suitable addresses to them. Draw PLC circuit diagram showing all input and output connections. Draw ladder logic to implement the process control.

@@ -5,6 +5,9 @@ How to use this repo if you are taking **MCL 431 CAM and Automation** at IIT Del
 - [Solve a question](solve-a-question.md) — index → atlas → YAML → validate / draw / eval
 - [What eval checks](eval.md) — goldens and what a pass means
 - [Copyright](copyright.md) — what is in GitHub vs what stays on your machine
+- [PLC intake run log](plc-intake-run-log.md) — L11–L13 notes + L14 problems first live ingest
+- [PLC visual + answer QA](plc-visual-qa.md) — paper/twin/math/visual/eval gates (no official key)
+- [Ship the studio](ship-execution-plan.md) — execution plan for a later product build. Not started. Not part of solving a paper.
 
 ## Gallery
 
