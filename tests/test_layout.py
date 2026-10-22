@@ -91,3 +91,54 @@ def test_b1_hydraulic_primitives_inside_viewbox(tmp_path) -> None:
     dest = tmp_path / "hydraulic_circuit.svg"
     draw_hydraulic(spec, dest)
     assert_primitives_inside(dest.read_text())
+
+
+def test_fall17_electrical_wraps_and_stays_in_viewbox(tmp_path) -> None:
+    from pathlib import Path
+
+    from circuit.draw_electrical import draw_electrical
+    from circuit.spec import CircuitSpec
+
+    root = Path(__file__).resolve().parents[1]
+    spec = CircuitSpec.from_yaml(root / "examples/drill_2017/circuit.yaml")
+    dest = tmp_path / "electrical_circuit.svg"
+    draw_electrical(spec, dest)
+    svg = dest.read_text()
+    assert_primitives_inside(svg)
+    _minx, _miny, w, h = viewbox(svg)
+    assert w < 2200, w
+    assert h > 1200, h
+
+
+def test_fall17_pneumatic_primitives_inside_viewbox(tmp_path) -> None:
+    from pathlib import Path
+
+    from circuit.draw_pneumatic import draw_pneumatic
+    from circuit.spec import CircuitSpec
+
+    root = Path(__file__).resolve().parents[1]
+    spec = CircuitSpec.from_yaml(root / "examples/drill_2017/circuit.yaml")
+    dest = tmp_path / "pneumatic_circuit.svg"
+    draw_pneumatic(spec, dest)
+    assert_primitives_inside(dest.read_text())
+
+
+def test_emboss_sheets_stay_in_viewbox(tmp_path) -> None:
+    from pathlib import Path
+
+    from circuit.draw_electrical import draw_electrical
+    from circuit.draw_phase import draw_phase
+    from circuit.draw_pneumatic import draw_pneumatic
+    from circuit.spec import CircuitSpec
+
+    root = Path(__file__).resolve().parents[1]
+    spec = CircuitSpec.from_yaml(root / "examples/emboss_2016/circuit.yaml")
+    pneu = tmp_path / "pneumatic_circuit.svg"
+    elec = tmp_path / "electrical_circuit.svg"
+    phase = tmp_path / "step_displacement.svg"
+    draw_pneumatic(spec, pneu)
+    draw_electrical(spec, elec)
+    draw_phase(spec, phase)
+    assert_primitives_inside(pneu.read_text())
+    assert_primitives_inside(elec.read_text())
+    assert_primitives_inside(phase.read_text())

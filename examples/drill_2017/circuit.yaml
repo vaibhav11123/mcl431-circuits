@@ -1,0 +1,62 @@
+meta:
+  title: Fall-2017 Minor-2 indexing drill
+  domain: pneumatic_plus_electrical
+  exam_id: Fall17-Minor2
+  patterns:
+    - sequence_double_solenoid
+
+sequence:
+  - { action: 3A+, label: "drill hole 1 (pos 1 = 1A− 2A−)" }
+  - { action: 3A-, label: retract drill }
+  - { action: 1A+, label: index 1→2 }
+  - { action: 3A+, label: drill hole 2 }
+  - { action: 3A-, label: retract drill }
+  - { action: 2A+, label: index 2→3 }
+  - { action: 3A+, label: drill hole 3 }
+  - { action: 3A-, label: retract drill }
+  - { action: 1A-, label: index 3→4 }
+  - { action: 3A+, label: drill hole 4 }
+  - { action: 3A-, label: retract drill }
+  - { action: 2A-, label: return 4→1 }
+
+power:
+  pumps: []
+  tank: ""
+
+cylinders:
+  1A:
+    dcv: 1V
+    sensors: [1B1, 1B2]
+  2A:
+    dcv: 2V
+    sensors: [2B1, 2B2]
+  3A:
+    dcv: 3V
+    sensors: [3B1, 3B2]
+
+motors: {}
+
+valves:
+  1V:
+    type: dcv_5_3
+    solenoids: [1Y1, 1Y2]
+  2V:
+    type: dcv_5_3
+    solenoids: [2Y1, 2Y2]
+  3V:
+    type: dcv_5_3
+    solenoids: [3Y1, 3Y2]
+
+sensors:
+  - START
+  - S0
+  - 1B1
+  - 1B2
+  - 2B1
+  - 2B2
+  - 3B1
+  - 3B2
+
+electrical:
+  convention: lecture
+  paths: []

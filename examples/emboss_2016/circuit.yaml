@@ -9,7 +9,8 @@ meta:
 sequence:
   - { action: 1A1+, label: clamp }
   - { action: 2A1+, label: emboss }
-  - { action: 2A1-, label: retract at 4 bar }
+  - { action: PS, label: hold until 4 bar }
+  - { action: 2A1-, label: retract emboss }
   - { action: 1A1-, label: unclamp }
 
 power:
@@ -36,6 +37,8 @@ valves:
 
 sensors:
   - S1
+  - S0
+  - PS
   - 1B1
   - 1B2
   - 2B1

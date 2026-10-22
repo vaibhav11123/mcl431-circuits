@@ -104,7 +104,7 @@ questions:
     deliverables:
       sheets: [plc_connection, plc_ladder]
       calcs: []
-    pattern_hint: plc_v2_skip
+    pattern_hint: plc_analog_conveyor
     tags: [plc_v2, analog_io, conveyor]
 
   - id: MCL431_Minor2_2022-23

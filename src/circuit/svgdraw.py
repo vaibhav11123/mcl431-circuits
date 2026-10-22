@@ -58,9 +58,14 @@ class SVG:
         anchor: str = "middle",
         color: str = "#000",
     ) -> None:
+        escaped = (
+            s.replace("&", "&amp;")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;")
+        )
         self.parts.append(
             f'<text x="{x:.1f}" y="{y:.1f}" font-family="Helvetica, Arial, sans-serif" '
-            f'font-size="{size}" text-anchor="{anchor}" fill="{color}">{s}</text>'
+            f'font-size="{size}" text-anchor="{anchor}" fill="{color}">{escaped}</text>'
         )
 
     def triangle(self, pts: list[tuple[float, float]], fill: str = "#000") -> None:

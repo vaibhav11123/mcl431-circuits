@@ -111,7 +111,14 @@ glyphs:
     crop: lecture/crops/dcv_5_2_double_solenoid.png
     from: {pdf: MCL431_L10_ElectropneumaticSequenceCircuits.pdf, page: 5}
     ports: {1: supply, 2: rod, 3: exhaust, 4: cap, 5: exhaust}
-    layout: "cylinder on top; valve under; filled supply dot"
+    internals: "ISO 1219-1 5/2; ports on the rest envelope"
+    layout: "cylinder on top; valve under; lecture solenoid_box both sides"
+  - id: dcv_5_3
+    crop: lecture/crops/dcv_5_3.png
+    from: {pdf: MCL431_L10A_ElectropneumaticRelayLift.pdf, page: 16}
+    ports: {1: supply, 2: rod, 3: exhaust, 4: cap, 5: exhaust}
+    internals: "closed centre (ISO 1219-1); ports on the rest envelope"
+    layout: "same L10 p5 cylinder-over-valve; lecture solenoid_box both sides"
   - id: contact_no
     crop: lecture/crops/contact_no.png
     from: {pdf: MCL431_L8_ElectropneumaticCircuitGuidelines.pdf, page: 8}

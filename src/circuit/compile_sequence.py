@@ -21,10 +21,14 @@ def _start_and_latch(spec: CircuitSpec) -> tuple[list[str], list[str]]:
         start.append("S1")
         if "S3" in sensors:
             start.append("S3")
+        if "S0" in sensors:
+            start.append("S0")
     else:
         start.append("START")
         if "JOB" in sensors:
             start.append("JOB")
+        elif "S0" in sensors:
+            start.append("S0")
     first: dict[str, str] = {}
     for step in spec.sequence:
         act = step.action
@@ -41,6 +45,8 @@ def _start_and_latch(spec: CircuitSpec) -> tuple[list[str], list[str]]:
     latch = ["K1"]
     if "JOB" in sensors:
         latch.append("JOB")
+    elif "S0" in sensors:
+        latch.append("S0")
     elif "S1" in sensors:
         latch.append("S1")
     return start, latch
@@ -200,9 +206,152 @@ def _compile_chain(spec: CircuitSpec) -> list[CurrentPath]:
     return _renumber(paths)
 
 
+def _opposing_solenoid(sol: str) -> str:
+    if sol.endswith("1"):
+        return sol[:-1] + "2"
+    if sol.endswith("2"):
+        return sol[:-1] + "1"
+    return sol
+
+
+def _compile_indexing_drill(spec: CircuitSpec) -> list[CurrentPath]:
+    """Fall-17 Minor-2: 12 motions as K2–K13, K1 cycle, K14 done, KM with K1.
+
+    Closed-centre 5/3 needs each solenoid held until the next step is set.
+    Paper: spindle ON from START until holes are drilled (drops at return K13).
+    """
+    start, latch = _start_and_latch(spec)
+    motions = [
+        ("3Y1", ["1B1", "2B1", "3B1"]),
+        ("3Y2", ["3B2"]),
+        ("1Y1", ["3B1", "1B1", "2B1"]),
+        ("3Y1", ["1B2", "2B1", "3B1"]),
+        ("3Y2", ["3B2"]),
+        ("2Y1", ["3B1", "1B2", "2B1"]),
+        ("3Y1", ["1B2", "2B2", "3B1"]),
+        ("3Y2", ["3B2"]),
+        ("1Y2", ["3B1", "1B2", "2B2"]),
+        ("3Y1", ["1B1", "2B2", "3B1"]),
+        ("3Y2", ["3B2"]),
+        ("2Y2", ["3B1", "1B1", "2B2"]),
+    ]
+    n_steps = len(motions)
+    k_first = 2
+    k_last = k_first + n_steps - 1  # K13
+    k_done = f"K{k_last + 1}"  # K14
+    k_return = f"K{k_last}"  # K13
+    paths = [
+        CurrentPath(number=1, kind="control", contacts=start, coil="K1"),
+        CurrentPath(
+            number=2,
+            kind="control",
+            contacts=[*latch, nc(k_done)],
+            coil="K1",
+        ),
+    ]
+    prev = "K1"
+    for i, (sol, enable) in enumerate(motions):
+        k = f"K{k_first + i}"
+        nxt = f"K{k_first + i + 1}"
+        paths.append(
+            CurrentPath(number=0, kind="control", contacts=[prev, *enable], coil=k)
+        )
+        paths.append(
+            CurrentPath(number=0, kind="control", contacts=[k, nc(nxt)], coil=k)
+        )
+        paths.append(
+            CurrentPath(
+                number=0,
+                kind="main",
+                contacts=[k, nc(_opposing_solenoid(sol))],
+                coil=sol,
+            )
+        )
+        prev = k
+    paths.append(
+        CurrentPath(number=0, kind="control", contacts=[k_return, "2B1"], coil=k_done)
+    )
+    paths.append(
+        CurrentPath(number=0, kind="main", contacts=["K1", nc(k_return)], coil="KM")
+    )
+    return _renumber(paths)
+
+
+def is_wait_step(action: str) -> bool:
+    """Non-motion holds: timer or pressure-switch wait (not an end sensor)."""
+    return action in {"TIMER", "PS", "PRESSURE"}
+
+
+def _compile_emboss_2016(spec: CircuitSpec) -> list[CurrentPath]:
+    """Fall-16 Minor-1 Q2: clamp, emboss, hold until PS≥4 bar, then retract.
+
+    2A1 must not retract on 2B2. 1Y2 cannot be a raw 2B1 (true at rest).
+    """
+    start, latch = _start_and_latch(spec)
+    y1 = spec.valves[spec.cylinders["1A1"].dcv].solenoids
+    y2 = spec.valves[spec.cylinders["2A1"].dcv].solenoids
+    paths = [
+        CurrentPath(number=1, kind="control", contacts=start, coil="K1"),
+        CurrentPath(
+            number=2,
+            kind="control",
+            contacts=[*latch, nc("K5")],
+            coil="K1",
+        ),
+        CurrentPath(
+            number=3,
+            kind="control",
+            contacts=["K1", "1B2", nc("K4")],
+            coil="K3",
+        ),
+        CurrentPath(number=4, kind="control", contacts=["K3", "PS"], coil="K4"),
+        CurrentPath(
+            number=5,
+            kind="control",
+            contacts=["K4", nc("K5")],
+            coil="K4",
+        ),
+        CurrentPath(number=6, kind="control", contacts=["K4", "2B1"], coil="K5"),
+        CurrentPath(number=7, kind="control", contacts=["K5", "1B2"], coil="K5"),
+        CurrentPath(
+            number=8,
+            kind="main",
+            contacts=["K1", nc("K5"), nc(y1[1])],
+            coil=y1[0],
+        ),
+        CurrentPath(
+            number=9,
+            kind="main",
+            contacts=["K3", nc("K4"), nc(y2[1])],
+            coil=y2[0],
+        ),
+        CurrentPath(
+            number=10,
+            kind="main",
+            contacts=["K4", nc(y2[0])],
+            coil=y2[1],
+        ),
+        CurrentPath(
+            number=11,
+            kind="main",
+            contacts=["K5", nc(y1[0])],
+            coil=y1[1],
+        ),
+    ]
+    return _renumber(paths)
+
+
 def compile_paths(spec: CircuitSpec) -> list[CurrentPath]:
     if spec.electrical.paths:
         return spec.electrical.paths
+    if spec.meta.exam_id == "2016_minor1_emboss":
+        return _compile_emboss_2016(spec)
+    if spec.meta.exam_id in {"Fall17-Minor2", "MCL431_Minor2_2017-18_Sem1"}:
+        return _compile_indexing_drill(spec)
+    if spec.cylinders and all(
+        spec.valves[c.dcv].type == "dcv_5_3" for c in spec.cylinders.values()
+    ):
+        return _compile_indexing_drill(spec)
     timer = any(s.action == "TIMER" for s in spec.sequence)
     if spec.motors and timer and len(spec.cylinders) >= 2:
         return _compile_motor_timer_double_solenoid(spec)

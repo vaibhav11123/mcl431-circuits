@@ -71,6 +71,57 @@ def test_strip_feed_eval_passes() -> None:
         assert name in coils, name
 
 
+def test_fall17_drill_eval_passes() -> None:
+    spec = CircuitSpec.from_yaml(ROOT / "examples/drill_2017/circuit.yaml")
+    report = eval_spec(spec, ROOT)
+    failed = [c for c in report["checks"] if not c["ok"]]
+    assert report["pass"], failed
+    names = [c["name"] for c in report["checks"]]
+    for name in ("three_5_3", "workpiece_s0", "twelve_motions", "spindle_km", "electrical_sequence"):
+        assert name in names, name
+
+
+def test_plc_conveyor_eval_passes() -> None:
+    spec = CircuitSpec.from_yaml(ROOT / "examples/plc_conveyor_2023/circuit.yaml")
+    report = eval_spec(spec, ROOT)
+    failed = [c for c in report["checks"] if not c["ok"]]
+    assert report["pass"], failed
+    names = [c["name"] for c in report["checks"]]
+    for name in (
+        "plc_domain",
+        "plc_ai_220",
+        "plc_ai_220_cmp",
+        "plc_ai_580",
+        "plc_ao_1185",
+        "plc_ao_2250",
+        "plc_ao_3545",
+        "plc_start_stop",
+        "plc_three_lamps",
+        "has_pump",
+        "has_sequence",
+    ):
+        assert name in names, name
+    assert "electrical_sequence" not in names
+
+
+def test_emboss_2016_eval_passes() -> None:
+    spec = CircuitSpec.from_yaml(ROOT / "examples/emboss_2016/circuit.yaml")
+    report = eval_spec(spec, ROOT)
+    failed = [c for c in report["checks"] if not c["ok"]]
+    assert report["pass"], failed
+    names = [c["name"] for c in report["checks"]]
+    for name in (
+        "two_5_2",
+        "domain_pneumatic",
+        "workpiece_s0",
+        "pressure_switch_ps",
+        "hold_until_4_bar",
+        "2y2_waits_for_ps_not_2b2",
+        "electrical_sequence",
+    ):
+        assert name in names, name
+
+
 def test_l4_regen_not_attached_to_b1() -> None:
     spec = CircuitSpec.from_yaml(ROOT / "examples/grinding_machine/circuit.yaml")
     report = eval_spec(spec, ROOT)

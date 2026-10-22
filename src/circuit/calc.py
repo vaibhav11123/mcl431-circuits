@@ -77,6 +77,7 @@ def solution_lines_grinding() -> list[str]:
 
 def solution_lines_hilo_2017() -> list[str]:
     """2017 Minor-1 Q1 — paper numbers only. Bore is not in the paper."""
+    uv_kpa = 1.48 * (695.0 + 380.0)
     return [
         "F = 7800 N (paper)",
         "v_approach = 15 cm/s; v_punch = 1.5 cm/s; v_return = 25 cm/s (paper)",
@@ -84,8 +85,13 @@ def solution_lines_hilo_2017() -> list[str]:
         "line loss rapid-extend high-flow to blank = 695 kPa (paper)",
         "line loss rapid-extend rod-end to tank = 380 kPa (paper)",
         "punching line losses negligibly small (paper)",
-        "bore not_given — pick from standard table",
-        "Q = A·v and UV/RV set-points need bore; not invented.",
+        "P1 = large (high-flow); P2 = small (high-pressure); one check on P1; UV unloads P1; RV on P2",
+        "Punch: only P2 → Q2 = Ap·vp. Approach: P1+P2 → Q1+Q2 = Ap·va. Return still both pumps (UV resets).",
+        "Q1/Q2 = va/vp − 1 = 9. Ar/Ap = 1 − va/vr = 0.40. Dr/Dp = √0.40 = 0.632.",
+        "bore and rod mm not_given — paper has no table; not invented.",
+        "Q1 = 0.135 Ap, Q2 = 0.015 Ap (Ap in m² → m³/s). Absolute L/min needs bore.",
+        f"UV = 1.48×(695+380) = {uv_kpa:.0f} kPa = {uv_kpa/100:.2f} bar (exam sum of the two stated losses).",
+        "Punch P = 7800/Ap Pa. RV = 1.48×7800/Ap — needs bore; not invented.",
     ]
 
 
@@ -159,6 +165,72 @@ def solution_lines_mcl431_minor() -> list[str]:
     ]
 
 
+def solution_lines_fall17_minor2() -> list[str]:
+    return [
+        "Paper requires 5/3 DCVs on 1A, 2A, 3A. Closed-centre ISO 1219-1 5/3 (Wikimedia mid-position-closed; lecture solenoid_box).",
+        "Assumed closed-centre 5/3 (holds table). No drill time given: 3A− starts at 3B2.",
+        "P1=(1B1,2B1) P2=(1B2,2B1) P3=(1B2,2B2) P4=(1B1,2B2).",
+        "Sequence: 3A+ 3A− 1A+ 3A+ 3A− 2A+ 3A+ 3A− 1A− 3A+ 3A− 2A−.",
+        "KM latches with K1 (paper: spindle from start of sequence until all holes done), not only during 3A+.",
+        "Step table: 1 drill1↓ START∧S0∧1B1∧2B1∧3B1 → 3Y1; 2 drill1↑ 3B2 → 3Y2; 3 index1→2 3B1 → 1Y1;",
+        "4 drill2↓ 1B2∧2B1∧3B1 → 3Y1; 5 drill2↑ 3B2 → 3Y2; 6 index2→3 3B1 → 2Y1;",
+        "7 drill3↓ 1B2∧2B2∧3B1 → 3Y1; 8 drill3↑ 3B2 → 3Y2; 9 index3→4 3B1 → 1Y2;",
+        "10 drill4↓ 1B1∧2B2∧3B1 → 3Y1; 11 drill4↑ 3B2 → 3Y2; 12 return4→1 3B1 → 2Y2.",
+    ]
+
+
+def plc_counts(eng: float, eng_max: float, max_count: int) -> int:
+    """Integer analog counts. 12-bit AI uses 4095; 10-bit AO uses 1023."""
+    return int(round(eng / eng_max * max_count))
+
+
+def plc_2023_q2_scaling() -> dict[str, int]:
+    """2023 Minor-2 Q2: photo values 0–4000 RPM (not the OCR 40000).
+
+    220 kg is 948.32 counts, so W<220 is AI<949 (AI=948 is still 219.93 kg).
+    """
+    return {
+        "ai_220": plc_counts(220, 950, 4095),
+        "ai_220_cmp": 949,
+        "ai_580": plc_counts(580, 950, 4095),
+        "ao_1185": plc_counts(1185, 4000, 1023),
+        "ao_2250": plc_counts(2250, 4000, 1023),
+        "ao_3545": plc_counts(3545, 4000, 1023),
+    }
+
+
+def solution_lines_plc_2023() -> list[str]:
+    s = plc_2023_q2_scaling()
+    return [
+        "facts.yaml + paper photo: 0–950 kg, 12-bit AI slot 3 ch 2; 0–10 V / 0–4000 RPM, 10-bit AO slot 2 ch 1",
+        f"AI = W/950 × 4095  →  220 kg → {s['ai_220']} (W<220 ⇒ AI<{s['ai_220_cmp']}),  580 kg → {s['ai_580']}",
+        f"AO = N/4000 × 1023 →  1185 RPM → {s['ao_1185']},  2250 RPM → {s['ao_2250']},  3545 RPM → {s['ao_3545']} (906.63, nearest)",
+        "Zones: W<220 low (L1), 220≤W≤580 normal incl. 470 kg (L2), W>580 high (L3)",
+        "STOP writes AO=0 so the speed controller does not hold the last voltage",
+        "Load-cell signal type not given — 0–10 V assumed (4–20 mA would only change the AI card wiring)",
+        "I/O from scan notes: START I:0.0/0, STOP I:0.0/1, L1 O:0.0/0, L2 O:0.0/1, L3 O:0.0/2",
+    ]
+
+
+def solution_lines_emboss_2016() -> list[str]:
+    return [
+        "not_given — paper asks diagrams only; no force/Q/size",
+        "Sequence 1A1+ clamp, 2A1+ emboss, HOLD until PS≥4 bar, 2A1−, 1A1−.",
+        "Start only if S1 ∧ S0 (magazine proximity) ∧ 1B1 ∧ 2B1 (both home).",
+        "Do not retract 2A1 on 2B2 — 2B2 is position; PS is embossing pressure.",
+        "P/E converter: pressure-switch mode, Pset=4 bar, RD +24 V, BU 0 V, BK signal.",
+    ]
+
+
+def solution_lines_strip_feed_2023() -> list[str]:
+    return [
+        "not_given — paper asks diagrams only; no force/Q/pressure",
+        "Sequence 1A+ (hold) 2A− (retract feed) 1A− (release) 2A+ (return forward).",
+        "S1 = main switch (latched). S3 = punch-tool upper, simulated by pushbutton (start).",
+        "H1 optical indicator to the press when 2B1 ∧ 1B1 (2A retracted and 1A released).",
+    ]
+
+
 def solution_lines_for(exam_id: str | None) -> list[str]:
     return {
         "2023_selfstudy_b1": solution_lines_grinding(),
@@ -168,4 +240,9 @@ def solution_lines_for(exam_id: str | None) -> list[str]:
         "2016_minor1_hoist": solution_lines_2016_hoist(),
         "2023_selfstudy_b2": solution_lines_2023_b2(),
         "MCL431_minor": solution_lines_mcl431_minor(),
+        "Fall17-Minor2": solution_lines_fall17_minor2(),
+        "MCL431_Minor2_2017-18_Sem1": solution_lines_fall17_minor2(),
+        "2023_minor2_q1": solution_lines_strip_feed_2023(),
+        "2023_minor2_q2": solution_lines_plc_2023(),
+        "2016_minor1_emboss": solution_lines_emboss_2016(),
     }.get(exam_id or "", [])

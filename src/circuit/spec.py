@@ -19,6 +19,7 @@ class Domain(str, Enum):
     PNEUMATIC = "pneumatic"
     HYDRAULIC_PLUS_ELECTRICAL = "hydraulic_plus_electrical"
     PNEUMATIC_PLUS_ELECTRICAL = "pneumatic_plus_electrical"
+    PLC = "plc"
 
 
 class PatternId(str, Enum):

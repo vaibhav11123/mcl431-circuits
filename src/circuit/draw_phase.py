@@ -21,6 +21,16 @@ def _next_state(action: str, act: str, cur: int, *, is_motor: bool = False) -> i
     return cur
 
 
+def _initial_state(spec: CircuitSpec, act: str) -> int:
+    """Rest position: extended if the first motion of this actuator is a retract."""
+    for st in spec.sequence:
+        if st.action in {f"{act}+", f"{act}_ON"}:
+            return 0
+        if st.action in {f"{act}-", f"{act}_OFF"}:
+            return 1
+    return 0
+
+
 def _sensor_at_edge(spec: CircuitSpec, act: str, going_to: int) -> str:
     cyl = spec.cylinders.get(act)
     if not cyl or not cyl.sensors:
@@ -44,7 +54,8 @@ def draw_phase(spec: CircuitSpec, dest: Path) -> Path:
         x = left + i * step_w
         label = f"{i + 1}=1" if i == n - 1 else str(i + 1)
         s.text(x, 68, label, 13)
-        s.text(x + 8, 86, st.action, 10, "start")
+        act_lbl = "PS≥4 bar" if st.action in {"PS", "PRESSURE"} else st.action
+        s.text(x + 8, 86, act_lbl, 10, "start")
 
     for ti, act in enumerate(actuators):
         color = colors[ti % len(colors)]
@@ -59,7 +70,7 @@ def draw_phase(spec: CircuitSpec, dest: Path) -> Path:
         s.line(left, y1, left + n * step_w, y1, 0.8, "#bbbbbb")
         s.line(left, y0, left + n * step_w, y0, 0.8, "#bbbbbb")
 
-        cur = 0
+        cur = _initial_state(spec, act)
         is_motor = act in spec.motors
         for i, st in enumerate(steps):
             nxt = _next_state(st.action, act, cur, is_motor=is_motor)
@@ -89,6 +100,15 @@ def draw_phase(spec: CircuitSpec, dest: Path) -> Path:
                     )
                 elif is_motor and nxt == 0:
                     s.text(x1 + 4, yn + 14, f"{act} OFF", 10, "start", color)
+            elif st.action in {"PS", "PRESSURE"} and act in spec.cylinders and cur == 1:
+                last_plus = ""
+                for prev in spec.sequence:
+                    if prev.action.endswith("+"):
+                        last_plus = prev.action[:-1]
+                    if prev is st:
+                        break
+                if act == last_plus:
+                    s.text(x1 + 8, yc - 14, "HOLD PS≥4 bar", 9, "start", color)
             cur = nxt
 
     dest.write_text(s.tostring())

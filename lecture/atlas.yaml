@@ -461,7 +461,7 @@ symbols:
     pdf: MCL431_L10_ElectropneumaticSequenceCircuits.pdf
     page: 5
   crop: lecture/crops/dcv_5_2_double_solenoid.png
-  naming: nV valve; solenoids nY1 / nY2; sensors nB1 / nB2
+  naming: nV valve; solenoids nY1 / nY2; sensors nB1 / nB2. Body is ISO 1219-1 5/2 (Wikimedia File:Symbol_5-2_ski_selector_valve.svg, MovGP0, CC-BY-3.0). Operators are lecture solenoid_box flush on the envelopes (no stem). Ports on the rest (right) envelope.
   also:
   - pdf: MCL431_L9_ElectropneumaticRelayCircuits.pdf
     page: 27
@@ -477,8 +477,8 @@ symbols:
   source:
     pdf: MCL431_L10A_ElectropneumaticRelayLift.pdf
     page: 16
-  crop: null
-  naming: authorized by L10A drilling problem ('Use 5/3 DCVs'); no isolated glyph on that slide
+  crop: lecture/crops/dcv_5_3.png
+  naming: 5/3 closed-centre (ISO 1219-1); L10A authorizes the type. Glyph from Wikimedia File:Symbol_5-3_ski_selector_valve_(mid-position_closed).svg (MovGP0, CC-BY-3.0). Operators are lecture solenoid_box flush on the envelopes (no stem). Ports on the centre envelope. Paper may ask 5/3 for air even though lab notes mark 5/3 as hydraulics-only.
   also:
   - pdf: MCL431_L3_ControlValves.pdf
     page: 3
