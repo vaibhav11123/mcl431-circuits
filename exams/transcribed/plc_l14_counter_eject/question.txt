@@ -1,0 +1,11 @@
+L14 Counter Example (MCL431_L14_PLC_Problems.pdf)
+
+Parts are to be ejected from a gravity-feed magazine via a cylinder.
+
+If Push button S1 is actuated, the cylinder is to advance, eject a workpiece and then retract again.
+
+15 parts are to be ejected in this way. When 15 parts have been ejected, it should no longer be possible to trigger a cylinder movement via push button S1.
+
+First the counter must be reset by actuating push button S2.
+
+Deliverables: I/O list, PLC connection diagram, ladder (CTU preset 15).

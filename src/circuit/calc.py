@@ -184,6 +184,49 @@ def plc_counts(eng: float, eng_max: float, max_count: int) -> int:
     return int(round(eng / eng_max * max_count))
 
 
+def resolve_plc_counts(scaling: object | None) -> dict[str, int]:
+    """Merge explicit counts with checkpoint→count conversion from plc.scaling."""
+    if scaling is None:
+        return {}
+    out: dict[str, int] = dict(getattr(scaling, "counts", None) or {})
+    checkpoints = getattr(scaling, "checkpoints", None) or {}
+    ai = getattr(scaling, "ai", None)
+    ao = getattr(scaling, "ao", None)
+    for name, eng in checkpoints.items():
+        if name in out:
+            continue
+        if name.startswith("ai_") and ai is not None:
+            max_c = (1 << int(ai.bits)) - 1
+            out[name] = plc_counts(float(eng), float(ai.eng_max), max_c)
+        elif name.startswith("ao_") and ao is not None:
+            max_c = (1 << int(ao.bits)) - 1
+            out[name] = plc_counts(float(eng), float(ao.eng_max), max_c)
+        elif name.startswith("t_") or name.startswith("rh_"):
+            # 16-bit 0–100 eng (fan T/RH)
+            out[name] = plc_counts(float(eng), 100.0, 65535)
+    return out
+
+
+def plc_fan_ao_counts(rpm: float) -> int:
+    """L14 fan AO: 100 rpm @ 1 V, 1000 rpm @ 10 V, 10-bit (0–10 V → 0–1023)."""
+    voltage = 1.0 + (rpm - 100.0) / 900.0 * 9.0
+    return plc_counts(voltage, 10.0, 1023)
+
+
+def plc_fan_l14_scaling() -> dict[str, int]:
+    """L14 fan controller analog counts (16-bit T/RH, 10-bit AO)."""
+    return {
+        "t_30": plc_counts(30, 100, 65535),
+        "t_40": plc_counts(40, 100, 65535),
+        "t_50": plc_counts(50, 100, 65535),
+        "rh_40": plc_counts(40, 100, 65535),
+        "rh_50": plc_counts(50, 100, 65535),
+        "ao_200": plc_fan_ao_counts(200),
+        "ao_500": plc_fan_ao_counts(500),
+        "ao_800": plc_fan_ao_counts(800),
+    }
+
+
 def plc_2023_q2_scaling() -> dict[str, int]:
     """2023 Minor-2 Q2: photo values 0–4000 RPM (not the OCR 40000).
 
@@ -231,6 +274,17 @@ def solution_lines_strip_feed_2023() -> list[str]:
     ]
 
 
+def solution_lines_plc_fan_l14() -> list[str]:
+    s = plc_fan_l14_scaling()
+    return [
+        "L14: T/RH 0–100 on 16-bit AI Slot 2; AO Slot 1 10-bit, 100 rpm@1 V … 1000 rpm@10 V",
+        f"T counts: 30→{s['t_30']}, 40→{s['t_40']}, 50→{s['t_50']}",
+        f"RH counts: 40→{s['rh_40']}, 50→{s['rh_50']}",
+        f"AO: 200 rpm→{s['ao_200']}, 500→{s['ao_500']}, 800→{s['ao_800']}",
+        "Alternate single PB toggles RUN; three lamps for speed zones; CMP/MOV in subroutine style",
+    ]
+
+
 def solution_lines_for(exam_id: str | None) -> list[str]:
     return {
         "2023_selfstudy_b1": solution_lines_grinding(),
@@ -245,4 +299,5 @@ def solution_lines_for(exam_id: str | None) -> list[str]:
         "2023_minor2_q1": solution_lines_strip_feed_2023(),
         "2023_minor2_q2": solution_lines_plc_2023(),
         "2016_minor1_emboss": solution_lines_emboss_2016(),
+        "plc_l14_fan_controller": solution_lines_plc_fan_l14(),
     }.get(exam_id or "", [])

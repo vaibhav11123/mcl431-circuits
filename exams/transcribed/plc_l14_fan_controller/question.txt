@@ -1,0 +1,15 @@
+L14 Fan Controller Problem (MCL431_L14_PLC_Problems.pdf)
+
+Design a PLC Circuit diagram and Ladder logic for controlling a fan speed according to Temperature and Humidity.
+
+- Temperature sensor reads 0 - 100 ºC and Humidity sensor reads 0 - 100% Relative humidity. Both are connected to Analog Input modules (Slot 2) of the Micrologix PLC with 16-bit resolution.
+
+Fan Speed zones:
+| Fan Speed | 1 (200 rpm) | 2 (500 rpm) | 3 (800 rpm) |
+| Environmental Conditions | 30ºC <T < 40ºC, 50%<RH | 40ºC <T < 50ºC, 40%<RH<50% | T > 50ºC, RH<40% |
+
+- 10-bit analog output module (Slot 1) of PLC which operates at 100 rpm at 1V and 1000 rpm at 10V.
+- START/STOP the fan by a single Push Button.
+- Pressing push button alternately START and STOP the Fan.
+- Indicate Speed of Fan by 3 different lamps.
+- Use of subroutines is recommended. Show all connections in PLC Circuit Diagram.

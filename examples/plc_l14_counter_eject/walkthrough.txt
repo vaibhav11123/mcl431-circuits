@@ -1,0 +1,28 @@
+L14 Counter Eject — rung-by-rung walkthrough
+I/O: S1 = I0.0, S2 = I0.1, Y1 = Q0.0, Y2 = Q0.1
+
+Rung 1 — Reset the counter
+  S2 —| |— [ RES C5:0 ]
+  Press S2 to zero ACC and clear DN for a fresh batch of 15.
+
+Rung 2 — Count the parts
+  S1 —| |— [ONS] —|/| C5:0/DN — [ CTU C5:0 PRE=15 ]
+  ONS = one rising-edge pulse per S1 press (no multi-count while held).
+  DN NC blocks further counts once ACC reaches 15.
+
+Rung 3 — Cylinder advance
+  S1 —| |— |/| C5:0/DN — ( Y1 )
+  Advance/eject only while DN is false.
+
+Rung 4 — Cylinder retract
+  S1 —|/|— ( Y2 )
+  Release S1 → retract. DN is intentionally NOT on this rung so the
+  15th cycle can still retract after DN becomes true.
+
+When ACC hits 15: further S1 presses neither count nor advance; releasing
+S1 still commands Y2. Press S2 to reset and run another batch.
+
+Open-loop note: no limit switches confirm end positions — exam-style
+pushbutton command only.
+
+Symbols: —| |— NO, —|/|— NC, ( ) coil, CTU, RES, ONS, DN, PRE, ACC.

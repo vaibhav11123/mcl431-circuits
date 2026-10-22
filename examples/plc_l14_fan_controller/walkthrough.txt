@@ -1,0 +1,19 @@
+L14 Fan Controller — corrected ladder (memorise this)
+I/O: PB I0.0; AI Slot-2 T/RH; AO Slot-1 10-bit; L1–L3 Q0.0–2
+
+Toggle (fixes shared-ONS + OTL/OTU race)
+  1  RUN → M0.5 run_snap   (snapshot before toggle)
+  2  PB · ONS → M0.1 pulse (one ONS only)
+  3  pulse · !snap → (L) RUN
+  4  pulse ·  snap → (U) RUN
+
+Zones (same bit → AO and lamp)
+  5  Z1 M0.2: RUN · 30<T<40 · RH>50
+  6  Z2 M0.3: RUN · 40<T<50 · 40<RH<50
+  7  Z3 M0.4: RUN · T>50 · RH<40
+  8–10  Z → MOV 205 / 512 / 818
+  11 !Z1·!Z2·!Z3 → MOV 0
+  12–14 Z → L1 / L2 / L3
+
+Pattern: Toggle → zone → AO → matching lamp.
+Scaling OK for 10-bit 0–10 V (100 rpm@1 V … 1000@10 V).

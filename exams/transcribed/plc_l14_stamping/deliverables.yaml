@@ -1,0 +1,8 @@
+questions:
+  - part: Q1
+    sheets: [plc_connection, plc_ladder]
+    calcs: []
+    paper_asks:
+      - List input and output devices
+      - Draw PLC connection diagram
+      - Draw ladder for stamping sequence

@@ -1,0 +1,9 @@
+questions:
+  - part: Q1
+    sheets: [plc_connection, plc_ladder]
+    calcs:
+      - analog counts for zone thresholds and AO rpm setpoints
+    paper_asks:
+      - Draw PLC circuit / connection diagram
+      - Draw ladder (CMP/MOV zones, alt PB, 3 lamps)
+      - Subroutines recommended

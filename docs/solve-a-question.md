@@ -30,7 +30,9 @@ Only use IDs in [`lecture/atlas.yaml`](../lecture/atlas.yaml). Ports and rest po
 
 Copy a close golden from [`examples/`](../examples/) (B1 grinding, 2017 hi-lo, 2023 strip-feed). Preserve the stated sequence. Valves are drawn de-energized.
 
-Hydraulic and electrical stay on **separate sheets**. Pneumatic papers use the L10 5/2 sheet, not a hydraulic 4/3. PLC papers (2023 Minor-2 Q2) write a connection diagram and analog ladder — not L8 coils.
+Hydraulic and electrical stay on **separate sheets**. Pneumatic papers use the L10 5/2 sheet, not a hydraulic 4/3.
+
+**PLC:** use `domain: plc` and a `plc:` block (`io`, `field`, optional `scaling`, `rungs`). Draw emits `plc_connection.svg` + `plc_ladder.svg` — not L8 coils. Local notes L11–L13 are ingest drafts only; L14 problems are locked under `exams/transcribed/plc_l14_*`. Goldens: `examples/plc_conveyor_2023`, `examples/plc_l14_*`.
 
 ## 4. Validate, draw, eval
 

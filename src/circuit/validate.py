@@ -155,7 +155,12 @@ def validate_spec(spec: CircuitSpec, root: Path | None = None) -> list[Check]:
     elif spec.meta.figure_given:
         checks.append(Check("has_sequence", True, "figure given — no sequence to draw"))
     elif plc:
-        checks.append(Check("has_sequence", True, "plc analog conveyor — no cylinder sequence"))
+        checks.append(Check("has_sequence", True, "plc — no cylinder sequence"))
+        if spec.plc is None:
+            checks.append(Check("plc_block", False, "missing plc:"))
+        else:
+            checks.append(Check("plc_io", bool(spec.plc.io), f"{len(spec.plc.io)} rows"))
+            checks.append(Check("plc_rungs", bool(spec.plc.rungs), f"{len(spec.plc.rungs)} rungs"))
     else:
         checks.append(Check("has_sequence", False, "empty"))
 

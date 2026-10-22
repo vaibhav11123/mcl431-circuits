@@ -11,6 +11,7 @@ from circuit.calc import (
     hoist_2016_load_kn,
     l4_regen_example,
     plc_2023_q2_scaling,
+    plc_fan_l14_scaling,
     solution_lines_for,
 )
 from circuit.compile_sequence import apply_compile, bare, is_wait_step
@@ -121,6 +122,140 @@ def _grinding_ladder_checks(spec: CircuitSpec) -> list[Check]:
             "K2" in motor and "K4" in motor,
             f"3Y1={sorted(motor)}",
         ),
+    ]
+
+
+def _plc_all_kinds(spec: CircuitSpec) -> list[str]:
+    kinds: list[str] = []
+    if not spec.plc:
+        return kinds
+    for r in spec.plc.rungs:
+        for el in list(r.series) + list(r.branch):
+            kinds.append(el.kind)
+        if r.output:
+            kinds.append(r.output.kind)
+    return kinds
+
+
+def _plc_fan_toggle_checks(spec: CircuitSpec) -> list[Check]:
+    """Shared ONS pulse → OTL/OTU; zone bits drive AO and lamps together."""
+    kinds = _plc_all_kinds(spec)
+    out_kinds = [r.output.kind for r in (spec.plc.rungs if spec.plc else []) if r.output]
+    ons_rungs = 0
+    pulse_feeds_toggle = False
+    zone_tags = {"M0.2", "M0.3", "M0.4"}
+    lamp_from_zone = 0
+    mov_from_zone = 0
+    ao_zero_no_zone = False
+    for r in spec.plc.rungs if spec.plc else []:
+        if any(e.kind == "ons" for e in r.series):
+            ons_rungs += 1
+        if r.output and r.output.kind in {"otl", "otu"}:
+            if any(e.tag == "M0.1" for e in r.series):
+                pulse_feeds_toggle = True
+        if r.output and r.output.tag in {"Q0.0", "Q0.1", "Q0.2"}:
+            if any(e.tag in zone_tags for e in r.series):
+                lamp_from_zone += 1
+        if r.output and r.output.kind == "mov" and r.output.value_from:
+            if any(e.tag in zone_tags for e in r.series):
+                mov_from_zone += 1
+        if r.output and r.output.kind == "mov" and r.output.value == 0:
+            ncs = [e for e in r.series if e.sense.upper() == "NC" and e.tag in zone_tags]
+            if len(ncs) >= 3:
+                ao_zero_no_zone = True
+    return [
+        Check("fan_ons", "ons" in kinds, ",".join(kinds)),
+        Check("fan_otl", "otl" in out_kinds, ",".join(out_kinds)),
+        Check("fan_otu", "otu" in out_kinds, ",".join(out_kinds)),
+        Check("fan_shared_ons_pulse", ons_rungs == 1 and pulse_feeds_toggle, f"ons_rungs={ons_rungs}"),
+        Check("fan_lamps_from_zones", lamp_from_zone == 3, f"lamps={lamp_from_zone}"),
+        Check("fan_mov_from_zones", mov_from_zone == 3, f"movs={mov_from_zone}"),
+        Check("fan_ao_zero_no_zone", ao_zero_no_zone, "MOV 0 when !Z1·!Z2·!Z3"),
+    ]
+
+
+def _plc_counter_checks(spec: CircuitSpec) -> list[Check]:
+    kinds = _plc_all_kinds(spec)
+    out_kinds = [r.output.kind for r in (spec.plc.rungs if spec.plc else []) if r.output]
+    devices = {r.device for r in (spec.plc.io if spec.plc else [])}
+    presets = [
+        r.output.preset
+        for r in (spec.plc.rungs if spec.plc else [])
+        if r.output and r.output.kind == "ctu"
+    ]
+    # Y2 retract must not be gated by DN (else 15th cycle stuck advanced)
+    y2_dn_ok = True
+    for r in spec.plc.rungs if spec.plc else []:
+        if r.output and (r.output.tag == "Q0.1" or "Y2" in (r.output.label or "")):
+            if any("DN" in (e.tag or "") or "DN" in (e.label or "") for e in r.series):
+                y2_dn_ok = False
+    return [
+        Check("ctu_present", "ctu" in out_kinds, ",".join(out_kinds)),
+        Check("res_present", "res" in out_kinds, ",".join(out_kinds)),
+        Check("ctu_preset_15", 15 in presets, str(presets)),
+        Check("counter_y1", "Y1" in devices, ",".join(sorted(devices))),
+        Check("counter_retract_y2", "Y2" in devices, ",".join(sorted(devices))),
+        Check("counter_edge_ons", "ons" in kinds, ",".join(kinds)),
+        Check("counter_y2_not_dn_gated", y2_dn_ok, "Y2 retract free of DN"),
+    ]
+
+
+def _plc_stamping_checks(spec: CircuitSpec) -> list[Check]:
+    devices = {r.device for r in (spec.plc.io if spec.plc else [])}
+    need_dev = {"START", "STOP", "LS1", "LS2", "LS3", "LSUP", "LSDN", "Power"}
+    # Power lamp rung must include RUN (START latch)
+    power_ok = False
+    for r in spec.plc.rungs if spec.plc else []:
+        if r.output and (r.output.tag == "Q0.3" or "Power" in (r.output.label or "")):
+            tags = {e.tag for e in r.series}
+            if "M0.0" in tags or any("RUN" in (e.label or "") for e in r.series):
+                power_ok = True
+    start_sets_run = False
+    for r in spec.plc.rungs if spec.plc else []:
+        if r.output and (r.output.tag == "M0.0" or "RUN" in (r.output.label or "")):
+            tags = {e.tag for e in r.series}
+            if any(t.startswith("I0.0") or "START" in (e.label or "") for e, t in ((e, e.tag) for e in r.series)):
+                start_sets_run = True
+            if "I0.0" in tags or any(e.tag == "I0.0" for e in r.series):
+                start_sets_run = True
+    conv_coils = 0
+    for r in spec.plc.rungs if spec.plc else []:
+        if r.output and (r.output.tag == "Q0.2" or "CONV" in (r.output.label or "")):
+            conv_coils += 1
+    return [
+        Check("stamp_devices", need_dev <= devices, str(sorted(devices))),
+        Check("stamp_start_run", start_sets_run, "START→RUN"),
+        Check("stamp_power_from_run", power_ok, "Power←RUN"),
+        Check("stamp_ls123", {"LS1", "LS2", "LS3"} <= devices, str(sorted(devices))),
+        Check("stamp_lsup_lsdn", {"LSUP", "LSDN"} <= devices, str(sorted(devices))),
+        Check("stamp_single_conv_coil", conv_coils == 1, f"CONV coils={conv_coils}"),
+    ]
+
+
+def _plc_apple_checks(spec: CircuitSpec) -> list[Check]:
+    kinds = _plc_all_kinds(spec)
+    out_kinds = [r.output.kind for r in (spec.plc.rungs if spec.plc else []) if r.output]
+    ctu_p = [
+        r.output.preset
+        for r in (spec.plc.rungs if spec.plc else [])
+        if r.output and r.output.kind == "ctu"
+    ]
+    ton_p = [
+        r.output.preset
+        for r in (spec.plc.rungs if spec.plc else [])
+        if r.output and r.output.kind == "ton"
+    ]
+    box_conv_coils = 0
+    for r in spec.plc.rungs if spec.plc else []:
+        if r.output and (r.output.tag == "Q0.0" or "BOX_CONV" in (r.output.label or "")):
+            box_conv_coils += 1
+    return [
+        Check("apple_ton", "ton" in out_kinds, ",".join(out_kinds)),
+        Check("apple_ctu", "ctu" in out_kinds, ",".join(out_kinds)),
+        Check("apple_count_12", 12 in ctu_p, str(ctu_p)),
+        Check("apple_ton_5", 5 in ton_p, str(ton_p)),
+        Check("apple_edge_ons", "ons" in kinds, ",".join(kinds)),
+        Check("apple_single_box_conv", box_conv_coils == 1, f"BOX_CONV coils={box_conv_coils}"),
     ]
 
 
@@ -256,6 +391,30 @@ def math_checks(spec: CircuitSpec) -> list[Check]:
                 ",".join(spec.sensors),
             )
         )
+    if spec.meta.domain == Domain.PLC and spec.plc is not None:
+        addrs = [r.address for r in spec.plc.io]
+        checks.append(Check("plc_has_io", bool(addrs), str(len(addrs))))
+        checks.append(Check("plc_has_rungs", bool(spec.plc.rungs), str(len(spec.plc.rungs))))
+    if exam == "plc_l14_fan_controller":
+        s = plc_fan_l14_scaling()
+        checks.append(Check("fan_ao_200", s["ao_200"] == 205, str(s["ao_200"])))
+        checks.append(Check("fan_ao_500", s["ao_500"] == 512, str(s["ao_500"])))
+        checks.append(Check("fan_ao_800", s["ao_800"] == 818, str(s["ao_800"])))
+        checks.append(Check("fan_pb", "PB" in spec.sensors, ",".join(spec.sensors)))
+        checks.append(
+            Check(
+                "fan_three_lamps",
+                all(t in spec.sensors for t in ("L1", "L2", "L3")),
+                ",".join(spec.sensors),
+            )
+        )
+        checks.extend(_plc_fan_toggle_checks(spec))
+    if exam == "plc_l14_counter_eject":
+        checks.extend(_plc_counter_checks(spec))
+    if exam == "plc_l14_stamping":
+        checks.extend(_plc_stamping_checks(spec))
+    if exam == "plc_l14_apple_packing":
+        checks.extend(_plc_apple_checks(spec))
     if spec.meta.figure_given:
         lines = "\n".join(solution_lines_for(exam))
         checks.append(Check("calc_cites_facts", "facts.yaml" in lines, exam or ""))
@@ -306,5 +465,9 @@ def golden_specs(root: Path) -> list[Path]:
         root / "examples/drill_2017/circuit.yaml",
         root / "examples/plc_conveyor_2023/circuit.yaml",
         root / "examples/emboss_2016/circuit.yaml",
+        root / "examples/plc_l14_fan_controller/circuit.yaml",
+        root / "examples/plc_l14_counter_eject/circuit.yaml",
+        root / "examples/plc_l14_stamping/circuit.yaml",
+        root / "examples/plc_l14_apple_packing/circuit.yaml",
     ]
     return [p for p in required if p.exists()]

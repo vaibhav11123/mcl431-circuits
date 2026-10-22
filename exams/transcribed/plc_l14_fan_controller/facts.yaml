@@ -1,0 +1,45 @@
+exam: plc_l14_fan_controller
+source: lecture/MCL431_L14_PLC_Problems.pdf
+pages: [7, 8]
+domain: plc
+course_version: v2
+identifier_style: plc
+identifiers: [PB, L1, L2, L3]
+questions:
+  - part: Q1
+    domain: plc
+    identifiers: [PB, L1, L2, L3]
+    identifier_style: plc
+    sequence: []
+    plc:
+      analog_input:
+        devices: [Temperature, Humidity]
+        range: [0, 100]
+        resolution_bits: 16
+        slot: 2
+      analog_output:
+        device: Fan speed controller
+        rpm_at_1v: 100
+        rpm_at_10v: 1000
+        resolution_bits: 10
+        slot: 1
+      speeds_rpm:
+        zone1: 200
+        zone2: 500
+        zone3: 800
+      zones:
+        - { speed: 1, rpm: 200, t: [30, 40], rh_gt: 50 }
+        - { speed: 2, rpm: 500, t: [40, 50], rh: [40, 50] }
+        - { speed: 3, rpm: 800, t_gt: 50, rh_lt: 40 }
+      lamps: 3
+      start_stop: alternate_single_pb
+      io:
+        - { address: I0.0, device: PB, function: "Alternate START/STOP" }
+        - { address: "AI Slot-2 Ch-0", device: Temperature, function: "0–100 °C, 16-bit" }
+        - { address: "AI Slot-2 Ch-1", device: Humidity, function: "0–100 %RH, 16-bit" }
+        - { address: "AO Slot-1 Ch-0", device: Fan AO, function: "0–10 V → 100–1000 rpm, 10-bit" }
+        - { address: Q0.0, device: L1, function: "Speed 1 lamp (200 rpm)" }
+        - { address: Q0.1, device: L2, function: "Speed 2 lamp (500 rpm)" }
+        - { address: Q0.2, device: L3, function: "Speed 3 lamp (800 rpm)" }
+    tags: [plc_v2, analog_io, cmp, mov, fan]
+    note: Channel numbers within Slot 2/1 not fixed by paper; Ch-0/Ch-1 assigned for T/RH.

@@ -1,0 +1,54 @@
+meta:
+  title: L14 Counter Eject PLC
+  domain: plc
+  exam_id: plc_l14_counter_eject
+  patterns: []
+
+sequence: []
+power: { pumps: [], tank: "" }
+cylinders: {}
+motors: {}
+valves: {}
+sensors: [S1, S2]
+electrical: { convention: plc, paths: [] }
+
+plc:
+  subtitle_connection: "PLC connection  ·  counter eject  ·  L14"
+  subtitle_ladder: "PLC ladder  ·  CTU PV=15  ·  advance / retract"
+  notes:
+    - "S1 ONS counts + Y1 advance while ACC < 15; S1 release → Y2 retract (not gated by DN); S2 RES."
+    - "CTU PV=15. DN blocks count and advance only — 15th cycle can still retract on S1 release."
+  io:
+    - { address: I0.0, device: S1, function: "Advance / eject (NO)" }
+    - { address: I0.1, device: S2, function: "Counter reset (NO)" }
+    - { address: Q0.0, device: Y1, function: "Cylinder advance" }
+    - { address: Q0.1, device: Y2, function: "Cylinder retract" }
+  field:
+    - title: Magazine / cylinder
+      lines: ["Gravity-feed magazine", "Y1 advance on S1", "Y2 retract when S1 released"]
+    - title: PLC
+      lines: ["I0.0 S1", "I0.1 S2", "Q0.0 Y1", "Q0.1 Y2", "C5:0 CTU PV=15"]
+  rungs:
+    - id: 1
+      caption: Reset counter on S2
+      series:
+        - { kind: contact, tag: I0.1, label: "I0.1 S2", sense: "NO" }
+      output: { kind: res, tag: C5:0, label: "RES C5:0" }
+    - id: 2
+      caption: "CTU on S1 rising edge while ACC < 15"
+      series:
+        - { kind: contact, tag: I0.0, label: "I0.0 S1", sense: "NO" }
+        - { kind: ons, tag: B3:0/1, label: "ONS" }
+        - { kind: contact, tag: "C5:0/DN", label: "C5:0/DN", sense: "NC" }
+      output: { kind: ctu, tag: C5:0, preset: 15 }
+    - id: 3
+      caption: Cylinder advance Y1
+      series:
+        - { kind: contact, tag: I0.0, label: "I0.0 S1", sense: "NO" }
+        - { kind: contact, tag: "C5:0/DN", label: "C5:0/DN", sense: "NC" }
+      output: { kind: coil, tag: Q0.0, label: "Q0.0 Y1" }
+    - id: 4
+      caption: Cylinder retract Y2 (S1 released — DN not required)
+      series:
+        - { kind: contact, tag: I0.0, label: "I0.0 S1", sense: "NC" }
+      output: { kind: coil, tag: Q0.1, label: "Q0.1 Y2" }

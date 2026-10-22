@@ -1,0 +1,28 @@
+exam: plc_l14_apple_packing
+source: lecture/MCL431_L14_PLC_Problems.pdf
+pages: [5, 6]
+domain: plc
+course_version: v2
+identifier_style: plc
+identifiers: [START, STOP]
+questions:
+  - part: Q1
+    domain: plc
+    identifiers: [START, STOP]
+    identifier_style: plc
+    sequence: []
+    plc:
+      start_stop: [START, STOP]
+      apple_count: 12
+      delay_s: 5
+      timer: TON
+      counter: CTU
+      io:
+        - { address: I0.0, device: START, function: "Start packing (NO)" }
+        - { address: I0.1, device: STOP, function: "Stop packing (NC in ladder)" }
+        - { address: I0.2, device: BOX, function: "Box at apple drop position" }
+        - { address: I0.3, device: APPLE, function: "Apple drop / count pulse" }
+        - { address: Q0.0, device: BOX_CONV, function: "Box conveyor motor" }
+        - { address: Q0.1, device: APPLE_CONV, function: "Apple conveyor motor" }
+    tags: [plc_v2, ton, ctu, dual_conveyor]
+    note: BOX and APPLE sensors implied by cycle; addresses suitable assignments per paper.

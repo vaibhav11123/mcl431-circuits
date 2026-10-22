@@ -1,0 +1,38 @@
+L14 Stamping — understand the machine before the ladder
+Source: MCL431_L14_PLC_Problems.pdf (addresses assigned for Micrologix-style exam)
+
+Physical sequence (one part on the belt):
+  Pos1 → Pos2 → Stamp (Dn then Up) → Pos3 → operator removes part
+
+Stage table
+  1  LS1          CONV ON     cylinder up
+  2  LS2          CONV OFF    Dn until LSDN
+  3  LSDN         CONV OFF    Up until LSUP
+  4  LSUP         CONV ON     stay up
+  5  LS3          CONV OFF    stay up; Stop lamp
+
+Inputs (to PLC)
+  START (Go PB)  I0.0   start process
+  STOP           I0.1   stop process
+  LS1–LS3        I0.2–4 part at Pos1/2/3
+  LSUP / LSDN    I0.5–6 stamper up / down
+
+Outputs (from PLC)
+  Up / Dn        Q0.0–1 stamp solenoids
+  CONV           Q0.2   conveyor relay
+  Light (Power)  Q0.3   power ON
+  Go lamp        Q0.4   part in process
+  Stop lamp      Q0.5   process stopped
+
+Note: Go/Stop pushbuttons ≠ Go/Stop indicator lamps.
+Paper names devices but does not fix bit addresses — we assign I/Q as above.
+
+Exam approach — four tasks, not one giant ladder:
+  1) START/STOP seal-in (RUN)
+  2) Conveyor Pos1→2 and Pos2→3 (stop while stamping; restart only after LSUP)
+  3) Dn at LS2 with LSDN feedback
+  4) Up after LSDN with LSUP feedback
+
+Memory trick: START → LS1 → CONV → LS2 → Dn → LSDN → Up → LSUP → CONV → LS3 → Stop
+
+See walkthrough.txt for the matching rung-by-rung of circuit.yaml.

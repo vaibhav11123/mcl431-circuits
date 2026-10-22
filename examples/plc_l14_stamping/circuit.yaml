@@ -1,0 +1,120 @@
+meta:
+  title: L14 Stamping PLC
+  domain: plc
+  exam_id: plc_l14_stamping
+  patterns: []
+
+sequence: []
+power: { pumps: [], tank: "" }
+cylinders: {}
+motors: {}
+valves: {}
+sensors: [START, STOP, LS1, LS2, LS3, LSUP, LSDN]
+electrical: { convention: plc, paths: [] }
+
+plc:
+  subtitle_connection: "PLC connection  ·  stamping line  ·  L14"
+  subtitle_ladder: "PLC ladder  ·  START latch  ·  LS1–3 / LSUP / LSDN"
+  notes:
+    - "START→RUN; to_stamp (LS1→LS2); one CONV coil (1→2 OR 2→3); Dn/Up with interlock; lamps."
+    - "M0.1 to_stamp, M0.2 stamped, M0.3/M0.4 feed single Q0.2 CONV (no dual-coil conflict)."
+  io:
+    - { address: I0.0, device: START, function: "Start process (NO)" }
+    - { address: I0.1, device: STOP, function: "Stop / fault (NC in ladder)" }
+    - { address: I0.2, device: LS1, function: "Part at position 1" }
+    - { address: I0.3, device: LS2, function: "Part at position 2 (stamp)" }
+    - { address: I0.4, device: LS3, function: "Part at position 3" }
+    - { address: I0.5, device: LSUP, function: "Stamper up" }
+    - { address: I0.6, device: LSDN, function: "Stamper down" }
+    - { address: Q0.0, device: Up, function: "Stamp cylinder up solenoid" }
+    - { address: Q0.1, device: Dn, function: "Stamp cylinder down solenoid" }
+    - { address: Q0.2, device: CONV, function: "Conveyor motor relay" }
+    - { address: Q0.3, device: Power, function: "Power ON lamp" }
+    - { address: Q0.4, device: Go, function: "Part in process lamp" }
+    - { address: Q0.5, device: Stop, function: "Process stopped lamp" }
+  field:
+    - title: Operator
+      lines: ["START / STOP PBs"]
+    - title: Proximity / limits
+      lines: ["LS1 LS2 LS3", "LSUP LSDN stamper"]
+    - title: Actuators
+      lines: ["Up Q0.0  Dn Q0.1", "CONV Q0.2", "Power/Go/Stop lamps"]
+  rungs:
+    - id: 1
+      caption: START/STOP latch → RUN
+      series:
+        - { kind: contact, tag: I0.0, label: "I0.0 START", sense: "NO" }
+        - { kind: contact, tag: I0.1, label: "I0.1 STOP", sense: "NC" }
+      branch:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+      output: { kind: coil, tag: M0.0, label: "M0.0 RUN" }
+    - id: 2
+      caption: Power lamp from RUN
+      series:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+      output: { kind: coil, tag: Q0.3, label: "Q0.3 Power" }
+    - id: 3
+      caption: to_stamp — (RUN·LS1) OR hold; clear at LS2 or stamped
+      series:
+        - { kind: contact, tag: M0.1, label: "M0.1 to_stamp", sense: "NO" }
+        - { kind: contact, tag: I0.3, label: "I0.3 LS2", sense: "NC" }
+        - { kind: contact, tag: M0.2, label: "M0.2 stamped", sense: "NC" }
+      branch:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+        - { kind: contact, tag: I0.2, label: "I0.2 LS1", sense: "NO" }
+      output: { kind: coil, tag: M0.1, label: "M0.1 to_stamp" }
+    - id: 4
+      caption: conv_1to2 memory (to_stamp and not LS2)
+      series:
+        - { kind: contact, tag: M0.1, label: "M0.1 to_stamp", sense: "NO" }
+        - { kind: contact, tag: I0.3, label: "I0.3 LS2", sense: "NC" }
+      output: { kind: coil, tag: M0.3, label: "M0.3 conv_1to2" }
+    - id: 5
+      caption: Stamp down at LS2 until LSDN (!Up interlock)
+      series:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+        - { kind: contact, tag: I0.3, label: "I0.3 LS2", sense: "NO" }
+        - { kind: contact, tag: I0.6, label: "I0.6 LSDN", sense: "NC" }
+        - { kind: contact, tag: M0.2, label: "M0.2 stamped", sense: "NC" }
+        - { kind: contact, tag: Q0.0, label: "Q0.0 Up", sense: "NC" }
+      output: { kind: coil, tag: Q0.1, label: "Q0.1 Dn" }
+    - id: 6
+      caption: stamped latch after LSDN; clear at LS3
+      series:
+        - { kind: contact, tag: M0.2, label: "M0.2 stamped", sense: "NO" }
+        - { kind: contact, tag: I0.4, label: "I0.4 LS3", sense: "NC" }
+      branch:
+        - { kind: contact, tag: I0.6, label: "I0.6 LSDN", sense: "NO" }
+      output: { kind: coil, tag: M0.2, label: "M0.2 stamped" }
+    - id: 7
+      caption: Stamp up until LSUP (!Dn interlock)
+      series:
+        - { kind: contact, tag: M0.2, label: "M0.2 stamped", sense: "NO" }
+        - { kind: contact, tag: I0.5, label: "I0.5 LSUP", sense: "NC" }
+        - { kind: contact, tag: Q0.1, label: "Q0.1 Dn", sense: "NC" }
+      output: { kind: coil, tag: Q0.0, label: "Q0.0 Up" }
+    - id: 8
+      caption: conv_2to3 memory (stamped · LSUP · not LS3)
+      series:
+        - { kind: contact, tag: M0.2, label: "M0.2 stamped", sense: "NO" }
+        - { kind: contact, tag: I0.5, label: "I0.5 LSUP", sense: "NO" }
+        - { kind: contact, tag: I0.4, label: "I0.4 LS3", sense: "NC" }
+      output: { kind: coil, tag: M0.4, label: "M0.4 conv_2to3" }
+    - id: 9
+      caption: Single CONV coil — 1→2 OR 2→3
+      series:
+        - { kind: contact, tag: M0.3, label: "M0.3 conv_1to2", sense: "NO" }
+      branch:
+        - { kind: contact, tag: M0.4, label: "M0.4 conv_2to3", sense: "NO" }
+      output: { kind: coil, tag: Q0.2, label: "Q0.2 CONV" }
+    - id: 10
+      caption: Go lamp in process
+      series:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+        - { kind: contact, tag: I0.4, label: "I0.4 LS3", sense: "NC" }
+      output: { kind: coil, tag: Q0.4, label: "Q0.4 Go" }
+    - id: 11
+      caption: Stop lamp at LS3
+      series:
+        - { kind: contact, tag: I0.4, label: "I0.4 LS3", sense: "NO" }
+      output: { kind: coil, tag: Q0.5, label: "Q0.5 Stop" }

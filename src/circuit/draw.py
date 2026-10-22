@@ -27,38 +27,26 @@ __all__ = [
 
 
 def _write_plc_solution(spec: CircuitSpec, dest: Path) -> Path:
-    sc = plc_2023_q2_scaling()
-    lines = [
-        spec.meta.title,
-        "",
-        "I/O (paper + scan notes)",
-        "  I0.0 START PB    I0.1 STOP PB",
-        "  AI Slot-3 Ch-2  load cell 0–950 kg, 12-bit (0–4095)",
-        "  AO Slot-2 Ch-1  speed controller 0–10 V / 0–4000 RPM, 10-bit (0–1023)",
-        "  Q0.0 L1 LOW     Q0.1 L2 NORMAL     Q0.2 L3 HIGH",
-        "",
-        "Scaling",
-    ]
+    lines = [spec.meta.title, "", "I/O"]
+    if spec.plc:
+        for row in spec.plc.io:
+            lines.append(f"  {row.address}  {row.device}  — {row.function}")
+    lines += ["", "Calculations / notes"]
     lines.extend(f"  {ln}" for ln in solution_lines_for(spec.meta.exam_id))
-    lines += [
-        "",
-        "Zone table (nearest integer counts)",
-        f"  W < 220 kg          AI < {sc['ai_220_cmp']}     1185 RPM   AO {sc['ao_1185']}   2.9625 V   L1",
-        f"  220 ≤ W ≤ 580 kg    AI {sc['ai_220_cmp']}–{sc['ai_580']}   2250 RPM   AO {sc['ao_2250']}   5.625 V    L2",
-        f"  W > 580 kg          AI > {sc['ai_580']}    3545 RPM   AO {sc['ao_3545']}   8.8625 V   L3",
-        "  STOP                —            0 RPM      AO 0       0 V        lamps OFF",
-        "",
-        "Ladder",
-        "  M0.0 = START latch, broken by STOP",
-        f"  RUN ∧ AI < {sc['ai_220_cmp']} → MOV {sc['ao_1185']} AO + L1",
-        f"  RUN ∧ {sc['ai_220_cmp']} ≤ AI ≤ {sc['ai_580']} → MOV {sc['ao_2250']} AO + L2",
-        f"  RUN ∧ AI > {sc['ai_580']} → MOV {sc['ao_3545']} AO + L3",
-        "  /RUN → MOV 0 AO  (must zero the speed-controller voltage on STOP)",
-        "",
-        "Components",
-        "  PLC analog conveyor — no hydraulic pump/valves",
-        "  field: START, STOP, load cell, speed controller, L1, L2, L3",
-    ]
+    if spec.meta.exam_id == "2023_minor2_q2":
+        sc = plc_2023_q2_scaling()
+        lines += [
+            "",
+            "Zone table (nearest integer counts)",
+            f"  W < 220 kg          AI < {sc['ai_220_cmp']}     1185 RPM   AO {sc['ao_1185']}   L1",
+            f"  220 ≤ W ≤ 580 kg    AI {sc['ai_220_cmp']}–{sc['ai_580']}   2250 RPM   AO {sc['ao_2250']}   L2",
+            f"  W > 580 kg          AI > {sc['ai_580']}    3545 RPM   AO {sc['ao_3545']}   L3",
+            "  /RUN → MOV 0 AO  (must zero the speed-controller voltage on STOP)",
+        ]
+    if spec.plc and spec.plc.notes:
+        lines += ["", "Ladder notes"]
+        lines.extend(f"  {n}" for n in spec.plc.notes)
+    lines += ["", "Components", "  PLC sheet — no hydraulic pump/valves"]
     dest.write_text("\n".join(lines) + "\n")
     return dest
 
