@@ -1,19 +1,26 @@
-L14 Fan Controller — corrected ladder (memorise this)
+L14 Fan Controller — exam-ready structure
 I/O: PB I0.0; AI Slot-2 T/RH; AO Slot-1 10-bit; L1–L3 Q0.0–2
 
-Toggle (fixes shared-ONS + OTL/OTU race)
-  1  RUN → M0.5 run_snap   (snapshot before toggle)
-  2  PB · ONS → M0.1 pulse (one ONS only)
-  3  pulse · !snap → (L) RUN
-  4  pulse ·  snap → (U) RUN
+Four sections
+  1–3   Start/stop toggle
+  4–6   Which T/RH zone is active
+  7–10  Set fan speed (AO)
+  11–13 Matching indicator lamps
+  14    Store RUN → M0.5 for *next* scan
 
-Zones (same bit → AO and lamp)
-  5  Z1 M0.2: RUN · 30<T<40 · RH>50
-  6  Z2 M0.3: RUN · 40<T<50 · 40<RH<50
-  7  Z3 M0.4: RUN · T>50 · RH<40
-  8–10  Z → MOV 205 / 512 / 818
-  11 !Z1·!Z2·!Z3 → MOV 0
-  12–14 Z → L1 / L2 / L3
+Toggle (previous-state safe)
+  1  PB · ONS → M0.1 pulse   (one shared edge)
+  2  pulse · !M0.5 → (L) RUN  (prev was OFF → start)
+  3  pulse ·  M0.5 → (U) RUN  (prev was ON  → stop)
+  14 RUN → M0.5               (write prev_RUN last; used next scan)
 
-Pattern: Toggle → zone → AO → matching lamp.
-Scaling OK for 10-bit 0–10 V (100 rpm@1 V … 1000@10 V).
+M0.5 is last scan’s RUN. Do not copy RUN at the top of the program before
+OTL/OTU — that can blur “previous” vs “just latched” in the same scan.
+
+Zones / AO / lamps
+  Z1 M0.2: 30<T<40 & RH>50  → MOV 205 + L1
+  Z2 M0.3: 40<T<50 & 40<RH<50 → MOV 512 + L2
+  Z3 M0.4: T>50 & RH<40     → MOV 818 + L3
+  Then !Z1·!Z2·!Z3 → MOV 0 (does not run when a zone MOV just wrote)
+
+Memorise: Toggle → zone → speed → lamp. Same zone bit for AO and lamp.
