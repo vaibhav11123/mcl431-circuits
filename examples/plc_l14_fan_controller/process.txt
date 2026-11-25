@@ -1,0 +1,42 @@
+L14 Fan Controller — convert the question into logic (before rungs)
+Source: MCL431_L14_PLC_Problems.pdf
+
+What the paper wants
+  • T 0–100 °C and RH 0–100% on 16-bit AI (Slot 2)
+  • Three zones only (do not invent others):
+      S1 = (T>30)∧(T<40)∧(RH>50)     → 200 rpm
+      S2 = (T>40)∧(T<50)∧(RH>40)∧(RH<50) → 500 rpm
+      S3 = (T>50)∧(RH<40)               → 800 rpm
+  • Single PB alternates START/STOP (edge, not level)
+  • Three lamps for selected speed
+  • 10-bit AO: 100 rpm @ 1 V … 1000 rpm @ 10 V
+
+I/O (Micrologix-style assignment used in circuit.yaml)
+  I0.0 PB | AI Slot-2 Ch-0 T | AI Slot-2 Ch-1 RH
+  AO Slot-1 Ch-0 | Q0.0 L1 | Q0.1 L2 | Q0.2 L3
+
+Scaling (exam formulas)
+  T  = (T_raw / N) × 100     (N = module raw max, e.g. 32767 or 65535)
+  RH = (RH_raw / N) × 100
+  V_out = RPM / 100
+  Count = (V_out / 10) × 1023   → 205 / 512 / 818 for 200/500/800 rpm
+
+Logic flow
+  Read AI → scale T,RH → toggle FAN_RUN on PB edge →
+  evaluate S1/S2/S3 → MOV AO (or 0 if none) → lamps follow Si
+
+Toggle (conceptual)
+  PB · ONE-SHOT → TOGGLE_EVENT
+  if TOGGLE_EVENT: FAN_RUN := NOT FAN_RUN
+  (Our ladder: shared ONS pulse + OTL/OTU on previous-scan RUN; see walkthrough.txt)
+
+Zones (all series — AND)
+  FAN_RUN · (T>30)·(T<40)·(RH>50) → SPEED_1 / 200 rpm
+  FAN_RUN · (T>40)·(T<50)·(RH>40)·(RH<50) → SPEED_2 / 500 rpm
+  FAN_RUN · (T>50)·(RH<40) → SPEED_3 / 800 rpm
+
+AO / lamps
+  V = 2 V / 5 V / 8 V for S1/S2/S3; else 0 V (conservative default)
+  Lamp_i ON iff corresponding Si (and thus FAN_RUN) is true
+
+Memorise: sensors → scale → FAN_RUN → compare → speed → AO → lamp

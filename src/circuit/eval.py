@@ -138,21 +138,31 @@ def _plc_all_kinds(spec: CircuitSpec) -> list[str]:
 
 
 def _plc_fan_toggle_checks(spec: CircuitSpec) -> list[Check]:
-    """Shared ONS pulse → OTL/OTU; zone bits drive AO and lamps together."""
+    """Shared ONS pulse → OTL/OTU on prev_RUN; zone bits drive AO and lamps."""
     kinds = _plc_all_kinds(spec)
     out_kinds = [r.output.kind for r in (spec.plc.rungs if spec.plc else []) if r.output]
     ons_rungs = 0
     pulse_feeds_toggle = False
+    toggle_uses_prev = False
     zone_tags = {"M0.2", "M0.3", "M0.4"}
     lamp_from_zone = 0
     mov_from_zone = 0
     ao_zero_no_zone = False
-    for r in spec.plc.rungs if spec.plc else []:
+    snap_idx = -1
+    toggle_idx = -1
+    rungs = list(spec.plc.rungs) if spec.plc else []
+    for i, r in enumerate(rungs):
         if any(e.kind == "ons" for e in r.series):
             ons_rungs += 1
         if r.output and r.output.kind in {"otl", "otu"}:
+            if toggle_idx < 0:
+                toggle_idx = i
             if any(e.tag == "M0.1" for e in r.series):
                 pulse_feeds_toggle = True
+            if any(e.tag == "M0.5" for e in r.series):
+                toggle_uses_prev = True
+        if r.output and r.output.tag == "M0.5":
+            snap_idx = i
         if r.output and r.output.tag in {"Q0.0", "Q0.1", "Q0.2"}:
             if any(e.tag in zone_tags for e in r.series):
                 lamp_from_zone += 1
@@ -163,11 +173,14 @@ def _plc_fan_toggle_checks(spec: CircuitSpec) -> list[Check]:
             ncs = [e for e in r.series if e.sense.upper() == "NC" and e.tag in zone_tags]
             if len(ncs) >= 3:
                 ao_zero_no_zone = True
+    snap_after_toggle = snap_idx > toggle_idx >= 0
     return [
         Check("fan_ons", "ons" in kinds, ",".join(kinds)),
         Check("fan_otl", "otl" in out_kinds, ",".join(out_kinds)),
         Check("fan_otu", "otu" in out_kinds, ",".join(out_kinds)),
         Check("fan_shared_ons_pulse", ons_rungs == 1 and pulse_feeds_toggle, f"ons_rungs={ons_rungs}"),
+        Check("fan_toggle_uses_prev_run", toggle_uses_prev, "OTL/OTU via M0.5"),
+        Check("fan_prev_run_stored_last", snap_after_toggle, f"snap@{snap_idx} toggle@{toggle_idx}"),
         Check("fan_lamps_from_zones", lamp_from_zone == 3, f"lamps={lamp_from_zone}"),
         Check("fan_mov_from_zones", mov_from_zone == 3, f"movs={mov_from_zone}"),
         Check("fan_ao_zero_no_zone", ao_zero_no_zone, "MOV 0 when !Z1·!Z2·!Z3"),
