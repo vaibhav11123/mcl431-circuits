@@ -35,5 +35,5 @@ Homepage (after Pages is on): `https://vaibhav11123.github.io/mcl431-circuits/`
 1. Merge/push is done by the agent when you asked to land on `main`.
 2. ~~Enable GitHub Pages~~ done — workspace URL above.
 3. Host `/mcp` on hardware you already have **only if** you want directory listing.
-4. ChatGPT / Claude login and submit — [HUMAN_ACTIONS_REQUIRED.md](../HUMAN_ACTIONS_REQUIRED.md).
+4. ChatGPT / Claude login and submit — [HUMAN_ACTIONS_REQUIRED.md](ops/HUMAN_ACTIONS_REQUIRED.md).
 5. Post the launch copy. Do not say Fly or directory-listed.

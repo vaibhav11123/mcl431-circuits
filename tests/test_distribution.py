@@ -82,6 +82,7 @@ def test_pack_plugin_zip() -> None:
 
 
 def test_handover_docs_exist() -> None:
+    ops = ROOT / "docs" / "ops"
     for name in (
         "COMPLETION_AUDIT.md",
         "RELEASE_READINESS.md",
@@ -90,8 +91,12 @@ def test_handover_docs_exist() -> None:
         "KNOWN_LIMITATIONS.md",
         "NEXT_MILESTONES.md",
     ):
-        text = (ROOT / name).read_text(encoding="utf-8")
+        text = (ops / name).read_text(encoding="utf-8")
         assert text.strip()
     plan = (ROOT / "docs" / "product-execution-plan.md").read_text()
     assert "SKIPPED_OPTIONAL" in plan
     assert "not deployed" in plan.lower() or "SKIPPED_OPTIONAL" in plan
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    assert "Verification-oriented compiler" in readme
+    assert "vaibhav11123.github.io/mcl431-circuits" in readme
+    assert "Course goldens" not in readme  # product face, not a PYQ dump
