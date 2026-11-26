@@ -7,7 +7,7 @@ How to use this repo if you are taking **MCL 431 CAM and Automation** at IIT Del
 - [Copyright](copyright.md) — what is in GitHub vs what stays on your machine
 - [PLC intake run log](plc-intake-run-log.md) — L11–L13 notes + L14 problems first live ingest
 - [PLC visual + answer QA](plc-visual-qa.md) — paper/twin/math/visual/eval gates (no official key)
-- [Product execution plan](product-execution-plan.md) — Sequence Circuit contract (T0–T32, commands, Expected/Actual, live tests). Not started until the user says execute.
+- [Product execution plan](product-execution-plan.md) — Sequence Circuit contract (T0–T45: product + translation validation + SequenceBench). Not started until the user says execute.
 - [Ship the studio (T1–T10 subset)](ship-execution-plan.md) — pack/MCP slice subsumed by the product plan.
 
 ## Gallery
