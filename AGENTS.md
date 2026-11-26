@@ -33,4 +33,4 @@ Never invent a symbol ID. Never skip `eval`. Hydraulic and electrical are separa
 
 Follow `.cursor/skills/generate-circuit/SKILL.md`. Fan out four subagents, merge YAML, then validate → draw → eval. Sheets land in `output/<exam_id>/`.
 
-The later product build is [docs/ship-execution-plan.md](docs/ship-execution-plan.md). Do not start it unless the user asks to execute that plan.
+The product contract is [docs/product-execution-plan.md](docs/product-execution-plan.md) (T0–T32, measures, live VM tests). T1–T10 detail also lives in [docs/ship-execution-plan.md](docs/ship-execution-plan.md). Do not start either unless the user asks to execute.
