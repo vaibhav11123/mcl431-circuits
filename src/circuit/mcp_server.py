@@ -276,6 +276,60 @@ def get_mcp():
     return mcp
 
 
+def http_transport_security(
+    *,
+    public_host: str | None = None,
+    disable_dns_rebind: bool | None = None,
+):
+    """Build FastMCP DNS-rebinding settings for tunnel / workers.dev Host headers.
+
+    MCP only matches exact Host values (or ``host:*`` port wildcards), not
+    ``*.loca.lt``. Pass ``CIRCUIT_MCP_PUBLIC_HOST=hostname`` or
+    ``CIRCUIT_MCP_DISABLE_DNS_REBIND=1``.
+    """
+    import os
+
+    from mcp.server.transport_security import TransportSecuritySettings
+
+    allowed_hosts = [
+        "127.0.0.1",
+        "127.0.0.1:*",
+        "localhost",
+        "localhost:*",
+        "[::1]",
+        "[::1]:*",
+    ]
+    allowed_origins = [
+        "http://127.0.0.1",
+        "http://127.0.0.1:*",
+        "http://localhost",
+        "http://localhost:*",
+        "http://[::1]",
+        "http://[::1]:*",
+    ]
+    if public_host is None:
+        public_host = os.environ.get("CIRCUIT_MCP_PUBLIC_HOST", "").strip()
+    if public_host:
+        public = (
+            public_host.removeprefix("https://")
+            .removeprefix("http://")
+            .split("/")[0]
+        )
+        allowed_hosts.extend([public, f"{public}:*"])
+        allowed_origins.extend([f"https://{public}", f"https://{public}:*"])
+    if disable_dns_rebind is None:
+        disable_dns_rebind = os.environ.get("CIRCUIT_MCP_DISABLE_DNS_REBIND", "").strip() in {
+            "1",
+            "true",
+            "yes",
+        }
+    return TransportSecuritySettings(
+        enable_dns_rebinding_protection=not disable_dns_rebind,
+        allowed_hosts=allowed_hosts,
+        allowed_origins=allowed_origins,
+    )
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="circuit.mcp_server")
     parser.add_argument("--http", action="store_true")
@@ -286,6 +340,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.http:
         server.settings.host = args.host
         server.settings.port = args.port
+        server.settings.transport_security = http_transport_security()
         server.run(transport="streamable-http")
         return 0
     server.run(transport="stdio")

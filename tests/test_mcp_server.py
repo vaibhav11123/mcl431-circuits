@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from circuit.mcp_server import _LOG, create_server, INSTRUCTIONS
+from circuit.mcp_server import _LOG, create_server, http_transport_security, INSTRUCTIONS
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -66,3 +66,21 @@ def test_log_omits_yaml_marker() -> None:
         pass
     joined = "\n".join(_LOG)
     assert marker not in joined
+
+
+def test_http_transport_security_allows_public_host() -> None:
+    settings = http_transport_security(
+        public_host="https://sequence-circuit-mcp.sequence-circuit.workers.dev/mcp",
+        disable_dns_rebind=False,
+    )
+    assert settings.enable_dns_rebinding_protection is True
+    assert "sequence-circuit-mcp.sequence-circuit.workers.dev" in settings.allowed_hosts
+    assert (
+        "https://sequence-circuit-mcp.sequence-circuit.workers.dev"
+        in settings.allowed_origins
+    )
+
+
+def test_http_transport_security_can_disable_rebind() -> None:
+    settings = http_transport_security(public_host="", disable_dns_rebind=True)
+    assert settings.enable_dns_rebinding_protection is False

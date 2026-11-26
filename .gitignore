@@ -25,3 +25,8 @@ exams/pyqs/*.png
 
 # local tunnel binary
 .tools/
+
+# cloudflared local secrets are outside repo
+
+# local Cursor MCP config (may point at personal Cloudflare auth)
+.cursor/mcp.json

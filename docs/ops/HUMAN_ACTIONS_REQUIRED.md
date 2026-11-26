@@ -20,14 +20,23 @@ The agent must not log in to ChatGPT or Claude, must not install the plugin in t
 
 Use hardware or a tunnel you already have. Do **not** buy Fly for this. See `docs/self-hosting.md`.
 
-1. Run `python -m circuit.mcp_server --http --host 0.0.0.0 --port 8080` behind HTTPS.
+**Personal / DEVELOPMENT (already wired, laptop must stay awake):**
+
+- Origin: `https://sequence-circuit-mcp.sequence-circuit.workers.dev`
+- MCP: `https://sequence-circuit-mcp.sequence-circuit.workers.dev/mcp`
+- Start local: `CIRCUIT_MCP_PUBLIC_HOST=sequence-circuit-mcp.sequence-circuit.workers.dev python -m circuit.mcp_server --http --host 127.0.0.1 --port 8080` plus `cloudflared tunnel run` for tunnel `sequence-circuit-mcp`.
+- ChatGPT: **Add custom MCP server** with that `/mcp` URL (URL is locked after create — delete/recreate to change it). Do **not** submit this laptop-backed URL to the public directory.
+
+**Directory listing** still needs an always-on host (not this Mac asleep). Then:
+
+1. Run `python -m circuit.mcp_server --http` behind that always-on HTTPS.
 2. Serve `/privacy`, `/terms`, `/support` (the process already maps those routes from `deploy/static/`).
 3. Put the OpenAI challenge token as **plain text** at `https://<host>/.well-known/openai-apps-challenge`.
-4. Replace every `https://REPLACE_ON_DEPLOY` in `plugin/mcp.json` and `plugin/plugin.json` with that origin.
+4. Replace every `https://REPLACE_ON_DEPLOY` in `plugin/mcp.json` and `plugin/plugin.json` with that origin (keep REPLACE in git until then).
 5. `curl -sS https://<host>/health` → `{"ok": true}`.
 6. Confirm streamable HTTP at `https://<host>/mcp`.
 
-Until step 4 is a real hostname, **do not submit**.
+Until step 4 is an always-on hostname, **do not submit** to the directory.
 
 ### B. ChatGPT — login, install, directory (you)
 
