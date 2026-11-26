@@ -1,0 +1,1 @@
+MCQ: actuators, meter-in/out, shuttle, ADC bytes, 0.5 C bits, TON TT, ladder logic.

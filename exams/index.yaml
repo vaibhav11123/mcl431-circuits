@@ -261,3 +261,409 @@ questions:
       sheets: [pneumatic, displacement_step, electrical]
       calcs: []
     pattern_hint: indexing_drill
+
+  # --- Major / re-major corpus from PYQs with solutions (Wave 2) ---
+  - id: 2017_major_q1_oven
+    file: exams/transcribed/2017_major_q1_oven
+    source: exams/pyqs/MCL431_Major-22Nov2017.pdf
+    readable: true
+    domain: plc
+    identifiers: [S1, A, B]
+    deliverables:
+      sheets: [plc_connection, plc_ladder]
+      calcs: [AI band counts]
+    pattern_hint: plc_oven_setpoint
+    tags: [plc_v2, cmp, otl]
+
+  - id: 2017_major_q2_tank_mix
+    file: exams/transcribed/2017_major_q2_tank_mix
+    source: exams/pyqs/MCL431_Major-22Nov2017.pdf
+    readable: true
+    domain: plc
+    identifiers: [START, STOP]
+    deliverables:
+      sheets: [plc_connection, plc_ladder]
+      calcs: []
+    pattern_hint: plc_tank_mix
+    tags: [plc_v2, ton]
+
+  - id: 2017_major_q3_two_cyl_loss
+    file: exams/transcribed/2017_major_q3_two_cyl_loss
+    source: exams/pyqs/MCL431_Major-22Nov2017.pdf
+    readable: true
+    domain: hydraulic
+    deliverables:
+      sheets: []
+      calcs: [F1, F2 with losses]
+    pattern_hint: head_loss
+    tags: [figure_given, not_given_cells]
+
+  - id: 2017_major_servo
+    file: exams/transcribed/2017_major_servo
+    source: exams/pyqs/MCL431_Major-22Nov2017.pdf
+    readable: true
+    domain: hydraulic
+    deliverables:
+      sheets: []
+      calcs: [control resolution, rpm, encoder freq]
+    pattern_hint: cnc_numeric
+    tags: [figure_given, servo]
+
+  - id: 2018_major_q1_airjet
+    file: exams/transcribed/2018_major_q1_airjet
+    source: exams/pyqs/MCL431_Major-17Nov2018.pdf
+    readable: true
+    domain: pneumatic_plus_electrical
+    identifiers: [1A, 2A, 3Z, START]
+    sequence: [1A+, 2A+, 2A- with 3Z, 1A-]
+    deliverables:
+      sheets: [pneumatic, electrical]
+      calcs: []
+    pattern_hint: sequence_double_solenoid
+    tags: [air_jet, dcv_3_2]
+
+  - id: 2018_major_q2_cnc
+    file: exams/transcribed/2018_major_q2_cnc
+    source: exams/pyqs/MCL431_Major-17Nov2018.pdf
+    readable: true
+    domain: hydraulic
+    deliverables:
+      sheets: []
+      calcs: [part_program]
+    pattern_hint: cnc_program
+    tags: [not_given]
+
+  - id: 2018_major_q3_lockout
+    file: exams/transcribed/2018_major_q3_lockout
+    source: exams/pyqs/MCL431_Major-17Nov2018.pdf
+    readable: true
+    domain: plc
+    identifiers: [OL, RESET]
+    deliverables:
+      sheets: [plc_connection, plc_ladder]
+      calcs: []
+    pattern_hint: plc_motor_lockout
+    tags: [plc_v2, ctu, ton, otl]
+
+  - id: 2018_major_q4_preset_counter
+    file: exams/transcribed/2018_major_q4_preset_counter
+    source: exams/pyqs/MCL431_Major-17Nov2018.pdf
+    readable: true
+    domain: plc
+    identifiers: [LS1]
+    deliverables:
+      sheets: [plc_connection, plc_ladder]
+      calcs: []
+    pattern_hint: plc_preset_counter
+    tags: [plc_v2, ctu]
+
+  - id: 2018_major_q5_cnc_fillin
+    file: exams/transcribed/2018_major_q5_cnc_fillin
+    source: exams/pyqs/MCL431_Major-17Nov2018.pdf
+    readable: true
+    domain: hydraulic
+    deliverables:
+      sheets: []
+      calcs: [part_program]
+    pattern_hint: cnc_program
+    tags: [not_given]
+
+  - id: 2019_major_q1_sprinkler
+    file: exams/transcribed/2019_major_q1_sprinkler
+    source: exams/pyqs/MCL431_Major-21Nov2019.pdf
+    readable: true
+    domain: plc
+    identifiers: [RESET]
+    deliverables:
+      sheets: [plc_connection, plc_ladder]
+      calcs: []
+    pattern_hint: plc_rtc_sprinkler
+    tags: [plc_v2, ctu, ton]
+
+  - id: 2019_major_q2_meter_out
+    file: exams/transcribed/2019_major_q2_meter_out
+    source: exams/pyqs/MCL431_Major-21Nov2019.pdf
+    readable: true
+    domain: hydraulic
+    identifiers: [P1]
+    deliverables:
+      sheets: []
+      calcs: [extend speed, P1 loaded, P1 no load, retract FCV]
+    pattern_hint: meter_out
+    tags: [figure_given]
+
+  - id: 2019_major_q3_cnc
+    file: exams/transcribed/2019_major_q3_cnc
+    source: exams/pyqs/MCL431_Major-21Nov2019.pdf
+    readable: true
+    domain: hydraulic
+    deliverables:
+      sheets: []
+      calcs: [part_program]
+    pattern_hint: cnc_program
+    tags: [not_given]
+
+  - id: 2019_major_q4_adaptation
+    file: exams/transcribed/2019_major_q4_adaptation
+    source: exams/pyqs/MCL431_Major-21Nov2019.pdf
+    readable: true
+    domain: hydraulic
+    deliverables:
+      sheets: []
+      calcs: []
+    pattern_hint: not_a_sheet
+    note: corporate adaptation graph — one-line refusal
+
+  - id: 2020_major_q1_oven
+    file: exams/transcribed/2020_major_q1_oven
+    source: exams/pyqs/MCL431_Major_Selfstudy_11July2020A.pdf
+    readable: true
+    same_as: 2017_major_q1_oven
+    domain: plc
+    identifiers: [S1, A, B]
+    deliverables:
+      sheets: [plc_connection, plc_ladder]
+      calcs: []
+    pattern_hint: plc_oven_setpoint
+
+  - id: 2020_major_q2_apple
+    file: exams/transcribed/2020_major_q2_apple
+    source: exams/pyqs/MCL431_Major_Selfstudy_11July2020A.pdf
+    readable: true
+    same_as: plc_l14_apple_packing
+    domain: plc
+    identifiers: [START, STOP]
+    deliverables:
+      sheets: [plc_connection, plc_ladder]
+      calcs: []
+    pattern_hint: plc_apple_packing
+
+  - id: 2020_major_q3_hoist_loss
+    file: exams/transcribed/2020_major_q3_hoist_loss
+    source: exams/pyqs/MCL431_Major_Selfstudy_11July2020A.pdf
+    readable: true
+    domain: hydraulic
+    deliverables:
+      sheets: []
+      calcs: [pump outlet pressure, motor RPM HP]
+    pattern_hint: motor_analysis
+    tags: [figure_given, pipe_loss]
+
+  - id: 2020_major_q4_cnc
+    file: exams/transcribed/2020_major_q4_cnc
+    source: exams/pyqs/MCL431_Major_Selfstudy_11July2020A.pdf
+    readable: true
+    domain: hydraulic
+    deliverables:
+      sheets: []
+      calcs: [part_program]
+    pattern_hint: cnc_program
+    tags: [not_given]
+
+  - id: 2020_major_q5_mill_clamp
+    file: exams/transcribed/2020_major_q5_mill_clamp
+    source: exams/pyqs/MCL431_Major_Selfstudy_11July2020A.pdf
+    readable: true
+    domain: pneumatic_plus_electrical
+    identifiers: [1A, 2A]
+    sequence: [1A+ to 5 bar, 2A+, 2A-, 1A-]
+    deliverables:
+      sheets: [pneumatic, displacement_step, electrical]
+      calcs: []
+    pattern_hint: emboss_sequence
+    tags: [pressure_switch_5bar]
+
+  - id: 2020_remajor_q1_orange_juice
+    file: exams/transcribed/2020_remajor_q1_orange_juice
+    source: exams/pyqs/MCL431_ReMajor-3Jan2020.pdf
+    readable: true
+    domain: plc
+    identifiers: [START, STOP]
+    deliverables:
+      sheets: [plc_connection, plc_ladder]
+      calcs: []
+    pattern_hint: plc_interlock_ton
+    tags: [plc_v2, ton]
+
+  - id: 2020_remajor_q2_servo
+    file: exams/transcribed/2020_remajor_q2_servo
+    source: exams/pyqs/MCL431_ReMajor-3Jan2020.pdf
+    readable: true
+    same_as: 2017_major_servo
+    domain: hydraulic
+    deliverables:
+      sheets: []
+      calcs: [control resolution, rpm, encoder freq]
+    pattern_hint: cnc_numeric
+
+  - id: 2020_remajor_q3_strip
+    file: exams/transcribed/2020_remajor_q3_strip
+    source: exams/pyqs/MCL431_ReMajor-3Jan2020.pdf
+    readable: true
+    same_as: 2023_minor2_q1
+    domain: pneumatic_plus_electrical
+    identifiers: [1A, 2A, S1, S3]
+    sequence: [1A+, 2A-, 1A-, 2A+]
+    deliverables:
+      sheets: [pneumatic, electrical]
+      calcs: []
+    pattern_hint: sequence_double_solenoid
+
+  - id: 2020_remajor_q4_cnc
+    file: exams/transcribed/2020_remajor_q4_cnc
+    source: exams/pyqs/MCL431_ReMajor-3Jan2020.pdf
+    readable: true
+    domain: hydraulic
+    deliverables:
+      sheets: []
+      calcs: [part_program]
+    pattern_hint: cnc_program
+    tags: [not_given]
+
+  - id: 2022_major_q1_oven_ao
+    file: exams/transcribed/2022_major_q1_oven_ao
+    source: exams/pyqs/Major 2022.pdf
+    readable: true
+    domain: plc
+    identifiers: [S1, S2, A, B]
+    deliverables:
+      sheets: [plc_connection, plc_ladder]
+      calcs: [12-bit AO 2kW 8kW]
+    pattern_hint: plc_oven_setpoint
+    tags: [plc_v2, mov, ton]
+
+  - id: 2022_major_q2_stepper
+    file: exams/transcribed/2022_major_q2_stepper
+    source: exams/pyqs/Major 2022.pdf
+    readable: true
+    domain: hydraulic
+    deliverables:
+      sheets: []
+      calcs: [control resolution, rpm, encoder freq, accuracy]
+    pattern_hint: cnc_numeric
+    tags: [stepper]
+
+  - id: 2022_major_q3_hoist_loss
+    file: exams/transcribed/2022_major_q3_hoist_loss
+    source: exams/pyqs/Major 2022.pdf
+    readable: true
+    domain: hydraulic
+    deliverables:
+      sheets: []
+      calcs: [pump outlet pressure, motor RPM HP]
+    pattern_hint: motor_analysis
+    tags: [figure_given, pipe_loss]
+
+  - id: 2022_major_q4_twohand
+    file: exams/transcribed/2022_major_q4_twohand
+    source: exams/pyqs/Major 2022.pdf
+    readable: true
+    domain: pneumatic_plus_electrical
+    identifiers: [A, B, START, EMERGENCY]
+    deliverables:
+      sheets: [electrical]
+      calcs: []
+    pattern_hint: sequence_double_solenoid
+    tags: [two_hand, e_stop]
+
+  - id: 2023_major_parta
+    file: exams/transcribed/2023_major_parta
+    source: exams/pyqs/Major_07May2023.pdf
+    readable: true
+    domain: hydraulic
+    deliverables:
+      sheets: []
+      calcs: [objective workings]
+    pattern_hint: mcq
+    tags: [part_a]
+
+  - id: 2023_major_b1_fourhole
+    file: exams/transcribed/2023_major_b1_fourhole
+    source: exams/pyqs/Major_07May2023.pdf
+    readable: true
+    domain: pneumatic_plus_electrical
+    identifiers: [1A, 2A, 3A, START]
+    sequence: [holes 1-3-4-2]
+    deliverables:
+      sheets: [pneumatic, displacement_step, electrical]
+      calcs: []
+    pattern_hint: indexing_drill
+    tags: [electro_pneumatic, 5_3_dcv, proximity]
+
+  - id: 2023_major_b2_plywood
+    file: exams/transcribed/2023_major_b2_plywood
+    source: exams/pyqs/Major_07May2023.pdf
+    readable: true
+    domain: plc
+    identifiers: [ON, STOP]
+    deliverables:
+      sheets: [plc_connection, plc_ladder]
+      calcs: []
+    pattern_hint: plc_stack_paint
+    tags: [plc_v2, ctu, ton]
+
+  - id: 2023_major_b3_cnc
+    file: exams/transcribed/2023_major_b3_cnc
+    source: exams/pyqs/Major_07May2023.pdf
+    readable: true
+    domain: hydraulic
+    deliverables:
+      sheets: []
+      calcs: [part_program]
+    pattern_hint: cnc_program
+    tags: [not_given]
+
+  - id: quiz5_traffic_lights
+    file: exams/transcribed/quiz5_traffic_lights
+    source: exams/pyqs/Quiz 5 - PLC.jpeg.jpg
+    readable: true
+    domain: plc
+    identifiers: [START, STOP]
+    deliverables: {sheets: [plc_connection, plc_ladder], calcs: []}
+    pattern_hint: plc_traffic_lights
+
+  - id: quiz4_airjet
+    file: exams/transcribed/quiz4_airjet
+    source: exams/pyqs/Quiz 4 - Electropneumatic.jpeg.jpg
+    readable: true
+    same_as: 2018_major_q1_airjet
+    domain: pneumatic_plus_electrical
+    identifiers: [1A, 2A, 3Z]
+    deliverables: {sheets: [pneumatic, displacement_step, electrical], calcs: []}
+    pattern_hint: sequence_double_solenoid
+
+  - id: quiz6_conveyor_weight
+    file: exams/transcribed/quiz6_conveyor_weight
+    source: exams/pyqs/Quiz 6 - PLC.jpeg.jpg
+    readable: true
+    domain: plc
+    identifiers: [START, STOP]
+    deliverables: {sheets: [plc_connection, plc_ladder], calcs: [AI AO counts]}
+    pattern_hint: plc_analog_conveyor
+
+  - id: quiz2_regen
+    file: exams/transcribed/quiz2_regen
+    source: exams/pyqs/Quiz 2 - Hydraulic Circuit Design and Analysis.jpeg.jpg
+    readable: true
+    domain: hydraulic
+    deliverables: {sheets: [], calcs: [regen speed force power]}
+    pattern_hint: regen
+
+  - id: quiz8_cnc
+    file: exams/transcribed/quiz8_cnc
+    source: exams/pyqs/Quiz 8 - CnC Part Programming.jpeg.jpg
+    readable: true
+    domain: hydraulic
+    deliverables: {sheets: [], calcs: [part_program]}
+    pattern_hint: cnc_program
+    tags: [not_given]
+
+  - id: 2024_selfstudy_b1
+    file: exams/transcribed/2024_selfstudy_b1
+    source: exams/pyqs/2024 self study minor.jpg
+    readable: true
+    same_as: 2023_selfstudy_b1
+    domain: hydraulic_plus_electrical
+    identifiers: [HC1, HC2, HM1, START]
+    deliverables: {sheets: [hydraulic, electrical], calcs: []}
+    pattern_hint: grinding_sequence

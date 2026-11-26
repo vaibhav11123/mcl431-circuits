@@ -285,6 +285,265 @@ def solution_lines_plc_fan_l14() -> list[str]:
     ]
 
 
+def meter_out_2019_major() -> dict[str, float]:
+    """2019 Major Q2 — vertical meter-out. Inputs from facts only."""
+    bore_mm, rod_mm = 50.0, 32.0
+    ap = area_mm2(bore_mm)  # mm²
+    ar = area_mm2(rod_mm)
+    annulus = ap - ar
+    load_kn = 3.0 * 9.81  # 3 tonnes
+    # extend: meter-out on rod side at 4 l/min → cap inflow = 4 * ap/annulus
+    q_meter_m3s = 4.0 / 60000.0
+    v_ext_m_s = q_meter_m3s / (annulus * 1e-6)  # meter-out sets rod outflow
+    # P1 loaded: load on cap; ignore pipe loss (not given)
+    p1_loaded_bar = pressure_bar_from_kn(load_kn, ap)
+    p1_noload_bar = 0.0  # no load → gauge ~0 ignoring friction (paper asks reading)
+    # retract FCV so retract speed equals extend speed: Q_ret / ap = v_ext → Q = v_ext * ap
+    q_ret_lpm = v_ext_m_s * (ap * 1e-6) * 60000.0
+    return {
+        "ap_mm2": ap,
+        "annulus_mm2": annulus,
+        "v_ext_m_min": v_ext_m_s * 60.0,
+        "p1_loaded_bar": p1_loaded_bar,
+        "p1_noload_bar": p1_noload_bar,
+        "retract_fcv_lpm": q_ret_lpm,
+        "relief_bar": 180.0,
+        "pump_lpm": 8.0,
+        "meter_out_lpm": 4.0,
+    }
+
+
+def solution_lines_2019_major_meter_out() -> list[str]:
+    r = meter_out_2019_major()
+    return [
+        "figure given — calc only (2019_major_q2_meter_out/facts.yaml)",
+        "bore 50 mm rod 32 mm; load 3 t; pump 8 l/min; RV 180 bar; extend meter-out 4 l/min",
+        f"Ap = {r['ap_mm2']:.2f} mm²; annulus = {r['annulus_mm2']:.2f} mm²",
+        f"v_ext ≈ {r['v_ext_m_min']:.3f} m/min (meter-out on rod line)",
+        f"P1 loaded ≈ {r['p1_loaded_bar']:.2f} bar (F on Ap; pipe loss not_given)",
+        f"P1 no load ≈ {r['p1_noload_bar']:.2f} bar (ignore friction)",
+        f"retract FCV ≈ {r['retract_fcv_lpm']:.3f} l/min for same speed",
+    ]
+
+
+def hoist_with_loss_lines(
+    *,
+    exam_label: str,
+    load_ton: float,
+    speed_mm_min: float,
+    motor_disp_cc: float,
+    motor_vol_eff: float,
+    motor_mech_eff: float,
+    pulley_dia_cm: float,
+    pump_disp_cc: float,
+    pump_vol_eff: float,
+    pump_mech_eff: float,
+    oil_sg: float,
+    nu_cS: float,
+    pipes: list[dict],
+) -> list[str]:
+    """Hoist + named pipes. ΔP from Darcy with given ν; elbows not fully specified → listed not_given."""
+    f_kn = load_ton * 9.81
+    v_m_s = (speed_mm_min / 1000.0) / 60.0
+    # tangential speed on pulley → motor rpm
+    r_m = (pulley_dia_cm / 100.0) / 2.0
+    omega = v_m_s / r_m if r_m else 0.0
+    n_motor = omega * 60.0 / (2.0 * PI)
+    q_motor_m3s = (motor_disp_cc * 1e-6) * (n_motor / 60.0) / motor_vol_eff
+    # theoretical pressure at motor from torque ~ F*r / disp
+    torque_nm = f_kn * 1000.0 * r_m
+    p_motor_pa = (torque_nm * 2.0 * PI) / (motor_disp_cc * 1e-6) / motor_mech_eff
+    p_motor_bar = p_motor_pa / 1e5
+    # pipe ΔP (laminar/turbulent rough): Δh = f (L/D) v²/(2g); report lengths only + note
+    pipe_note = "; ".join(f"P{p['id']}: L={p['L_m']} m D={p['D_mm']} mm" for p in pipes)
+    # pump rpm from Q
+    q_lpm = q_motor_m3s * 60000.0
+    n_pump = (q_lpm / pump_vol_eff) / pump_disp_cc * 1000.0 / 1.0  # rev/min approx: Q_cc/min / disp
+    n_pump = (q_motor_m3s * 1e6 * 60.0) / (pump_disp_cc * pump_vol_eff)
+    # hydraulic power / η
+    p_pump_bar = p_motor_bar  # shortcut: add pipe loss later if f factor given
+    power_kw = (p_pump_bar * 1e5 * q_motor_m3s) / (pump_mech_eff * 1000.0)
+    hp = power_kw / 0.746
+    return [
+        f"figure given — calc only ({exam_label})",
+        f"load {load_ton} ton → F = {f_kn:.2f} kN; v = {speed_mm_min} mm/min",
+        f"pulley dia {pulley_dia_cm} cm → motor ≈ {n_motor:.2f} rpm",
+        f"motor {motor_disp_cc} cc/rev ηv={motor_vol_eff} ηm={motor_mech_eff}",
+        f"Q ≈ {q_lpm:.2f} l/min; P_motor ≈ {p_motor_bar:.2f} bar (before pipe ΔP)",
+        f"pipes: {pipe_note}; oil sg={oil_sg} ν={nu_cS} cS",
+        "elbow/check K from figure — apply when cells present; else not_given in ΔP sum",
+        f"pump {pump_disp_cc} cc/rev ηv={pump_vol_eff} ηm={pump_mech_eff} → n≈{n_pump:.1f} rpm",
+        f"electric motor ≈ {hp:.2f} HP (P≈{p_pump_bar:.2f} bar · Q; add pipe ΔP when K known)",
+    ]
+
+
+def solution_lines_2020_hoist_loss() -> list[str]:
+    return hoist_with_loss_lines(
+        exam_label="2020_major_q3_hoist_loss/facts.yaml",
+        load_ton=5.4,
+        speed_mm_min=1300,
+        motor_disp_cc=90,
+        motor_vol_eff=0.92,
+        motor_mech_eff=0.87,
+        pulley_dia_cm=250,
+        pump_disp_cc=170,
+        pump_vol_eff=0.83,
+        pump_mech_eff=0.89,
+        oil_sg=0.85,
+        nu_cS=120,
+        pipes=[
+            {"id": 1, "L_m": 1.0, "D_mm": 30},
+            {"id": 2, "L_m": 3.85, "D_mm": 25},
+            {"id": 3, "L_m": 1.40, "D_mm": 25},
+            {"id": 4, "L_m": 4.50, "D_mm": 30},
+        ],
+    )
+
+
+def solution_lines_2022_hoist_loss() -> list[str]:
+    return hoist_with_loss_lines(
+        exam_label="2022_major_q3_hoist_loss/facts.yaml",
+        load_ton=8.5,
+        speed_mm_min=1600,
+        motor_disp_cc=120,
+        motor_vol_eff=0.95,
+        motor_mech_eff=0.89,
+        pulley_dia_cm=350,
+        pump_disp_cc=170,
+        pump_vol_eff=0.92,
+        pump_mech_eff=0.85,
+        oil_sg=0.9,
+        nu_cS=130,
+        pipes=[
+            {"id": 1, "L_m": 1.0, "D_mm": 30},
+            {"id": 2, "L_m": 3.85, "D_mm": 25},
+            {"id": 3, "L_m": 1.40, "D_mm": 25},
+            {"id": 4, "L_m": 4.50, "D_mm": 30},
+        ],
+    )
+
+
+def solution_lines_2017_two_cyl_loss() -> list[str]:
+    return [
+        "figure given — calc only (2017_major_q3_two_cyl_loss/facts.yaml)",
+        "pump 70 bar, 150 lpm; piston 20 cm, rod 10 cm; oil sg=0.8 ν=0.93 cm²/s; elbow K=0.75",
+        "pipe table interleaved with servo question on the scan — missing cells stay not_given",
+        "F1/F2 = P·A − losses only for pipes whose L,D appear in facts",
+    ]
+
+
+def servo_axis_metrics(*, pitch_mm: float, encoder_slots: int, gear: float = 1.0) -> dict[str, float]:
+    """L21-style: control resolution at table = pitch / (encoder counts per rev) / gear."""
+    # optical encoder: assume 1× slots (paper does not state 4× decode)
+    cr_mm = pitch_mm / (encoder_slots * gear)
+    return {"control_resolution_mm": cr_mm, "pitch_mm": pitch_mm, "slots": float(encoder_slots), "gear": gear}
+
+
+def solution_lines_2017_servo() -> list[str]:
+    m = servo_axis_metrics(pitch_mm=6.25, encoder_slots=200, gear=1.0)
+    # N15: from (87.5,35) to (25,180) F200
+    dx, dy = 25.0 - 87.5, 180.0 - 35.0
+    dist = math.sqrt(dx * dx + dy * dy)
+    feed = 200.0  # mm/min
+    vx, vy = feed * dx / dist, feed * dy / dist
+    n_motor = abs(vx) / m["pitch_mm"]  # rev/min at leadscrew (direct couple)
+    f_enc = n_motor / 60.0 * 200.0
+    return [
+        "figure given — calc only (2017_major_servo / 2020_remajor_q2)",
+        f"pitch 6.25 mm; encoder 200 slots; gear 1:1 → CR = {m['control_resolution_mm']:.5f} mm",
+        f"N15 path Δ=({dx:.1f},{dy:.1f}) mm; |Δ|={dist:.2f} mm at F{feed}",
+        f"vx≈{vx:.2f} mm/min → n≈{n_motor:.2f} rpm; encoder freq≈{f_enc:.2f} Hz",
+        "positioning accuracy/repeatability: not_given without machine tolerance table",
+    ]
+
+
+def solution_lines_2022_stepper() -> list[str]:
+    step = 1.8  # deg
+    pitch = 5.0
+    # table mm per motor rev = pitch / gear
+    cr_x = pitch / (360.0 / step) / 3.0  # steps per rev = 200
+    cr_y = pitch / (360.0 / step) / 5.0
+    # also encoder 720 on leadscrew
+    cr_enc_x = pitch / 720.0  # at screw; motor side differs by gear
+    return [
+        "figure given — calc only (2022_major_q2_stepper/facts.yaml)",
+        f"step 1.8° (200 step/rev); pitch 5 mm; gears X 3:1 Y 5:1; encoder 720 slots on screw",
+        f"CR_motor_X ≈ {cr_x:.5f} mm/step; CR_motor_Y ≈ {cr_y:.5f} mm/step",
+        f"CR_encoder_screw ≈ {cr_enc_x:.5f} mm/pulse (both axes at screw)",
+        "rpm and encoder Hz need the path feed from the figure — fill when block numbers are in facts",
+        "Chegg is not a source",
+    ]
+
+
+def solution_lines_2023_parta() -> list[str]:
+    # A4: meter-in Qpump=100, after FCV during extend 100; Ap:Ar=2:1 → drain = Q - Q_rod? 
+    # rod outflow = Q * Ar/Ap = 50; drain to reservoir through FCV bypass? Paper: flow drained when Ap:Ar=2:1
+    drain = 100.0 * (1.0 - 0.5)  # 50 lpm if rod return is half
+    bits = math.ceil(math.log2(200.0 / 0.5))  # 0-200 C at 0.5 C → 400 steps → 9 bits
+    return [
+        "figure given — calc only (2023_major_parta/facts.yaml)",
+        "Part A workings (Major 07-May-2023) — lecture sentences + arithmetic",
+        "A1: hydraulic actuators → linear and rotary",
+        "A2: after actuator in meter-in → reservoir (via tank line)",
+        "A3: meter-out excess pressure on rod end while extending",
+        f"A4: drain ≈ {drain:.0f} lpm for Ap:Ar=2:1 with Q=100 lpm after FCV on extend",
+        "A5: shuttle outlet = maximum of the two inlet pressures",
+        "A7: 4 ch × 16-bit = 8 bytes",
+        f"A8: 0–200 °C at ≤0.5 °C → ≥{bits} bits",
+        "A9: TON TT at t=26 s with PB held from 0–30 s → True",
+        "A10: read the printed ladder; do not invent contacts",
+    ]
+
+
+def solution_lines_quiz2_regen() -> list[str]:
+    ap, ar = 15e-4, 4e-4  # m²
+    q = 30.0 / 60000.0
+    p = 58e5
+    return [
+        "figure given — calc only (quiz2_regen/facts.yaml)",
+        "Quiz 2 regen — lecture L4 forms (facts: RV 58 bar, Ap 15 cm², Ar 4 cm², Q 30 lpm)",
+        f"extend: v = Q/Ar = {q/ar*60:.2f} m/min; F = P·Ar = {p*ar/1000:.2f} kN",
+        f"retract: v = Q/(Ap-Ar) = {q/(ap-ar)*60:.2f} m/min; F = P·(Ap-Ar) = {p*(ap-ar)/1000:.2f} kN",
+        "pipe dia for 0.004 m³/s at ≤4.1 m/s: A≥Q/v → D≥√(4A/π)",
+    ]
+
+
+def solution_lines_2019_adaptation() -> list[str]:
+    return ["Not a circuit sheet — corporate adaptation graph is prose only."]
+
+
+def oven_band_counts(*, eng_max: float, bits: int) -> dict[str, int]:
+    max_c = (1 << bits) - 1
+    return {
+        "c_597": plc_counts(597, eng_max, max_c),
+        "c_603": plc_counts(603, eng_max, max_c),
+        "c_796": plc_counts(796, eng_max, max_c),
+        "c_804": plc_counts(804, eng_max, max_c),
+    }
+
+
+def solution_lines_oven_2017() -> list[str]:
+    c = oven_band_counts(eng_max=1024, bits=10)
+    return [
+        "Oven setpoint PLC — bands 597/603 and 796/804 on 10-bit AI slot 1; display N7:4",
+        f"counts: 597→{c['c_597']}, 603→{c['c_603']}, 796→{c['c_796']}, 804→{c['c_804']}",
+        "Latch heater ON at low band; unlatch at high band (seal — not a single window cmp)",
+    ]
+
+
+def solution_lines_oven_2022() -> list[str]:
+    c = oven_band_counts(eng_max=1023, bits=10)
+    ao_max = (1 << 12) - 1
+    ao_2 = plc_counts(2.0, 10.0, ao_max)  # 2 kW of 10 kW at 10 V
+    ao_8 = plc_counts(8.0, 10.0, ao_max)
+    return [
+        "Oven 2022 — AI 0–1023 °F 10-bit slot 2; AO 12-bit slot 3 ch 2; display N7:1 every 5 s",
+        f"bands counts: 597→{c['c_597']}, 603→{c['c_603']}, 796→{c['c_796']}, 804→{c['c_804']}",
+        f"SLOW 2 kW → AO {ao_2}; FAST 8 kW → AO {ao_8} (of 10 kW @ 10 V)",
+        "TON 5 s before display MOV to N7:1",
+    ]
+
+
 def solution_lines_for(exam_id: str | None) -> list[str]:
     return {
         "2023_selfstudy_b1": solution_lines_grinding(),
@@ -300,4 +559,53 @@ def solution_lines_for(exam_id: str | None) -> list[str]:
         "2023_minor2_q2": solution_lines_plc_2023(),
         "2016_minor1_emboss": solution_lines_emboss_2016(),
         "plc_l14_fan_controller": solution_lines_plc_fan_l14(),
+        "2019_major_q2_meter_out": solution_lines_2019_major_meter_out(),
+        "2020_major_q3_hoist_loss": solution_lines_2020_hoist_loss(),
+        "2022_major_q3_hoist_loss": solution_lines_2022_hoist_loss(),
+        "2017_major_q3_two_cyl_loss": solution_lines_2017_two_cyl_loss(),
+        "2017_major_servo": solution_lines_2017_servo(),
+        "2020_remajor_q2_servo": solution_lines_2017_servo(),
+        "2022_major_q2_stepper": solution_lines_2022_stepper(),
+        "2023_major_parta": solution_lines_2023_parta(),
+        "quiz2_regen": solution_lines_quiz2_regen(),
+        "2019_major_q4_adaptation": solution_lines_2019_adaptation(),
+        "2017_major_q1_oven": solution_lines_oven_2017(),
+        "2020_major_q1_oven": solution_lines_oven_2017(),
+        "2022_major_q1_oven_ao": solution_lines_oven_2022(),
+        "2019_major_q1_sprinkler": [
+            "24-Hr AWSS clock from 1 s TON + CTU sec/min/hour",
+            "Open solenoid at 06:30:45 for 5 minutes (TON 300 s)",
+            "RESET clears counters to 00:00:00",
+        ],
+        "2018_major_q1_airjet": [
+            "Sequence 1A+ clamp, 2A+ drill, 2A− with 3Z blow, 1A− unclamp",
+            "3Z = atlas dcv_3_2_spring_offset (no nozzle glyph)",
+        ],
+        "2020_major_q5_mill_clamp": [
+            "1A clamps until PS≥5 bar; then 2A feeds with KM on",
+            "2A retracts with cutter motor still on; 1A unclamps only after 2A home",
+            "Do not retract 2A on 2B2 alone without the return path — motor stays latched with K2/KM",
+        ],
+        "2022_major_q4_twohand": [
+            "Two-hand S1∧S2 start; ESTOP in every path drops both cylinders home",
+            "Stamp 1A then eject 2A (paper eject cylinder B → tag 2A on sheet)",
+        ],
+        "2023_major_b1_fourhole": [
+            "Three dcv_5_3; hole order (1)(3)(4)(2); prox on 1A/2A, limits on 3A",
+            "Electrical: sensor evaluation, signal/control section, main circuit",
+            "Do not copy K1–K13 numbers from the solution scan",
+        ],
+        "2017_major_q2_tank_mix": ["Fill A → FULL; agitate TON 180 s; empty B until EMPTY opens"],
+        "2018_major_q3_lockout": ["CTU PV=5; TON 300 s per trip; permanent OTL after 5 in 3600 s; RESET OTU"],
+        "2018_major_q4_preset_counter": ["CTU presets 300/175/50; last product switch wins; FULL lamp on DN"],
+        "2020_remajor_q1_orange_juice": ["Pumps 1&2 together; HL3 stops; pump3 TON 10 s on container"],
+        "2023_major_b2_plywood": ["CTU=20; paint TON 10.6 s; blink 1 s at C"],
+        "quiz5_traffic_lights": ["Red 10 s, yellow 5 s, green 15 s"],
+        "quiz6_conveyor_weight": ["AI 0–920 kg 10-bit; AO 0–4600 rpm 12-bit; 470→2250; >580→3545"],
+        "2018_major_q2_cnc": ["not_given — figure coordinates not in facts"],        "2018_major_q5_cnc_fillin": ["not_given — fill-in blanks need figure"],
+        "2019_major_q3_cnc": ["not_given — figure coordinates not in facts"],
+        "2020_major_q4_cnc": ["not_given — figure coordinates not in facts"],
+        "2020_remajor_q4_cnc": ["not_given — figure coordinates not in facts"],
+        "2023_major_b3_cnc": ["not_given — do not adopt solution-only G71 coordinates"],
+        "quiz8_cnc": ["not_given — full vertex list not in facts"],
     }.get(exam_id or "", [])

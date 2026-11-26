@@ -1,0 +1,14 @@
+id: 2018_major_q1_airjet
+solution_files: []
+solution: absent
+items:
+- claim: 3Z uses atlas dcv_3_2_spring_offset; no nozzle glyph
+  source: lecture
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/airjet_2018/circuit.yaml
+- claim: 3Z blows on same step as 2A retract
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/airjet_2018/circuit.yaml

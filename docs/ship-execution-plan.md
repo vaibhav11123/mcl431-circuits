@@ -10,8 +10,12 @@ The customer is a student who already has the lab text and does not have the she
 2. They paste the lab: the parts list and the sequence, such as clamp, then drill, then eject.
 3. Their chat's model calls `list_symbols`, writes the spec, and calls `draw_spec`. The student does not write YAML and does not pick a sheet.
 4. If a symbol or a contact is wrong, the chat shows one plain sentence and the model fixes the spec, at most twice. No sheet is shown until the check passes.
-5. The chat then shows the pages that question needs: the power circuit, the electrical sheet and the step diagram when the lab asks for them, the written solution, and a card. A PLC lab gets the connection and the ladder. A paper that already prints the figure gets the calculation only.
+5. The chat then shows the pages that question needs: the power circuit, the electrical sheet and the step diagram when the lab asks for them, the written solution, and a card. A PLC lab gets the connection and the ladder. A paper that already prints the figure gets the calculation only. Solution text also covers meter-out, hoist-with-loss, stepper/servo numbers, Part A objectives, and a part program when every figure coordinate was transcribed; a prose graph is not a sheet (`not_given` / one-line refusal).
 6. The student hands in the sheets. A classmate can read the card from the image alone. They do not install anything.
+
+### Corpus
+
+New `exam_id` branches from the PYQ learning pass live in `calc.py` and golden YAML so tasks T3–T5 can move them later. Score stays **0/39** until T1–T10 run. Do not start those tasks from this corpus pass.
 
 A mechanic who only has the card can argue with the sentence. They are not asked to install. An instructor with a different symbol law points the same engine at their own pack later. The engine does not change.
 

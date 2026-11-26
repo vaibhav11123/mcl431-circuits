@@ -1,0 +1,9 @@
+id: 2019_minor1_meter
+solution_files: []
+solution: absent
+items:
+- claim: figure_given meter-in/out
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: exams/transcribed/2019_minor1_meter

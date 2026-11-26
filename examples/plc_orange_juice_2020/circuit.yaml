@@ -1,0 +1,73 @@
+meta:
+  title: 2020 Re-Major Q1 orange-juice interlock
+  domain: plc
+  exam_id: 2020_remajor_q1_orange_juice
+  patterns: []
+
+sequence: []
+power: { pumps: [], tank: "" }
+cylinders: {}
+motors: {}
+valves: {}
+sensors: [START, STOP, LL1, LL2, LL3, HL3, CONTAINER]
+electrical: { convention: plc, paths: [] }
+
+plc:
+  subtitle_connection: "PLC connection  ·  orange juice blend"
+  subtitle_ladder: "PLC ladder  ·  pumps together  ·  pump3 10 s"
+  notes:
+    - "Pumps 1 and 2 only together while LL1 and LL2 true and not HL3. Conveyor stop/start. Pump3 10 s when container present."
+  io:
+    - { address: I0.0, device: START, function: "Conveyor start" }
+    - { address: I0.1, device: STOP, function: "Conveyor stop" }
+    - { address: I0.2, device: LL1, function: "Tank1 low (signal present = liquid)" }
+    - { address: I0.3, device: LL2, function: "Tank2 low" }
+    - { address: I0.4, device: LL3, function: "Tank3 low" }
+    - { address: I0.5, device: HL3, function: "Tank3 high" }
+    - { address: I0.6, device: CONTAINER, function: "Container at fill" }
+    - { address: Q0.0, device: PUMP1, function: "Water pump" }
+    - { address: Q0.1, device: PUMP2, function: "Juice pump" }
+    - { address: Q0.2, device: PUMP3, function: "Fill pump 10 s" }
+    - { address: Q0.3, device: CONV, function: "Conveyor" }
+  field:
+    - title: Interlock
+      lines: ["PUMP1 and PUMP2 together", "stop on HL3"]
+  rungs:
+    - id: 1
+      caption: Conveyor latch
+      series:
+        - { kind: contact, tag: I0.0, label: "I0.0 START", sense: "NO" }
+        - { kind: contact, tag: I0.1, label: "I0.1 STOP", sense: "NC" }
+        - { kind: contact, tag: I0.6, label: "I0.6 CONTAINER", sense: "NC" }
+      branch:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+      output: { kind: coil, tag: M0.0, label: "M0.0 RUN" }
+    - id: 2
+      caption: Conveyor motor
+      series:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+      output: { kind: coil, tag: Q0.3, label: "Q0.3 CONV" }
+    - id: 3
+      caption: Blend pumps together
+      series:
+        - { kind: contact, tag: I0.2, label: "I0.2 LL1", sense: "NO" }
+        - { kind: contact, tag: I0.3, label: "I0.3 LL2", sense: "NO" }
+        - { kind: contact, tag: I0.5, label: "I0.5 HL3", sense: "NC" }
+      output: { kind: coil, tag: Q0.0, label: "Q0.0 PUMP1" }
+    - id: 4
+      caption: Pump2 same interlock
+      series:
+        - { kind: contact, tag: I0.2, label: "I0.2 LL1", sense: "NO" }
+        - { kind: contact, tag: I0.3, label: "I0.3 LL2", sense: "NO" }
+        - { kind: contact, tag: I0.5, label: "I0.5 HL3", sense: "NC" }
+      output: { kind: coil, tag: Q0.1, label: "Q0.1 PUMP2" }
+    - id: 5
+      caption: Container present → TON 10 s
+      series:
+        - { kind: contact, tag: I0.6, label: "I0.6 CONTAINER", sense: "NO" }
+      output: { kind: ton, tag: T4:0, preset: 10 }
+    - id: 6
+      caption: Pump3 while timing
+      series:
+        - { kind: contact, tag: "T4:0/TT", label: "T4:0/TT", sense: "NO" }
+      output: { kind: coil, tag: Q0.2, label: "Q0.2 PUMP3" }

@@ -1,0 +1,9 @@
+id: 2020_remajor_q4_cnc
+solution_files: []
+solution: absent
+items:
+- claim: not_given until figure coordinates transcribed
+  source: lecture
+  lecture_ok: true
+  disposition: not_given
+  lands_in: solution.txt

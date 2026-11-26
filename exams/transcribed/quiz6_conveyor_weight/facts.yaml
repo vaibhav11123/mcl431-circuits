@@ -1,0 +1,26 @@
+id: quiz6_conveyor_weight
+paper: Quiz 6 PLC
+source: exams/pyqs/Quiz 6 - PLC.jpeg.jpg
+domain: plc
+readable: true
+identifiers:
+- START
+- STOP
+deliverable_sheets:
+- plc_connection
+- plc_ladder
+deliverable_calcs:
+- AI/AO counts
+plc:
+  ai_max_kg: 920
+  ai_bits: 10
+  ao_max_rpm: 4600
+  ao_bits: 12
+  zones:
+  - kg: 470
+    rpm: 2250
+  - kg: 580
+    rpm: 3545
+note: "Near family of 2023 conveyor; numbers differ \u2014 own golden later or same\
+  \ structure"
+question_excerpt: Weight conveyor 0-920 kg 10-bit AI; AO 12-bit 0-4600 rpm.

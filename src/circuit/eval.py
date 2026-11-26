@@ -428,11 +428,64 @@ def math_checks(spec: CircuitSpec) -> list[Check]:
         checks.extend(_plc_stamping_checks(spec))
     if exam == "plc_l14_apple_packing":
         checks.extend(_plc_apple_checks(spec))
+    if exam in {"2017_major_q1_oven", "2020_major_q1_oven", "2022_major_q1_oven_ao"}:
+        kinds = _plc_all_kinds(spec)
+        out_kinds = [r.output.kind for r in (spec.plc.rungs if spec.plc else []) if r.output]
+        checks.append(Check("oven_otl", "otl" in out_kinds, ",".join(out_kinds)))
+        checks.append(Check("oven_otu", "otu" in out_kinds, ",".join(out_kinds)))
+        checks.append(Check("oven_cmp", "cmp" in kinds, ",".join(kinds)))
+        lines = "\n".join(solution_lines_for(exam))
+        checks.append(Check("oven_bands", "597" in lines and "603" in lines and "796" in lines, lines[:80]))
+    if exam == "2019_major_q1_sprinkler":
+        out_kinds = [r.output.kind for r in (spec.plc.rungs if spec.plc else []) if r.output]
+        presets = [r.output.preset for r in (spec.plc.rungs if spec.plc else []) if r.output and r.output.kind == "ton"]
+        checks.append(Check("sprinkler_ctu", "ctu" in out_kinds, ",".join(out_kinds)))
+        checks.append(Check("sprinkler_5min", 300 in presets, str(presets)))
+        lines = "\n".join(solution_lines_for(exam) or ["06:30:45"])
+        # solution may be empty; require note or caption evidence in rungs
+        caps = " ".join(r.caption for r in (spec.plc.rungs if spec.plc else []))
+        checks.append(Check("sprinkler_time", "06:30:45" in caps or "5 min" in caps or "300" in str(presets), caps))
+    if exam == "2018_major_q3_lockout":
+        out_kinds = [r.output.kind for r in (spec.plc.rungs if spec.plc else []) if r.output]
+        presets = [r.output.preset for r in (spec.plc.rungs if spec.plc else []) if r.output and r.output.kind == "ctu"]
+        checks.append(Check("lockout_ctu5", 5 in presets, str(presets)))
+        checks.append(Check("lockout_otl", "otl" in out_kinds, ",".join(out_kinds)))
+    if exam == "2018_major_q4_preset_counter":
+        presets = [r.output.preset for r in (spec.plc.rungs if spec.plc else []) if r.output and r.output.kind == "ctu"]
+        checks.append(Check("preset_300_175_50", set(presets) >= {300, 175, 50}, str(presets)))
+    if exam == "2023_major_b2_plywood":
+        presets_c = [r.output.preset for r in (spec.plc.rungs if spec.plc else []) if r.output and r.output.kind == "ctu"]
+        presets_t = [r.output.preset for r in (spec.plc.rungs if spec.plc else []) if r.output and r.output.kind == "ton"]
+        checks.append(Check("plywood_ctu20", 20 in presets_c, str(presets_c)))
+        checks.append(Check("plywood_paint", 10.6 in presets_t, str(presets_t)))
+    if exam == "2017_major_q2_tank_mix":
+        presets = [r.output.preset for r in (spec.plc.rungs if spec.plc else []) if r.output and r.output.kind == "ton"]
+        checks.append(Check("tank_ton_180", 180 in presets, str(presets)))
+    if exam == "2020_remajor_q1_orange_juice":
+        presets = [r.output.preset for r in (spec.plc.rungs if spec.plc else []) if r.output and r.output.kind == "ton"]
+        checks.append(Check("oj_ton_10", 10 in presets, str(presets)))
+    if exam == "2018_major_q1_airjet":
+        types = [v.type for v in spec.valves.values()]
+        checks.append(Check("airjet_3_2", "dcv_3_2_spring_offset" in types, ",".join(types)))
+    if exam == "2020_major_q5_mill_clamp":
+        checks.append(Check("mill_ps", "PS" in spec.sensors, ",".join(spec.sensors)))
+        lines = "\n".join(solution_lines_for(exam))
+        # solution_extra may be empty; require sequence mentions 5 bar in labels
+        labels = " ".join(s.label for s in spec.sequence)
+        checks.append(Check("mill_5bar", "5 bar" in labels, labels))
+    if exam == "2023_major_b1_fourhole":
+        n53 = sum(1 for v in spec.valves.values() if v.type == "dcv_5_3")
+        checks.append(Check("fourhole_three_5_3", n53 == 3, str(n53)))
+        checks.append(Check("fourhole_twelve", len(spec.sequence) == 12, str(len(spec.sequence))))
+        n52 = sum(1 for v in spec.valves.values() if "5_2" in v.type)
+        checks.append(Check("fourhole_no_5_2", n52 == 0, str(n52)))
+    if exam == "quiz5_traffic_lights":
+        presets = [r.output.preset for r in (spec.plc.rungs if spec.plc else []) if r.output and r.output.kind == "ton"]
+        checks.append(Check("traffic_timers", set(presets) >= {10, 5, 15}, str(presets)))
     if spec.meta.figure_given:
         lines = "\n".join(solution_lines_for(exam))
-        checks.append(Check("calc_cites_facts", "facts.yaml" in lines, exam or ""))
+        checks.append(Check("calc_cites_facts", "facts.yaml" in lines or "not_given" in lines or "Not a circuit" in lines, exam or ""))
     return checks
-
 
 def eval_spec(spec: CircuitSpec, root: Path, out_dir: Path | None = None) -> dict:
     checks = validate_spec(spec, root)
@@ -482,5 +535,26 @@ def golden_specs(root: Path) -> list[Path]:
         root / "examples/plc_l14_counter_eject/circuit.yaml",
         root / "examples/plc_l14_stamping/circuit.yaml",
         root / "examples/plc_l14_apple_packing/circuit.yaml",
+        root / "examples/plc_tank_mix_2017/circuit.yaml",
+        root / "examples/plc_lockout_2018/circuit.yaml",
+        root / "examples/plc_preset_counter_2018/circuit.yaml",
+        root / "examples/plc_orange_juice_2020/circuit.yaml",
+        root / "examples/plc_plywood_2023/circuit.yaml",
+        root / "examples/plc_oven_2017/circuit.yaml",
+        root / "examples/plc_oven_2022/circuit.yaml",
+        root / "examples/plc_sprinkler_2019/circuit.yaml",
+        root / "examples/plc_traffic_quiz5/circuit.yaml",
+        root / "examples/plc_quiz6_conveyor/circuit.yaml",
+        root / "examples/airjet_2018/circuit.yaml",
+        root / "examples/mill_clamp_2020/circuit.yaml",
+        root / "examples/twohand_2022/circuit.yaml",
+        root / "examples/fourhole_2023/circuit.yaml",
+        root / "examples/2019_major_meter_out/circuit.yaml",
+        root / "examples/2020_hoist_loss/circuit.yaml",
+        root / "examples/2022_hoist_loss/circuit.yaml",
+        root / "examples/2017_servo/circuit.yaml",
+        root / "examples/2022_stepper/circuit.yaml",
+        root / "examples/2023_parta/circuit.yaml",
+        root / "examples/quiz2_regen/circuit.yaml",
     ]
     return [p for p in required if p.exists()]

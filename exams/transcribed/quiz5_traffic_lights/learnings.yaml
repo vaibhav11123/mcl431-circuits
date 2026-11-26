@@ -1,0 +1,9 @@
+id: quiz5_traffic_lights
+solution_files: []
+solution: absent
+items:
+- claim: Three TON cascade for R/Y/G
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/plc_traffic_quiz5/circuit.yaml

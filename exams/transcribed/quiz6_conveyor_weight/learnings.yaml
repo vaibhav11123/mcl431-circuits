@@ -1,0 +1,9 @@
+id: quiz6_conveyor_weight
+solution_files: []
+solution: absent
+items:
+- claim: Same CMP/MOV pattern as 2023 conveyor with quiz numbers
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/plc_quiz6_conveyor/circuit.yaml

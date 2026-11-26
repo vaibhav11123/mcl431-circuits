@@ -1,0 +1,20 @@
+id: 2022_major_q4_twohand
+solution_files: []
+solution: absent
+items:
+- claim: Series two-hand start; E-stop drops both coils
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/twohand_2022/circuit.yaml
+- claim: Cylinder tags stay A/B as paper; do not rename to 1A
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/twohand_2022/circuit.yaml
+- claim: Paper asked electrical; process names cylinders so pneumatic sheet is drawn
+    for the valves the coils drive
+  source: lecture
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/twohand_2022/circuit.yaml

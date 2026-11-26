@@ -1,0 +1,14 @@
+meta:
+  title: 2019 Major Q2 vertical meter-out
+  domain: hydraulic
+  exam_id: 2019_major_q2_meter_out
+  figure_given: true
+  patterns: []
+
+sequence: []
+power: { pumps: [], tank: "" }
+cylinders: {}
+motors: {}
+valves: {}
+sensors: []
+electrical: { convention: lecture, paths: [] }

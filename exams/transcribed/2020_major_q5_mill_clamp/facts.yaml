@@ -1,0 +1,21 @@
+id: 2020_major_q5_mill_clamp
+year: 2020
+paper: Major Selfstudy 11-Jul-2020 Q5
+source: exams/pyqs/MCL431_Major_Selfstudy_11July2020A.pdf
+domain: pneumatic_plus_electrical
+identifiers:
+- 1A
+- 2A
+sequence:
+- 1A+ to 5 bar
+- 2A+
+- 2A-
+- 1A-
+deliverable_sheets:
+- pneumatic
+- electrical
+- displacement_step
+deliverable_calcs: []
+pressure_switch_bar: 5
+question_excerpt: Clamp 1A to 5 bar; feed 2A with cutter motor on; 1A must not open
+  until 2A home.

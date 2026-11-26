@@ -1,0 +1,74 @@
+meta:
+  title: 2019 Major Q1 24-hour sprinkler clock
+  domain: plc
+  exam_id: 2019_major_q1_sprinkler
+  patterns: []
+
+sequence: []
+power: { pumps: [], tank: "" }
+cylinders: {}
+motors: {}
+valves: {}
+sensors: [RESET]
+electrical: { convention: plc, paths: [] }
+
+plc:
+  subtitle_connection: "PLC connection  ·  AWSS clock"
+  subtitle_ladder: "PLC ladder  ·  1 s TON + CTU s/min/h  ·  open 06:30:45 for 5 min"
+  notes:
+    - "1 s free-running TON clocks seconds CTU. Cascade min/hour. Compare 6,30,45 then TON 300 s on solenoid. RESET clears."
+  io:
+    - { address: I0.0, device: RESET, function: "Reset clock 00:00:00" }
+    - { address: Q0.0, device: SPRINKLE, function: "Water solenoid" }
+  field:
+    - title: Clock
+      lines: ["T4:0 1s", "C5:0 sec", "C5:1 min", "C5:2 hour", "open 06:30:45", "T4:1 300s"]
+  rungs:
+    - id: 1
+      caption: 1 s base timer
+      series:
+        - { kind: contact, tag: I0.0, label: "I0.0 RESET", sense: "NC" }
+        - { kind: contact, tag: "T4:0/DN", label: "T4:0/DN", sense: "NC" }
+      output: { kind: ton, tag: T4:0, preset: 1 }
+    - id: 2
+      caption: Seconds CTU
+      series:
+        - { kind: contact, tag: "T4:0/DN", label: "T4:0/DN", sense: "NO" }
+      output: { kind: ctu, tag: C5:0, preset: 60 }
+    - id: 3
+      caption: Minutes CTU
+      series:
+        - { kind: contact, tag: "C5:0/DN", label: "C5:0/DN", sense: "NO" }
+      output: { kind: ctu, tag: C5:1, preset: 60 }
+    - id: 4
+      caption: Hours CTU
+      series:
+        - { kind: contact, tag: "C5:1/DN", label: "C5:1/DN", sense: "NO" }
+      output: { kind: ctu, tag: C5:2, preset: 24 }
+    - id: 5
+      caption: "At 06:30:45 start 5 min sprinkle"
+      series:
+        - { kind: contact, tag: "C5:2/ACC", label: "hour≈6", sense: "NO" }
+        - { kind: contact, tag: "C5:1/ACC", label: "min≈30", sense: "NO" }
+        - { kind: contact, tag: "C5:0/ACC", label: "sec≈45", sense: "NO" }
+      output: { kind: ton, tag: T4:1, preset: 300 }
+    - id: 6
+      caption: Sprinkler solenoid
+      series:
+        - { kind: contact, tag: "T4:1/TT", label: "T4:1/TT", sense: "NO" }
+      output: { kind: coil, tag: Q0.0, label: "Q0.0 SPRINKLE" }
+    - id: 7
+      caption: RESET seconds
+      series:
+        - { kind: contact, tag: I0.0, label: "I0.0 RESET", sense: "NO" }
+      output: { kind: res, tag: C5:0, label: "RES C5:0" }
+    - id: 8
+      caption: RESET minutes
+      series:
+        - { kind: contact, tag: I0.0, label: "I0.0 RESET", sense: "NO" }
+      output: { kind: res, tag: C5:1, label: "RES C5:1" }
+    - id: 9
+      caption: RESET hours
+      series:
+        - { kind: contact, tag: I0.0, label: "I0.0 RESET", sense: "NO" }
+      output: { kind: res, tag: C5:2, label: "RES C5:2" }

@@ -4,7 +4,9 @@ You write a `circuit.yaml`. Python draws and checks. It does not invent extra va
 
 ## 1. Read how the paper asks
 
-Open [`exams/index.yaml`](../exams/index.yaml). If a transcribed PYQ matches, start from that folder under [`exams/transcribed/`](../exams/transcribed/) (`facts.yaml`, `deliverables.yaml`). Use the paper’s identifiers (`HC1` vs `1A`), not a default guess.
+Open [`exams/index.yaml`](../exams/index.yaml). If a transcribed PYQ matches, start from that folder under [`exams/transcribed/`](../exams/transcribed/) (`facts.yaml`, `deliverables.yaml`, and `learnings.yaml` when present). Use the paper’s identifiers (`HC1` vs `1A`), not a default guess.
+
+**Evidence rank** when a solution scan disagrees with the studio: (1) lecture atlas and `calc.py`, (2) the question text, (3) a solution scan for structure the question left open, (4) an OpenPLC/Sanfoundry twin only when no scan exists. Never paste a solution paragraph into `solution.txt`. A coordinate that appears only in a scan is not adopted.
 
 If the paper is not in the index and you have a local PDF or scan, run ingest first (optional install):
 
@@ -59,4 +61,8 @@ Eval PASS is not handwriting. Check the sheet as an exam marker would:
 - Hydraulic-only papers skip electrical/phase sheets; electro papers write both.
 - Outputs go to `output/<exam_id>/`.
 - **Strip-feed:** H1 lamp on a main path; start contacts S1/S3, not JOB.
+- **Air jet (3Z):** atlas `dcv_3_2_spring_offset` — no nozzle glyph.
+- **Two-hand press:** series start contacts; emergency-stop in every path; electrical required.
+- **Mill clamp:** PS 5 bar; 1A stays clamped until 2A is home; cutter motor stays on during 2A return.
+- **Oven PLC:** latch heater between low and high band (OTL/OTU) — not a single compare window.
 - Missing atlas crop (`dcv_5_3` etc.) → stop. Do not draw a generic ISO box.

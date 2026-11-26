@@ -1,0 +1,1 @@
+Stepper 1.8 deg; gears 3:1 and 5:1; pitch 5 mm; encoder 720 slots.

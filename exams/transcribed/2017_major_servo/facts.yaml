@@ -1,0 +1,23 @@
+id: 2017_major_servo
+year: 2017
+paper: Major 22-Nov-2017 servo block (shared 2020 re-major Q2)
+source: exams/pyqs/MCL431_Major-22Nov2017.pdf
+domain: cnc_numeric
+figure_given: true
+identifiers: []
+deliverable_sheets: []
+deliverable_calcs:
+- control resolution
+- motor rpm
+- encoder frequency
+- accuracy
+given:
+  pitch_mm: 6.25
+  encoder_slots: 200
+  x0: 87.5
+  y0: 35.0
+  feed: 200
+  x1: 25.0
+  y1: 180.0
+question_excerpt: DC servomotor; pitch 6.25 mm; encoder 200 slots; N15 G01 X25 Y180
+  F200.

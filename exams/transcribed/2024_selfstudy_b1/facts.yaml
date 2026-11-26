@@ -1,0 +1,26 @@
+id: 2024_selfstudy_b1
+paper: 2024 self study minor B1
+source: exams/pyqs/2024 self study minor.jpg
+domain: hydraulic_plus_electrical
+readable: true
+identifiers:
+- HC1
+- HC2
+- HM1
+- START
+deliverable_sheets:
+- hydraulic
+- electrical
+deliverable_calcs: []
+same_as_pattern: 2023_selfstudy_b1
+cylinders:
+  HC1:
+    bore_mm: 45
+    rod_mm: 22.5
+    force_kn: 2.5
+  HC2:
+    bore_mm: 40
+    rod_mm: 20
+    approach_cm: 45
+question_excerpt: Grinding B1 family with HC1 45/22.5 2.5 kN; HC2 40/20 approach 45
+  cm.

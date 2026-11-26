@@ -1,0 +1,14 @@
+id: 2017_major_q2_tank_mix
+solution_files: []
+solution: absent
+items:
+- claim: TON 3 min = 180 s for agitate motor
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/plc_tank_mix_2017/circuit.yaml
+- claim: Do not invent heater or second conveyor
+  source: lecture
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/plc_tank_mix_2017/circuit.yaml

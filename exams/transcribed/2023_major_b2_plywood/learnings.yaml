@@ -1,0 +1,9 @@
+id: 2023_major_b2_plywood
+solution_files: []
+solution: absent
+items:
+- claim: CTU 20; paint TON 10.6; blink two 1 s timers
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/plc_plywood_2023/circuit.yaml

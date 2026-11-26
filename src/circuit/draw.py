@@ -99,7 +99,7 @@ def write_solution(spec: CircuitSpec, dest: Path) -> Path:
             "  PS on the 2A1+ cap line; 2B2 is position only",
             "  1Y2 is K5, not a raw 2B1 (2B1 is already true at rest)",
         ]
-    if spec.meta.exam_id in {"Fall17-Minor2", "MCL431_Minor2_2017-18_Sem1"}:
+    if spec.meta.exam_id in {"Fall17-Minor2", "MCL431_Minor2_2017-18_Sem1", "2023_major_b1_fourhole"}:
         lines += [
             "",
             "Positions from 1A/2A end sensors (no extra table sensors)",
