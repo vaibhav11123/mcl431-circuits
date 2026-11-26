@@ -1,0 +1,6 @@
+sheets:
+- plc_connection
+- plc_ladder
+calcs:
+- 12-bit AO for 2 kW and 8 kW
+- 10-bit AI bands

@@ -1,0 +1,16 @@
+id: 2019_major_q1_sprinkler
+year: 2019
+paper: Major 21-Nov-2019 Q1
+source: exams/pyqs/MCL431_Major-21Nov2019.pdf
+domain: plc
+identifiers:
+- RESET
+deliverable_sheets:
+- plc_connection
+- plc_ladder
+deliverable_calcs: []
+plc:
+  open_at: 06:30:45
+  open_duration_min: 5
+question_excerpt: 24-Hr clock AWSS; reset to 00:00:00; open solenoid at 06:30:45 for
+  5 minutes.

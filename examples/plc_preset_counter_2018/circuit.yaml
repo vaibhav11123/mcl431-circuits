@@ -1,0 +1,74 @@
+meta:
+  title: 2018 Major Q4 variable preset counter
+  domain: plc
+  exam_id: 2018_major_q4_preset_counter
+  patterns: []
+
+sequence: []
+power: { pumps: [], tank: "" }
+cylinders: {}
+motors: {}
+valves: {}
+sensors: [LS1, SW_A, SW_B, SW_C, RESET]
+electrical: { convention: plc, paths: [] }
+
+plc:
+  subtitle_connection: "PLC connection  ·  preset A/B/C"
+  subtitle_ladder: "PLC ladder  ·  CTU 300/175/50  ·  last switch wins"
+  notes:
+    - "Three CTU with presets 300/175/50. Last closed product switch selects active counter. Lamp on DN."
+  io:
+    - { address: I0.0, device: LS1, function: "Part count pulse" }
+    - { address: I0.1, device: SW_A, function: "Product A preset 300" }
+    - { address: I0.2, device: SW_B, function: "Product B preset 175" }
+    - { address: I0.3, device: SW_C, function: "Product C preset 50" }
+    - { address: I0.4, device: RESET, function: "Reset count" }
+    - { address: Q0.0, device: FULL_LAMP, function: "Rack full" }
+  field:
+    - title: Presets
+      lines: ["A=300", "B=175", "C=50"]
+  rungs:
+    - id: 1
+      caption: Count A (300) when SW_A
+      series:
+        - { kind: contact, tag: I0.1, label: "I0.1 SW_A", sense: "NO" }
+        - { kind: contact, tag: I0.0, label: "I0.0 LS1", sense: "NO" }
+        - { kind: ons, tag: B3:0/0, label: "ONS" }
+      output: { kind: ctu, tag: C5:0, preset: 300 }
+    - id: 2
+      caption: Count B (175) when SW_B (later rung wins if both)
+      series:
+        - { kind: contact, tag: I0.2, label: "I0.2 SW_B", sense: "NO" }
+        - { kind: contact, tag: I0.0, label: "I0.0 LS1", sense: "NO" }
+        - { kind: ons, tag: B3:0/1, label: "ONS" }
+      output: { kind: ctu, tag: C5:1, preset: 175 }
+    - id: 3
+      caption: Count C (50) when SW_C
+      series:
+        - { kind: contact, tag: I0.3, label: "I0.3 SW_C", sense: "NO" }
+        - { kind: contact, tag: I0.0, label: "I0.0 LS1", sense: "NO" }
+        - { kind: ons, tag: B3:0/2, label: "ONS" }
+      output: { kind: ctu, tag: C5:2, preset: 50 }
+    - id: 4
+      caption: Full lamp any DN
+      series:
+        - { kind: contact, tag: "C5:0/DN", label: "C5:0/DN", sense: "NO" }
+      branch:
+        - { kind: contact, tag: "C5:1/DN", label: "C5:1/DN", sense: "NO" }
+        - { kind: contact, tag: "C5:2/DN", label: "C5:2/DN", sense: "NO" }
+      output: { kind: coil, tag: Q0.0, label: "Q0.0 FULL_LAMP" }
+    - id: 5
+      caption: Reset all
+      series:
+        - { kind: contact, tag: I0.4, label: "I0.4 RESET", sense: "NO" }
+      output: { kind: res, tag: C5:0, label: "RES C5:0" }
+    - id: 6
+      caption: Reset B
+      series:
+        - { kind: contact, tag: I0.4, label: "I0.4 RESET", sense: "NO" }
+      output: { kind: res, tag: C5:1, label: "RES C5:1" }
+    - id: 7
+      caption: Reset C
+      series:
+        - { kind: contact, tag: I0.4, label: "I0.4 RESET", sense: "NO" }
+      output: { kind: res, tag: C5:2, label: "RES C5:2" }

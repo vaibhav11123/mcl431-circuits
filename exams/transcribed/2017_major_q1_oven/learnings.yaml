@@ -1,0 +1,14 @@
+id: 2017_major_q1_oven
+solution_files: []
+solution: absent
+items:
+- claim: Heater seal between low and high band; single cmp window is not enough
+  source: lecture
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/plc_oven_2017/circuit.yaml
+- claim: Addresses stay slot 1 and N7:4 as printed
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/plc_oven_2017/circuit.yaml

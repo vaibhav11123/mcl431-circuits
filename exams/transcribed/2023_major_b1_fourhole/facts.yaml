@@ -1,0 +1,35 @@
+id: 2023_major_b1_fourhole
+year: 2023
+paper: Major 07-May-2023 B1
+source: exams/pyqs/Major_07May2023.pdf
+domain: pneumatic_plus_electrical
+identifiers:
+- 1A
+- 2A
+- 3A
+- START
+sequence:
+- hole1
+- index
+- hole3
+- index
+- hole4
+- index
+- hole2
+- return
+hole_order:
+- 1
+- 3
+- 4
+- 2
+deliverable_sheets:
+- pneumatic
+- electrical
+- displacement_step
+deliverable_calcs: []
+sensors:
+  1A: proximity
+  2A: proximity
+  3A: limit
+question_excerpt: Four-hole drill; order (1)(3)(4)(2); prox on 1A/2A; limits on 3A;
+  three electrical bands.

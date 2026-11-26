@@ -1,0 +1,28 @@
+id: 2020_major_q1_oven
+year: 2020
+paper: Major Selfstudy 11-Jul-2020 Q1
+source: exams/pyqs/MCL431_Major_Selfstudy_11July2020A.pdf
+domain: plc
+same_as_pattern: 2017_major_q1_oven
+identifiers:
+- S1
+- A
+- B
+deliverable_sheets:
+- plc_connection
+- plc_ladder
+deliverable_calcs: []
+plc:
+  ai:
+    eng_max: 1024
+    bits: 10
+    slot: 1
+  display: N7:4
+  bands:
+    '600':
+    - 597
+    - 603
+    '800':
+    - 796
+    - 804
+question_excerpt: Same oven setpoint as 2017 Major Q1.

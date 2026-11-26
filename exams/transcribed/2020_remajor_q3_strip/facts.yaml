@@ -1,0 +1,22 @@
+id: 2020_remajor_q3_strip
+year: 2020
+paper: Re-Major 03-Jan-2020 Q3
+source: exams/pyqs/MCL431_ReMajor-3Jan2020.pdf
+domain: pneumatic_plus_electrical
+same_as: 2023_minor2_q1
+identifiers:
+- 1A
+- 2A
+- S1
+- S3
+sequence:
+- 1A+
+- 2A-
+- 1A-
+- 2A+
+deliverable_sheets:
+- pneumatic
+- electrical
+deliverable_calcs: []
+question_excerpt: Strip feed with S1, S3, optical indicator — same family as 2023
+  Minor-2 Q1.

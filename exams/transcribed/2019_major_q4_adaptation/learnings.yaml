@@ -1,0 +1,9 @@
+id: 2019_major_q4_adaptation
+solution_files: []
+solution: absent
+items:
+- claim: Not a circuit sheet; one-line refusal
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: solution.txt

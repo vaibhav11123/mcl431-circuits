@@ -1,0 +1,14 @@
+meta:
+  title: 2019 Major Q4 not a sheet
+  domain: hydraulic
+  exam_id: 2019_major_q4_adaptation
+  figure_given: true
+  patterns: []
+
+sequence: []
+power: { pumps: [], tank: "" }
+cylinders: {}
+motors: {}
+valves: {}
+sensors: []
+electrical: { convention: lecture, paths: [] }

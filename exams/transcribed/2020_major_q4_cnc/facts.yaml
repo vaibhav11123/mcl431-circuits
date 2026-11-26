@@ -1,0 +1,11 @@
+id: 2020_major_q4_cnc
+year: 2020
+paper: Major Selfstudy 11-Jul-2020 Q4
+source: exams/pyqs/MCL431_Major_Selfstudy_11July2020A.pdf
+domain: cnc_program
+figure_given: true
+identifiers: []
+deliverable_sheets: []
+deliverable_calcs:
+- part_program
+question_excerpt: G73 turning; 3 roughing passes; finish allowance 0.03 in.

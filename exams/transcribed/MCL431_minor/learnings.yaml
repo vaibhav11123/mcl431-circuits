@@ -1,0 +1,14 @@
+id: MCL431_minor
+solution_files: []
+solution: absent
+items:
+- claim: grinding calc; locked 1.6 kN-cm; reject 6.5 kN-m OCR twin
+  source: question
+  lecture_ok: true
+  disposition: keep_locked
+  lands_in: exams/transcribed/MCL431_minor
+- claim: 6.5 kN-m OCR twin rejected; keep 1.6 kN-cm locked facts
+  source: lecture
+  lecture_ok: true
+  disposition: keep_locked
+  lands_in: exams/transcribed/MCL431_minor/facts.yaml

@@ -1,0 +1,16 @@
+id: quiz2_regen
+paper: Quiz 2 Hydraulic
+source: exams/pyqs/Quiz 2 - Hydraulic Circuit Design and Analysis.jpeg.jpg
+domain: hydraulic
+figure_given: true
+readable: true
+deliverable_sheets: []
+deliverable_calcs:
+- regen extend/retract speed force power
+- pipe diameter
+given:
+  prv_bar: 58
+  ap_cm2: 15
+  ar_cm2: 4
+  q_lpm: 30
+question_excerpt: Regen circuit RV 58 bar Ap 15 Ar 4 cm2 Q 30 lpm.

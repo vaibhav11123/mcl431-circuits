@@ -1,0 +1,9 @@
+id: 2018_major_q4_preset_counter
+solution_files: []
+solution: absent
+items:
+- claim: Three CTU presets; last selector wins; preset stays int
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/plc_preset_counter_2018/circuit.yaml

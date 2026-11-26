@@ -1,0 +1,17 @@
+id: 2020_remajor_q1_orange_juice
+year: 2020
+paper: Re-Major 03-Jan-2020 Q1
+source: exams/pyqs/MCL431_ReMajor-3Jan2020.pdf
+domain: plc
+identifiers:
+- START
+- STOP
+deliverable_sheets:
+- plc_connection
+- plc_ladder
+deliverable_calcs: []
+plc:
+  pump3_ton_s: 10
+  pumps_together: true
+question_excerpt: Tanks 1/2 pumps only together; tank 3 high stops pumps; conveyor
+  stop/start; pump 3 for 10 s when container present.

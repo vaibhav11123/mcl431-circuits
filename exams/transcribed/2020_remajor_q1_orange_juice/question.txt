@@ -1,0 +1,1 @@
+Tanks 1/2 pumps only together; tank 3 high stops pumps; conveyor stop/start; pump 3 for 10 s when container present.

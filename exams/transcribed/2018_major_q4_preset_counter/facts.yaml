@@ -1,0 +1,22 @@
+id: 2018_major_q4_preset_counter
+year: 2018
+paper: Major 17-Nov-2018 Q4
+source: exams/pyqs/MCL431_Major-17Nov2018.pdf
+domain: plc
+identifiers:
+- LS1
+- A
+- B
+- C
+- RESET
+deliverable_sheets:
+- plc_connection
+- plc_ladder
+deliverable_calcs: []
+plc:
+  presets:
+    A: 300
+    B: 175
+    C: 50
+question_excerpt: Variable CTU presets 300/175/50 via product switches; last closed
+  wins; lamp when full.

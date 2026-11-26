@@ -1,0 +1,9 @@
+id: 2022_major_q2_stepper
+solution_files: []
+solution: absent
+items:
+- claim: Stepper relation from L21 notes; Chegg not a source
+  source: lecture
+  lecture_ok: true
+  disposition: adopt
+  lands_in: src/circuit/calc.py

@@ -1,0 +1,1 @@
+Mill circular contour with G41/42/43; drill 0.500 with G81; tools T01–T05 listed.

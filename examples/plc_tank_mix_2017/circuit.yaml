@@ -1,0 +1,77 @@
+meta:
+  title: 2017 Major Q2 tank fill-agitate-empty
+  domain: plc
+  exam_id: 2017_major_q2_tank_mix
+  patterns: []
+
+sequence: []
+power: { pumps: [], tank: "" }
+cylinders: {}
+motors: {}
+valves: {}
+sensors: [START, STOP, EMPTY, FULL]
+electrical: { convention: plc, paths: [] }
+
+plc:
+  subtitle_connection: "PLC connection  ·  tank mix  ·  2017 Major Q2"
+  subtitle_ladder: "PLC ladder  ·  fill / agitate 180 s / empty"
+  notes:
+    - "START/STOP latch. Sol A fills until FULL. TON 180 s agitate. Sol B empties until EMPTY opens."
+  io:
+    - { address: I0.0, device: START, function: "Start (NO)" }
+    - { address: I0.1, device: STOP, function: "Stop (NC in ladder)" }
+    - { address: I0.2, device: EMPTY, function: "Low level (closes when not empty)" }
+    - { address: I0.3, device: FULL, function: "High level" }
+    - { address: Q0.0, device: SOL_A, function: "Fill solenoid A" }
+    - { address: Q0.1, device: AGITATE, function: "Agitate motor" }
+    - { address: Q0.2, device: SOL_B, function: "Empty solenoid B" }
+  field:
+    - title: Operator
+      lines: ["START / STOP"]
+    - title: Levels
+      lines: ["EMPTY", "FULL"]
+    - title: Outputs
+      lines: ["SOL_A", "AGITATE", "SOL_B", "T4:0 PT=180s"]
+  rungs:
+    - id: 1
+      caption: START/STOP latch
+      series:
+        - { kind: contact, tag: I0.0, label: "I0.0 START", sense: "NO" }
+        - { kind: contact, tag: I0.1, label: "I0.1 STOP", sense: "NC" }
+      branch:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+      output: { kind: coil, tag: M0.0, label: "M0.0 RUN" }
+    - id: 2
+      caption: Fill SOL_A until FULL
+      series:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+        - { kind: contact, tag: I0.3, label: "I0.3 FULL", sense: "NC" }
+        - { kind: contact, tag: "T4:0/DN", label: "T4:0/DN", sense: "NC" }
+        - { kind: contact, tag: M0.2, label: "M0.2 emptying", sense: "NC" }
+      output: { kind: coil, tag: Q0.0, label: "Q0.0 SOL_A" }
+    - id: 3
+      caption: Agitate TON 180 s after FULL
+      series:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+        - { kind: contact, tag: I0.3, label: "I0.3 FULL", sense: "NO" }
+        - { kind: contact, tag: M0.2, label: "M0.2 emptying", sense: "NC" }
+      output: { kind: ton, tag: T4:0, preset: 180 }
+    - id: 4
+      caption: Agitate motor while timing
+      series:
+        - { kind: contact, tag: "T4:0/TT", label: "T4:0/TT", sense: "NO" }
+      output: { kind: coil, tag: Q0.1, label: "Q0.1 AGITATE" }
+    - id: 5
+      caption: Emptying memory after agitate done
+      series:
+        - { kind: contact, tag: "T4:0/DN", label: "T4:0/DN", sense: "NO" }
+        - { kind: contact, tag: I0.2, label: "I0.2 EMPTY", sense: "NO" }
+      branch:
+        - { kind: contact, tag: M0.2, label: "M0.2 emptying", sense: "NO" }
+      output: { kind: coil, tag: M0.2, label: "M0.2 emptying" }
+    - id: 6
+      caption: SOL_B empty until EMPTY opens
+      series:
+        - { kind: contact, tag: M0.2, label: "M0.2 emptying", sense: "NO" }
+        - { kind: contact, tag: I0.2, label: "I0.2 EMPTY", sense: "NO" }
+      output: { kind: coil, tag: Q0.2, label: "Q0.2 SOL_B" }

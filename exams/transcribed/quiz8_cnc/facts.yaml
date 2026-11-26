@@ -1,0 +1,26 @@
+id: quiz8_cnc
+paper: Quiz 8 CNC
+source: exams/pyqs/Quiz 8 - CnC Part Programming.jpeg.jpg
+domain: cnc_program
+readable: true
+figure_given: true
+deliverable_sheets: []
+deliverable_calcs:
+- part_program
+given:
+  blank:
+  - 4.0
+  - 2.5
+  - 0.15
+  R:
+  - 0.05
+  - 0.25
+  - 0.15
+  - 0.14
+  - 0.2
+  - 0.28
+  tool: T2 0.250 endmill
+  sfm: 90
+  feed_ipt: 0.002
+question_excerpt: Circular interpolation finish path program 00405; some dimensions
+  on figure.

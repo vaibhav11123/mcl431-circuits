@@ -1,0 +1,83 @@
+meta:
+  title: 2017/2020 Major oven setpoint
+  domain: plc
+  exam_id: 2017_major_q1_oven
+  patterns: []
+
+sequence: []
+power: { pumps: [], tank: "" }
+cylinders: {}
+motors: {}
+valves: {}
+sensors: [S1, A, B]
+electrical: { convention: plc, paths: [] }
+
+plc:
+  subtitle_connection: "PLC connection  ·  oven setpoint"
+  subtitle_ladder: "PLC ladder  ·  band latch 597/603 and 796/804"
+  notes:
+    - "S1 enables. A→600 band, B→800 band. OTL heater at low; OTU at high. Display N7:4."
+  io:
+    - { address: I0.0, device: S1, function: "System ON" }
+    - { address: I0.1, device: A, function: "Select 600 F" }
+    - { address: I0.2, device: B, function: "Select 800 F" }
+    - { address: "AI Slot-1", device: Temp, function: "0–1024 F 10-bit" }
+    - { address: Q0.0, device: HEATER, function: "Heater contactor" }
+  field:
+    - title: Bands
+      lines: ["600: on≤597 off≥603", "800: on≤796 off≥804", "N7:4 display"]
+  scaling:
+    ai: { eng_max: 1024, bits: 10, slot: 1, unit: F }
+    checkpoints: { ai_597: 597, ai_603: 603, ai_796: 796, ai_804: 804 }
+  rungs:
+    - id: 1
+      caption: Select 600
+      series:
+        - { kind: contact, tag: I0.1, label: "I0.1 A", sense: "NO" }
+      output: { kind: otl, tag: M0.1, label: "M0.1 SP600" }
+    - id: 2
+      caption: Clear 600 when B
+      series:
+        - { kind: contact, tag: I0.2, label: "I0.2 B", sense: "NO" }
+      output: { kind: otu, tag: M0.1, label: "M0.1 SP600" }
+    - id: 3
+      caption: Select 800
+      series:
+        - { kind: contact, tag: I0.2, label: "I0.2 B", sense: "NO" }
+      output: { kind: otl, tag: M0.2, label: "M0.2 SP800" }
+    - id: 4
+      caption: Clear 800 when A
+      series:
+        - { kind: contact, tag: I0.1, label: "I0.1 A", sense: "NO" }
+      output: { kind: otu, tag: M0.2, label: "M0.2 SP800" }
+    - id: 5
+      caption: "600 band — latch heater at low"
+      series:
+        - { kind: contact, tag: I0.0, label: "I0.0 S1", sense: "NO" }
+        - { kind: contact, tag: M0.1, label: "M0.1 SP600", sense: "NO" }
+        - { kind: cmp, op: "≤", left: AI, right_from: ai_597 }
+      output: { kind: otl, tag: M0.3, label: "M0.3 HEAT" }
+    - id: 6
+      caption: "600 band — unlatch at high"
+      series:
+        - { kind: contact, tag: M0.1, label: "M0.1 SP600", sense: "NO" }
+        - { kind: cmp, op: "≥", left: AI, right_from: ai_603 }
+      output: { kind: otu, tag: M0.3, label: "M0.3 HEAT" }
+    - id: 7
+      caption: "800 band — latch at low"
+      series:
+        - { kind: contact, tag: I0.0, label: "I0.0 S1", sense: "NO" }
+        - { kind: contact, tag: M0.2, label: "M0.2 SP800", sense: "NO" }
+        - { kind: cmp, op: "≤", left: AI, right_from: ai_796 }
+      output: { kind: otl, tag: M0.3, label: "M0.3 HEAT" }
+    - id: 8
+      caption: "800 band — unlatch at high"
+      series:
+        - { kind: contact, tag: M0.2, label: "M0.2 SP800", sense: "NO" }
+        - { kind: cmp, op: "≥", left: AI, right_from: ai_804 }
+      output: { kind: otu, tag: M0.3, label: "M0.3 HEAT" }
+    - id: 9
+      caption: Heater coil
+      series:
+        - { kind: contact, tag: M0.3, label: "M0.3 HEAT", sense: "NO" }
+      output: { kind: coil, tag: Q0.0, label: "Q0.0 HEATER" }

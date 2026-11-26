@@ -12,9 +12,17 @@ description: Turn an MCL 431 exam question into lecture-locked hydraulic/electri
    - **No index hit, and the user handed a local PDF or scan:** run `python -m circuit ingest <path>` first (needs `pip install -e ".[ingest]"`). The parser may read `exams/ingest/<stem>/document.md` and `draft.yaml` (or `lecture/ingest/` for notes). Copy identifiers, tables, quantities, and sequence tokens (`1A+`, including prose-inferred motions). Do not promote `domain_guess` to `meta.domain` unless the question text says the domain. Do not turn a figure note or bbox into an atlas id. Run `python -m circuit promote <ingest_dir>` for a `proposal/` checklist; promoting into `exams/transcribed/` or the atlas is still a human edit.
 2. If domain is **not** PLC: read `lecture/atlas.yaml`. You may only use those symbol IDs.
    If domain **is** PLC: skip atlas glyphs; fill a `plc:` block (see below). Notes L11–L13 under `lecture/ingest/` are searchable reference only.
-3. Launch **four parallel** Cursor Task subagents in one turn. They return YAML fragments only. They must not draw and must not invent atlas IDs.
+3. Branch before the fan-out, then launch only the subagents that deliverable needs. They return YAML fragments only. They must not draw and must not invent atlas IDs.
 
-### Non-PLC papers
+| Paper kind | Subagents |
+| --- | --- |
+| `domain: plc` | Parser, PLC-I/O, PLC-ladder, Calc |
+| Hydraulic / pneumatic / electro sheets | Parser, Hydraulic/pneumatic, Electrical, Calc |
+| `figure_given` or numeric CNC (servo/stepper) | Parser, Calc only |
+| Part program (G-code) | Parser only → `not_given` if any coordinate missing from facts |
+| Prose / graph (not a sheet) | Parser only → one refusal line in solution |
+
+### Non-PLC papers (when sheets are required)
 
 | Subagent | Returns |
 | --- | --- |
@@ -29,7 +37,7 @@ description: Turn an MCL 431 exam question into lecture-locked hydraulic/electri
 | --- | --- |
 | Parser | domain plc, deliverables (`plc_connection`, `plc_ladder`), identifiers |
 | PLC-I/O | `plc.io` rows + `plc.field` boxes (addresses from paper or suitable Micrologix-style) |
-| PLC-ladder | `plc.rungs` with kinds `contact`, `coil`, `mov`, `cmp`, `ctu`, `ton`, `res`, `ons`, `otl`, `otu` |
+| PLC-ladder | `plc.rungs` with kinds `contact`, `coil`, `mov`, `cmp`, `ctu`, `ton`, `res`, `ons`, `otl`, `otu`, `block` |
 | Calc | analog counts via `plc_counts` / paper presets, or `not_given` |
 
 4. Merge into `circuit.yaml`. Conflicts: question domain + atlas (or paper PLC addresses) win.
@@ -65,5 +73,8 @@ Eval PASS is not handwriting. After draw, check the sheet as an exam marker woul
 - Outputs go to `output/<exam_id>/`.
 - **Strip-feed:** H1 lamp on a main path; start contacts S1/S3, not JOB.
 - **Emboss:** PS≥4 bar holds 2A1; do not retract on 2B2.
+- **Air jet 3Z:** `dcv_3_2_spring_offset` — no nozzle glyph.
+- **Two-hand:** series start; ESTOP drops both coils.
+- **Mill clamp:** PS 5 bar; 1A waits for 2A home.
 - **Pneumatic air (notes p6, p14, p22):** 5/2 for air (4/2 is hydraulics). Port 1 = P supply, 2/4 = actuator, 3/5 = exhaust with open triangles and no continuing pipe. Cylinder over the valve; cap → 4, rod jog → 2. Solenoid boxes flush on the envelopes (no stem). Label contacts with the tag (`K5`), not `!K5`. FRL is on the supply path but has no atlas glyph — name it in the BOM, do not invent a stamp.
 - Missing atlas crop (`dcv_5_3` etc.) → stop. Do not draw a generic ISO box.

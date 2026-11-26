@@ -1,0 +1,23 @@
+id: 2019_major_q2_meter_out
+year: 2019
+paper: Major 21-Nov-2019 Q2
+source: exams/pyqs/MCL431_Major-21Nov2019.pdf
+domain: hydraulic
+figure_given: true
+identifiers:
+- P1
+deliverable_sheets: []
+deliverable_calcs:
+- extend speed
+- P1 loaded
+- P1 no load
+- retract FCV lpm
+given:
+  bore_mm: 50
+  rod_mm: 32
+  load_tonne: 3
+  pump_lpm: 8
+  relief_bar: 180
+  meter_out_lpm: 4
+question_excerpt: Vertical lift 3 t; bore 50 rod 32; pump 8 lpm; RV 180 bar; extend
+  meter-out 4 lpm.

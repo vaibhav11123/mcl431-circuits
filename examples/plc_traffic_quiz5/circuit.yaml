@@ -1,0 +1,68 @@
+meta:
+  title: Quiz 5 traffic lights
+  domain: plc
+  exam_id: quiz5_traffic_lights
+  patterns: []
+
+sequence: []
+power: { pumps: [], tank: "" }
+cylinders: {}
+motors: {}
+valves: {}
+sensors: [START, STOP]
+electrical: { convention: plc, paths: [] }
+
+plc:
+  subtitle_connection: "PLC connection  ·  traffic lights"
+  subtitle_ladder: "PLC ladder  ·  R10 Y5 G15"
+  notes: ["Red 10 s, yellow 5 s, green 15 s, repeat until STOP."]
+  io:
+    - { address: I0.0, device: START, function: "Start cycle" }
+    - { address: I0.1, device: STOP, function: "Stop" }
+    - { address: Q0.0, device: RED, function: "Red" }
+    - { address: Q0.1, device: YELLOW, function: "Yellow" }
+    - { address: Q0.2, device: GREEN, function: "Green" }
+  field:
+    - title: Timers
+      lines: ["T4:0=10s", "T4:1=5s", "T4:2=15s"]
+  rungs:
+    - id: 1
+      caption: Latch
+      series:
+        - { kind: contact, tag: I0.0, label: "I0.0 START", sense: "NO" }
+        - { kind: contact, tag: I0.1, label: "I0.1 STOP", sense: "NC" }
+      branch:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+      output: { kind: coil, tag: M0.0, label: "M0.0 RUN" }
+    - id: 2
+      caption: Red TON 10
+      series:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+        - { kind: contact, tag: "T4:2/DN", label: "T4:2/DN", sense: "NC" }
+      output: { kind: ton, tag: T4:0, preset: 10 }
+    - id: 3
+      caption: Red lamp
+      series:
+        - { kind: contact, tag: "T4:0/TT", label: "T4:0/TT", sense: "NO" }
+      output: { kind: coil, tag: Q0.0, label: "Q0.0 RED" }
+    - id: 4
+      caption: Yellow TON 5 after red
+      series:
+        - { kind: contact, tag: "T4:0/DN", label: "T4:0/DN", sense: "NO" }
+        - { kind: contact, tag: "T4:1/DN", label: "T4:1/DN", sense: "NC" }
+      output: { kind: ton, tag: T4:1, preset: 5 }
+    - id: 5
+      caption: Yellow lamp
+      series:
+        - { kind: contact, tag: "T4:1/TT", label: "T4:1/TT", sense: "NO" }
+      output: { kind: coil, tag: Q0.1, label: "Q0.1 YELLOW" }
+    - id: 6
+      caption: Green TON 15 after yellow
+      series:
+        - { kind: contact, tag: "T4:1/DN", label: "T4:1/DN", sense: "NO" }
+      output: { kind: ton, tag: T4:2, preset: 15 }
+    - id: 7
+      caption: Green lamp
+      series:
+        - { kind: contact, tag: "T4:2/TT", label: "T4:2/TT", sense: "NO" }
+      output: { kind: coil, tag: Q0.2, label: "Q0.2 GREEN" }

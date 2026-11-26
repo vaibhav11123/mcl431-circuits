@@ -1,0 +1,9 @@
+id: 2020_remajor_q1_orange_juice
+solution_files: []
+solution: absent
+items:
+- claim: Interlock pumps; TON 10 s on pump 3; no extra heater
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/plc_orange_juice_2020/circuit.yaml

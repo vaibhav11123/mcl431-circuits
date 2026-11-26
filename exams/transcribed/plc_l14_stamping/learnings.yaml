@@ -1,0 +1,9 @@
+id: plc_l14_stamping
+solution_files: []
+solution: absent
+items:
+- claim: L14 stamp
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: exams/transcribed/plc_l14_stamping

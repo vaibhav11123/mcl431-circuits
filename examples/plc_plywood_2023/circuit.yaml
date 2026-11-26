@@ -1,0 +1,106 @@
+meta:
+  title: 2023 Major B2 plywood stack paint
+  domain: plc
+  exam_id: 2023_major_b2_plywood
+  patterns: []
+
+sequence: []
+power: { pumps: [], tank: "" }
+cylinders: {}
+motors: {}
+valves: {}
+sensors: ["ON", STOP, STACK_PULSE, POS_B, POS_C]
+electrical: { convention: plc, paths: [] }
+
+plc:
+  subtitle_connection: "PLC connection  ·  plywood stack"
+  subtitle_ladder: "PLC ladder  ·  CTU=20  ·  paint 10.6 s  ·  blink 1 s"
+  notes:
+    - "Stacker CTU=20; convey to B; paint TON 10.6; convey to C; blink lamp 1 s ON/OFF."
+  io:
+    - { address: I0.0, device: "ON", function: "Process ON" }
+    - { address: I0.1, device: STOP, function: "Stop" }
+    - { address: I0.2, device: STACK_PULSE, function: "Sheet stacked pulse" }
+    - { address: I0.3, device: POS_B, function: "At paint station B" }
+    - { address: I0.4, device: POS_C, function: "At remove station C" }
+    - { address: Q0.0, device: STACKER, function: "Stacker" }
+    - { address: Q0.1, device: CONV, function: "Conveyor" }
+    - { address: Q0.2, device: PAINT, function: "Paint relay" }
+    - { address: Q0.3, device: LAMP, function: "Alert lamp" }
+  field:
+    - title: Counts
+      lines: ["C5:0 PV=20", "T4:0 PT=10.6s", "T4:1/T4:2 blink 1s"]
+  rungs:
+    - id: 1
+      caption: ON/STOP latch
+      series:
+        - { kind: contact, tag: I0.0, label: "I0.0 ON", sense: "NO" }
+        - { kind: contact, tag: I0.1, label: "I0.1 STOP", sense: "NC" }
+      branch:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+      output: { kind: coil, tag: M0.0, label: "M0.0 RUN" }
+    - id: 2
+      caption: Stacker until 20
+      series:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+        - { kind: contact, tag: "C5:0/DN", label: "C5:0/DN", sense: "NC" }
+        - { kind: contact, tag: M0.1, label: "M0.1 paint_done", sense: "NC" }
+      output: { kind: coil, tag: Q0.0, label: "Q0.0 STACKER" }
+    - id: 3
+      caption: Count sheets
+      series:
+        - { kind: contact, tag: Q0.0, label: "Q0.0 STACKER", sense: "NO" }
+        - { kind: contact, tag: I0.2, label: "I0.2 STACK_PULSE", sense: "NO" }
+        - { kind: ons, tag: B3:0/0, label: "ONS" }
+      output: { kind: ctu, tag: C5:0, preset: 20 }
+    - id: 4
+      caption: Convey to B after 20
+      series:
+        - { kind: contact, tag: "C5:0/DN", label: "C5:0/DN", sense: "NO" }
+        - { kind: contact, tag: I0.3, label: "I0.3 POS_B", sense: "NC" }
+        - { kind: contact, tag: M0.1, label: "M0.1 paint_done", sense: "NC" }
+      output: { kind: coil, tag: Q0.1, label: "Q0.1 CONV" }
+    - id: 5
+      caption: Paint 10.6 s at B
+      series:
+        - { kind: contact, tag: I0.3, label: "I0.3 POS_B", sense: "NO" }
+        - { kind: contact, tag: M0.1, label: "M0.1 paint_done", sense: "NC" }
+      output: { kind: ton, tag: T4:0, preset: 10.6 }
+    - id: 6
+      caption: Paint relay
+      series:
+        - { kind: contact, tag: "T4:0/TT", label: "T4:0/TT", sense: "NO" }
+      output: { kind: coil, tag: Q0.2, label: "Q0.2 PAINT" }
+    - id: 7
+      caption: Paint done latch
+      series:
+        - { kind: contact, tag: "T4:0/DN", label: "T4:0/DN", sense: "NO" }
+      output: { kind: otl, tag: M0.1, label: "M0.1 paint_done" }
+    - id: 8
+      caption: Convey B to C
+      series:
+        - { kind: contact, tag: M0.1, label: "M0.1 paint_done", sense: "NO" }
+        - { kind: contact, tag: I0.4, label: "I0.4 POS_C", sense: "NC" }
+      output: { kind: coil, tag: Q0.1, label: "Q0.1 CONV" }
+    - id: 9
+      caption: Blink timer 1 s at C
+      series:
+        - { kind: contact, tag: I0.4, label: "I0.4 POS_C", sense: "NO" }
+        - { kind: contact, tag: "T4:2/DN", label: "T4:2/DN", sense: "NC" }
+      output: { kind: ton, tag: T4:1, preset: 1 }
+    - id: 10
+      caption: Blink off 1 s
+      series:
+        - { kind: contact, tag: "T4:1/DN", label: "T4:1/DN", sense: "NO" }
+      output: { kind: ton, tag: T4:2, preset: 1 }
+    - id: 11
+      caption: Lamp while T4:1 timing
+      series:
+        - { kind: contact, tag: "T4:1/TT", label: "T4:1/TT", sense: "NO" }
+      output: { kind: coil, tag: Q0.3, label: "Q0.3 LAMP" }
+    - id: 12
+      caption: RES counter after leave C
+      series:
+        - { kind: contact, tag: I0.4, label: "I0.4 POS_C", sense: "NC" }
+        - { kind: contact, tag: M0.1, label: "M0.1 paint_done", sense: "NO" }
+      output: { kind: res, tag: C5:0, label: "RES C5:0" }

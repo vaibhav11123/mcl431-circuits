@@ -4,8 +4,11 @@ from circuit.calc import (
     area_mm2,
     grinding_hc1_pressure_bar,
     l4_regen_example,
+    meter_out_2019_major,
+    oven_band_counts,
     plc_2023_q2_scaling,
     plc_fan_l14_scaling,
+    servo_axis_metrics,
     solution_lines_for,
     solution_lines_hilo_2017,
 )
@@ -89,3 +92,33 @@ def test_figure_given_calc_cites_facts(exam_id: str, rel: str) -> None:
     report = eval_spec(spec, ROOT)
     failed = [c for c in report["checks"] if not c["ok"]]
     assert report["pass"], failed
+
+
+def test_meter_out_2019_extend_positive() -> None:
+    r = meter_out_2019_major()
+    assert r["v_ext_m_min"] > 0
+    assert r["retract_fcv_lpm"] > 0
+    assert r["p1_loaded_bar"] > 50
+    lines = "\n".join(solution_lines_for("2019_major_q2_meter_out"))
+    assert "facts.yaml" in lines
+    assert "4 l/min" in lines
+
+
+def test_servo_control_resolution() -> None:
+    m = servo_axis_metrics(pitch_mm=6.25, encoder_slots=200, gear=1.0)
+    assert abs(m["control_resolution_mm"] - 6.25 / 200) < 1e-9
+
+
+def test_oven_band_counts_10bit() -> None:
+    c = oven_band_counts(eng_max=1024, bits=10)
+    assert c["c_597"] < c["c_603"] < c["c_796"] < c["c_804"]
+    lines = "\n".join(solution_lines_for("2017_major_q1_oven"))
+    assert "597" in lines and "804" in lines
+
+
+def test_2016_hoist_still_no_pipe_invention() -> None:
+    lines = "\n".join(solution_lines_for("2016_minor1_hoist"))
+    assert "pipe" not in lines.lower() or "not" in lines.lower()
+    # 2020 hoist-with-loss does name pipes
+    lines20 = "\n".join(solution_lines_for("2020_major_q3_hoist_loss"))
+    assert "pipes:" in lines20

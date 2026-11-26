@@ -1,0 +1,12 @@
+id: 2018_major_q2_cnc
+year: 2018
+paper: 2018_major_q2_cnc
+source: exams/pyqs/MCL431_Major-17Nov2018.pdf
+domain: cnc_program
+figure_given: true
+identifiers: []
+deliverable_sheets: []
+deliverable_calcs:
+- part_program
+question_excerpt: Part program contour; CSS 350 ft/min — coordinates from figure or
+  not_given

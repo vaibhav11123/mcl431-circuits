@@ -1,0 +1,7 @@
+sheets: []
+calcs:
+- control resolution X/Y
+- motor rpm
+- encoder freq
+- accuracy
+- pct error

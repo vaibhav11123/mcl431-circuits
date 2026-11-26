@@ -1,0 +1,9 @@
+id: 2020_major_q1_oven
+solution_files: []
+solution: absent
+items:
+- claim: Reuse 2017 oven golden structure; addresses as printed
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/plc_oven_2017/circuit.yaml

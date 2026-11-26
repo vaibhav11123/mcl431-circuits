@@ -1,0 +1,5 @@
+sheets:
+- plc_connection
+- plc_ladder
+calcs:
+- 10-bit AI counts for 597/603 and 796/804

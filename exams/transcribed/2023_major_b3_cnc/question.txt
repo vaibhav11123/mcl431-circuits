@@ -1,0 +1,1 @@
+G71/G70 turning; rough DOC 0.09; finish X 0.014 Z 0.003; face 0.035.

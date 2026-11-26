@@ -1,0 +1,56 @@
+meta:
+  title: 2022 Major Q4 two-hand stamp and eject
+  domain: pneumatic_plus_electrical
+  exam_id: 2022_major_q4_twohand
+  patterns:
+    - ep_dac_5_2
+    - sequence_double_solenoid
+
+sequence:
+  - { action: 1A+, label: stamp (two-hand) }
+  - { action: 1A-, label: stamp return }
+  - { action: 2A+, label: eject }
+  - { action: 2A-, label: eject return }
+
+power:
+  pumps: []
+  tank: ""
+
+cylinders:
+  1A:
+    dcv: 1V
+    sensors: [1B1, 1B2]
+  2A:
+    dcv: 2V
+    sensors: [2B1, 2B2]
+
+motors: {}
+
+valves:
+  1V:
+    type: dcv_5_2_double_solenoid
+    solenoids: [1Y1, 1Y2]
+  2V:
+    type: dcv_5_2_double_solenoid
+    solenoids: [2Y1, 2Y2]
+
+sensors:
+  - S1
+  - S2
+  - ESTOP
+  - 1B1
+  - 1B2
+  - 2B1
+  - 2B2
+
+electrical:
+  convention: lecture
+  paths:
+    - { number: 1, kind: control, contacts: [S1, S2, ESTOP, 1B1, 2B1], coil: K1 }
+    - { number: 2, kind: control, contacts: [K1, ESTOP], coil: 1Y1 }
+    - { number: 3, kind: control, contacts: [1B2, ESTOP], coil: K2 }
+    - { number: 4, kind: control, contacts: [K2, ESTOP], coil: 1Y2 }
+    - { number: 5, kind: control, contacts: [1B1, K2, ESTOP], coil: K3 }
+    - { number: 6, kind: control, contacts: [K3, ESTOP], coil: 2Y1 }
+    - { number: 7, kind: control, contacts: [2B2, ESTOP], coil: K4 }
+    - { number: 8, kind: control, contacts: [K4, ESTOP], coil: 2Y2 }
