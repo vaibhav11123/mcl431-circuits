@@ -23,12 +23,17 @@ items:
   lecture_ok: true
   disposition: adopt
   lands_in: exams/transcribed/2017_major_q1_oven/learnings.yaml
+- claim: Air-jet electro photo is same_as 2018_major_q1_airjet
+  source: solution
+  lecture_ok: true
+  disposition: adopt
+  lands_in: exams/transcribed/2018_major_q1_airjet/learnings.yaml
 - claim: 06-Nov-2024 midterm photo set → new id 2024_midterm_q1_press
   source: question
   lecture_ok: true
   disposition: adopt
   lands_in: exams/transcribed/2024_midterm_q1_press/facts.yaml
-- claim: 6.5 kN forming-force OCR twin stays rejected for MCL431_minor (locked 1.6 kN-cm)
+- claim: Screenshot of 6.5 kN press is same_as MCL431_minor twin — keep_locked 1.6 kN-cm
   source: solution
   lecture_ok: true
   disposition: keep_locked

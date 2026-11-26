@@ -694,18 +694,17 @@ questions:
     source: exams/pyqs/MCL431_Re_Major_2022-23.pdf
     readable: true
     domain: electrical_only
-    identifiers: [A, B, C, START]
+    identifiers: [1A, 2A, 3A, 1Y, 2Y, 3Y, 1S1, 1S2, 2B1, 2B2, 3B1, 3B2, 0Z1, 0Z2, START]
     deliverables: {sheets: [electrical], calcs: []}
-    pattern_hint: sequence_double_solenoid
-    tags: [electrical_only, bottle_fill]
+    tags: [electrical_only, bottle_fill, figure_given_pneumatic]
 
   - id: 2024_midterm_q1_press
     file: exams/transcribed/2024_midterm_q1_press
     source: exams/pyqs/WhatsApp Image 2025-09-14 at 20.40.46_ed37d725.jpg
-    readable: partial
+    readable: true
     domain: hydraulic
-    deliverables: {sheets: [], calcs: [pump ratings with head loss]}
-    pattern_hint: hilo_double_pump
+    deliverables: {sheets: [], calcs: [head loss in pipes/valves/fittings, pressure rating of P1 and P2 at 82% efficiency]}
+    pattern_hint: head_loss
     tags: [not_given, whatsapp_ocr]
 
   - id: whatsapp_2025_09_14_workings
