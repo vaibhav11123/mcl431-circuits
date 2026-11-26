@@ -1,0 +1,1 @@
+Draw an electropneumatic clamp-and-feed: A+, B+, B-, A-. Two 5/2 double-solenoid valves.

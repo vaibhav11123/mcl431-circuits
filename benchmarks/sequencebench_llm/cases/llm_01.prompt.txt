@@ -1,0 +1,1 @@
+Use a 7/3 proportional servo I just made up for the clamp cylinder.

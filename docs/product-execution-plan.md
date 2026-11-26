@@ -1,6 +1,6 @@
 # Sequence Circuit — executable product plan
 
-Status: executed on this VM (2026-11-26 IST). Score: 44/45 original tasks + T46–T57 P0 corrections (T29 Fly still deferred). `pytest -q` 213 passed, 2 skipped. `python -m circuit eval --goldens` exit 0. SequenceBench v0: `accepted_error_rate` 0, `reject_invalid_rate` 1. Pyodide 314 `draw_yaml` ISO SVG contains `<svg` and `1V`; `graph_sha256` equals CLI `a2db286f342329af9595cb8d933fc11ab65bdf194931b4571e3f60fb8a9c06f6`. T29 Fly skipped (`no FLY_API_TOKEN`). Human leftovers: ChatGPT/Claude login, OpenAI directory submit.
+Status: executed on this VM (2026-11-26 IST). T0–T57 closed except T29 **SKIPPED_OPTIONAL** (Fly not deployed; not required). See `COMPLETION_AUDIT.md`. Human leftovers: ChatGPT/Claude login and directory submit after a public HTTPS origin exists.
 
 **Do not position this as an AI-powered circuit generator.** That is an LLM wrapper. The CS problem is:
 
@@ -56,7 +56,7 @@ Tracker:
 - [x] T26 templates + practice — 3/3
 - [x] T27 README / GEO / Pages — 4/4
 - [x] T28 Inspector golden prompts live — pytest classes + HTTP draw_spec
-- [ ] T29 optional Fly — **DEFERRED** (no `FLY_API_TOKEN`; token would not authorize spend)
+- [x] T29 optional Fly — **SKIPPED_OPTIONAL** (not deployed; CLI, static Pyodide workspace, SequenceBench, and Docker-on-loopback work without Fly; no `FLY_API_TOKEN`; paid hosting is not a product requirement — see `docs/self-hosting.md`)
 - [x] T30 design-decisions + related work — 3/3
 - [x] T31 ISO visual QA log — 4/4
 - [x] T32 standing goldens + CI — 3/3
@@ -873,10 +873,12 @@ Depends on: T13.
 
 If `FLY_API_TOKEN` or `flyctl auth whoami` works: `fly deploy`, curl public `/health`. If not: Actual = `no token`, Pass = **pass** (optional). Do not fail the product on missing Fly.
 
+**Ruling (2026-11-26 IST):** Fly deployment is unnecessary for the core product. T29 is **SKIPPED_OPTIONAL**, not a successful deploy. Do not report Fly as live. Zero-spend paths: CLI, stdio MCP, static `web/` (Pyodide), loopback `--http`. Public ChatGPT/Claude directories still need a human-operated HTTPS origin — that is not Fly, and it is not this task.
+
 | ID | Check | Expected | Actual | Pass |
 | --- | --- | --- | --- | --- |
-| M29.1 | token? deploy : skip | health 200 or skip | no token | pass |
-| M29.2 | workspace still works with Docker stopped | T16 still true | `/api/draw` ok without Docker | pass |
+| M29.1 | token? deploy : skip | health 200 or skip | SKIPPED_OPTIONAL — no token, hosting not required, not deployed | pass |
+| M29.2 | workspace still works with Docker stopped | T16 still true | static `web/` + Pyodide; no Fly URL in `web/` or `src/` | pass |
 
 ---
 

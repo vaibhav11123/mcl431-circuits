@@ -1,6 +1,6 @@
 # Architecture
 
-Parse YAML → `CircuitSpec` → typecheck → synthesize (`compile_paths` or pack `compile_override`) → `spec_trace` ⋈ `env_trace` → seal `VerifiedCircuit` → layout → SVG.
+Parse YAML → `CircuitSpec` → typecheck → synthesize (`compile_paths` or pack `compile_override`) → `spec_trace` ⋈ `env_trace` (discrete TIMER ticks; cascade electrical step-memory; deadlock FAIL) → seal `VerifiedCircuit` → layout → SVG. Pressure waits stay `UNSUPPORTED`. Physics is `NOT_EVALUATED`.
 
 `graph_trace` is a unit-test helper that walks explicit sensor assignments. `verify_spec` must not feed the required sequence into the target.
 

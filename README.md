@@ -16,7 +16,19 @@ python -m circuit verify examples/iso_sequence/circuit.yaml
 
 Workspace (editable sheets, download pack, sequence explorer): [`web/`](web/). Use from ChatGPT or Claude **or open the workspace**.
 
-MCP (optional): `python -m circuit.mcp_server --http`
+MCP (optional, local): `python -m circuit.mcp_server` (stdio) or `--http`.
+
+SequenceBench:
+
+```bash
+python -m circuit bench benchmarks/sequencebench
+python -m circuit bench --suite 300
+python -m circuit bench --suite llm
+```
+
+The 300-case suite and the LLM fixtures call **no paid API**. Fly.io is not required ([docs/self-hosting.md](docs/self-hosting.md); T29 is SKIPPED_OPTIONAL, not deployed).
+
+ChatGPT / Claude directory listing needs a human-operated public HTTPS origin. Local MCP does not make the plugin directory-eligible. See [plugin/SUBMISSION.md](plugin/SUBMISSION.md) and [HUMAN_ACTIONS_REQUIRED.md](HUMAN_ACTIONS_REQUIRED.md).
 
 ## Related work
 

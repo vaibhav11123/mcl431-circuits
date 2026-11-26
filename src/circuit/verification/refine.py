@@ -61,12 +61,15 @@ def refine(src: list[dict], tgt: list[dict]) -> VerifyResult:
 def verify_spec(spec: CircuitSpec) -> VerifyResult:
     from circuit.verification.mutex import start_dual_solenoid
 
-    if any(s.action == "TIMER" for s in spec.sequence):
-        return _result(Status.UNSUPPORTED, stats={"reason": "TIMER"})
+    if any(s.action in {"PS", "PRESSURE"} for s in spec.sequence):
+        return _result(Status.UNSUPPORTED, stats={"reason": "pressure wait"})
+    working = spec
     if (spec.meta.method or "") == "cascade":
-        return _result(Status.UNSUPPORTED, stats={"reason": "cascade"})
-    src = spec_trace(spec)
-    graph = from_spec(spec)
+        from circuit.cascade import apply_cascade
+
+        working = apply_cascade(spec)
+    src = compress_changes(spec_trace(working))
+    graph = from_spec(working)
     mx = start_dual_solenoid(graph)
     if not mx["ok"]:
         return _result(
@@ -85,6 +88,14 @@ def verify_spec(spec: CircuitSpec) -> VerifyResult:
             tgt_row=None,
             stats={"check": "env_conflict"},
         )
+    if run.get("deadlock"):
+        return _result(
+            Status.FAIL,
+            cex_step=int(run["deadlock"].get("step") or 0),
+            src_row=run["deadlock"],
+            tgt_row=src[-1] if src else None,
+            stats={"check": "deadlock"},
+        )
     if run.get("exhausted"):
         return _result(
             Status.INCONCLUSIVE,
@@ -96,5 +107,6 @@ def verify_spec(spec: CircuitSpec) -> VerifyResult:
         "check": "env_trace",
         "transitions": run.get("transitions"),
         "states": run.get("states"),
+        "deadlock": False,
     }
     return out

@@ -8,7 +8,7 @@ from circuit.validate import Check
 
 def extra_checks(spec: CircuitSpec) -> list[Check]:
     n52 = sum(1 for v in spec.valves.values() if "5_2" in v.type)
-    return [
+    checks = [
         Check("iso_two_5_2", n52 >= 2 or spec.meta.domain.value.startswith("plc") or spec.meta.domain.value.startswith("hydraulic"), str(n52)),
         Check(
             "iso_sequence_len",
@@ -19,6 +19,19 @@ def extra_checks(spec: CircuitSpec) -> list[Check]:
             str(len(spec.sequence)),
         ),
     ]
+    if (spec.meta.method or "") == "cascade":
+        from circuit.cascade import apply_cascade, groups_for
+
+        applied = apply_cascade(spec)
+        acts = [
+            s.action for s in applied.sequence if s.action.rstrip("+-") in applied.cylinders
+        ]
+        groups = groups_for(acts)
+        have = [f"G{i}" in applied.valves for i, _ in enumerate(groups, 1)]
+        checks.append(
+            Check("cascade_groups", all(have) and bool(groups), str(len(groups)))
+        )
+    return checks
 
 
 def compile_override(spec: CircuitSpec):
@@ -26,12 +39,10 @@ def compile_override(spec: CircuitSpec):
     domain = spec.meta.domain.value
     if domain.startswith("plc") or spec.meta.figure_given:
         return None
-    if (spec.meta.method or "") == "cascade":
-        return None
-    if any(s.action == "TIMER" for s in spec.sequence):
-        return None
     motions = [
-        s for s in spec.sequence if s.action.endswith("+") or s.action.endswith("-")
+        s
+        for s in spec.sequence
+        if s.action.endswith("+") or s.action.endswith("-") or s.action == "TIMER"
     ]
     if len(motions) < 2 or not spec.cylinders:
         return None
@@ -46,16 +57,28 @@ def compile_override(spec: CircuitSpec):
     from circuit.spec import CurrentPath
 
     def complete(step) -> str | None:
+        if step.action == "TIMER":
+            return None
         cid = step.action[:-1]
         cyl = spec.cylinders.get(cid)
         if not cyl or not cyl.sensors:
             return None
         return cyl.sensors[-1] if step.action.endswith("+") else cyl.sensors[0]
 
+    done_tags: list[str | None] = []
+    tcount = 0
+    for step in motions:
+        if step.action == "TIMER":
+            tcount += 1
+            done_tags.append(f"T{tcount}")
+        else:
+            done_tags.append(complete(step))
+
     start, _latch = _start_and_latch(spec)
     n = len(motions)
     ks = [f"K{i}" for i in range(1, n + 1)]
     paths: list[CurrentPath] = []
+    tcount = 0
     for i, step in enumerate(motions):
         ki = ks[i]
         nxt = ks[i + 1] if i + 1 < n else None
@@ -63,7 +86,7 @@ def compile_override(spec: CircuitSpec):
             set_contacts = list(start)
         else:
             set_contacts = [ks[i - 1]]
-            prev_done = complete(motions[i - 1])
+            prev_done = done_tags[i - 1]
             if prev_done:
                 set_contacts.append(prev_done)
         if nxt:
@@ -73,10 +96,22 @@ def compile_override(spec: CircuitSpec):
         if nxt:
             hold.append(nc(nxt))
         else:
-            last_done = complete(step)
+            last_done = done_tags[i]
             if last_done:
                 hold.append(nc(last_done))
         paths.append(CurrentPath(number=0, kind="control", contacts=hold, coil=ki))
+        if step.action == "TIMER":
+            tcount += 1
+            sec = max(int(step.seconds or 1), 1)
+            paths.append(
+                CurrentPath(
+                    number=0,
+                    kind="control",
+                    contacts=[ki],
+                    coil=f"T{tcount}_{sec}s",
+                )
+            )
+            continue
         coil = _solenoid_for(spec, step.action)
         if coil:
             contacts = [ki]

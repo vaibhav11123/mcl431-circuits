@@ -7,6 +7,7 @@ import base64
 import sys
 import time
 from collections import deque
+from pathlib import Path
 
 INSTRUCTIONS = (
     "YAML specs only. Use ids from the symbols resource. Never invent a valve "
@@ -71,14 +72,38 @@ def create_server():
         )
 
     @mcp.tool(
-        annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, openWorldHint=False),
+        title="List pack symbols",
+        description=(
+            "Return atlas symbol ids and ports from the active pack. "
+            "Justifications: readOnlyHint=true because this does not emit sheets "
+            "or write server state; destructiveHint=false because nothing stored "
+            "is modified; openWorldHint=false because the pack is local."
+        ),
+        annotations=ToolAnnotations(
+            title="List pack symbols",
+            readOnlyHint=True,
+            destructiveHint=False,
+            openWorldHint=False,
+        ),
     )
     def list_symbols() -> dict:
         _log("list_symbols ok=true")
         return list_symbols_fn()
 
     @mcp.tool(
-        annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, openWorldHint=False),
+        title="Validate circuit YAML",
+        description=(
+            "Run pack catalog checks on a YAML spec. "
+            "Justifications: readOnlyHint=true because no sheet is stored; "
+            "destructiveHint=false because the server has no durable circuit; "
+            "openWorldHint=false because validation is local."
+        ),
+        annotations=ToolAnnotations(
+            title="Validate circuit YAML",
+            readOnlyHint=True,
+            destructiveHint=False,
+            openWorldHint=False,
+        ),
     )
     def validate_spec(yaml: str) -> dict:
         if len(yaml.encode()) > MAX_YAML_BYTES:
@@ -89,7 +114,19 @@ def create_server():
         return out
 
     @mcp.tool(
-        annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, openWorldHint=False),
+        title="Evaluate circuit YAML",
+        description=(
+            "Run eval checks on a YAML spec and return an English sentence. "
+            "Justifications: readOnlyHint=true because no artifact is published; "
+            "destructiveHint=false because nothing is stored; "
+            "openWorldHint=false because eval is local."
+        ),
+        annotations=ToolAnnotations(
+            title="Evaluate circuit YAML",
+            readOnlyHint=True,
+            destructiveHint=False,
+            openWorldHint=False,
+        ),
     )
     def eval_spec(yaml: str) -> dict:
         if len(yaml.encode()) > MAX_YAML_BYTES:
@@ -100,7 +137,22 @@ def create_server():
         return out
 
     @mcp.tool(
-        annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=False, openWorldHint=False),
+        title="Draw verified circuit sheets",
+        description=(
+            "Compile YAML to sheets only if validate, eval, and translation "
+            "validation PASS. Example legal YAML: a two-cylinder 5/2 sequence "
+            "A+ B+ B- A- with valves typed dcv_5_2_double_solenoid. "
+            "Justifications: readOnlyHint=false because this produces a new "
+            "artifact for the caller; destructiveHint=false because the server "
+            "does not overwrite stored circuits; openWorldHint=false because "
+            "draw is local and does not call the public internet."
+        ),
+        annotations=ToolAnnotations(
+            title="Draw verified circuit sheets",
+            readOnlyHint=False,
+            destructiveHint=False,
+            openWorldHint=False,
+        ),
     )
     def draw_spec(yaml: str):
         if len(yaml.encode()) > MAX_YAML_BYTES:
@@ -124,7 +176,19 @@ def create_server():
 
     @mcp.tool(
         name="get_sheet",
-        annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=False, openWorldHint=False),
+        title="Get one sheet PNG",
+        description=(
+            "Redraw one named sheet from the full YAML. This server does not "
+            "store previous draws. Justifications: readOnlyHint=true because "
+            "nothing is stored; destructiveHint=false because no durable state "
+            "is modified; openWorldHint=false because render is local."
+        ),
+        annotations=ToolAnnotations(
+            title="Get one sheet PNG",
+            readOnlyHint=True,
+            destructiveHint=False,
+            openWorldHint=False,
+        ),
     )
     def get_sheet(yaml: str = "", name: str = "pneumatic"):
         if not yaml.strip():
@@ -159,9 +223,38 @@ def create_server():
     async def health(request: Request):
         return JSONResponse({"ok": True})
 
+    def _static_page(name: str, fallback: str) -> str:
+        path = Path(__file__).resolve().parents[2] / "deploy" / "static" / name
+        if path.is_file():
+            return path.read_text(encoding="utf-8")
+        return fallback
+
     @mcp.custom_route("/privacy", methods=["GET"])
     async def privacy(request: Request):
-        return HTMLResponse("<html><body><h1>Privacy</h1><p>No accounts. YAML is not stored.</p></body></html>")
+        return HTMLResponse(
+            _static_page(
+                "privacy.html",
+                "<html><body><h1>Privacy</h1><p>No accounts. YAML is not stored.</p></body></html>",
+            )
+        )
+
+    @mcp.custom_route("/terms", methods=["GET"])
+    async def terms(request: Request):
+        return HTMLResponse(
+            _static_page(
+                "terms.html",
+                "<html><body><h1>Terms</h1><p>Logical verification only. Not a safety certificate.</p></body></html>",
+            )
+        )
+
+    @mcp.custom_route("/support", methods=["GET"])
+    async def support(request: Request):
+        return HTMLResponse(
+            _static_page(
+                "support.html",
+                "<html><body><h1>Support</h1><p>Open a GitHub issue. No accounts.</p></body></html>",
+            )
+        )
 
     return mcp
 
