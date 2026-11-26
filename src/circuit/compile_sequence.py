@@ -34,11 +34,12 @@ def _start_and_latch(spec: CircuitSpec) -> tuple[list[str], list[str]]:
         act = step.action
         if act.endswith("+") or act.endswith("-"):
             first.setdefault(act[:-1], act)
+    lecture_start = bool({"S1", "JOB", "S0"} & sensors)
     for cid, cyl in spec.cylinders.items():
         if not cyl.sensors:
             continue
         fa = first.get(cid, "")
-        if fa.endswith("-") and len(cyl.sensors) > 1:
+        if lecture_start and fa.endswith("-") and len(cyl.sensors) > 1:
             start.append(cyl.sensors[-1])
         else:
             start.append(cyl.sensors[0])
@@ -344,10 +345,11 @@ def _compile_emboss_2016(spec: CircuitSpec) -> list[CurrentPath]:
 def compile_paths(spec: CircuitSpec) -> list[CurrentPath]:
     if spec.electrical.paths:
         return spec.electrical.paths
-    if spec.meta.exam_id == "2016_minor1_emboss":
-        return _compile_emboss_2016(spec)
-    if spec.meta.exam_id in {"Fall17-Minor2", "MCL431_Minor2_2017-18_Sem1"}:
-        return _compile_indexing_drill(spec)
+    from circuit.pack import call_hook
+
+    override = call_hook("compile_override", spec, default=None)
+    if override is not None:
+        return override
     if spec.cylinders and all(
         spec.valves[c.dcv].type == "dcv_5_3" for c in spec.cylinders.values()
     ):

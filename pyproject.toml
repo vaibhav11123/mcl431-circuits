@@ -15,18 +15,23 @@ dependencies = [
     "schemdraw>=0.19",
     "numpy>=1.26",
     "pillow>=10.0",
+    "pypdf>=4.0",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0"]
+dev = ["pytest>=8.0", "hypothesis>=6.100", "mcp>=1.2,<2"]
 png = ["cairosvg>=2.7"]
 ingest = ["docling>=2.141", "ocrmac>=1.0; platform_system=='Darwin'"]
+mcp = ["mcp>=1.2,<2"]
 
 [project.scripts]
 circuit = "circuit.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+circuit = ["packs/iso_sequence/**"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

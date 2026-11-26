@@ -1,62 +1,36 @@
-# MCL 431 CAM and Automation — circuit drawings (IIT Delhi)
+# Sequence Circuit
 
-Write a YAML spec. Python draws hydraulic, electropneumatic, and PYQ sheets the way this IIT Delhi course teaches them — lecture symbols, de-energized valves, L8 paths, L10 sequences.
+Verification-oriented compiler for AI-generated engineering systems.
 
-## Contents
+The language model is **untrusted**. It may propose a YAML circuit spec. A deterministic compiler decides whether that spec is allowed to become a sheet. A pretty drawing that fails eval is not returned.
 
-- [Gallery](#gallery)
-- [Start in 3 commands](#start-in-3-commands)
-- [What papers](#what-papers)
-- [Handbook](#handbook)
-- [Copyright](#copyright)
+This is not an AI circuit generator. The compiler has authority over correctness.
 
-## Gallery
-
-2023 Self-Study B1 grinding (HC1 / HC2 / HM1):
-
-![2023 B1 grinding hydraulic](docs/images/b1-hydraulic.png)
-
-![2023 B1 grinding electrical](docs/images/b1-electrical.png)
-
-![2023 B1 step-displacement](docs/images/b1-phase.png)
-
-2023 Minor-2 Q1 strip feed (1A / 2A, 5/2):
-
-![2023 Minor-2 Q1 strip-feed pneumatic](docs/images/strip-feed-pneumatic.png)
-
-## Start in 3 commands
-
-Python 3.11+.
+## Three commands
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
+python -m circuit draw examples/iso_sequence/circuit.yaml
+python -m circuit verify examples/iso_sequence/circuit.yaml
 ```
 
-```bash
-python -m circuit validate examples/grinding_machine/circuit.yaml
-python -m circuit draw examples/grinding_machine/circuit.yaml
-python -m circuit eval examples/grinding_machine/circuit.yaml
-```
+Workspace (editable sheets, download pack, sequence explorer): [`web/`](web/). Use from ChatGPT or Claude **or open the workspace**.
 
-Open the sheets under `output/<exam_id>/` after draw (B1 → `output/2023_selfstudy_b1/`). Each question gets its own folder.
+MCP (optional): `python -m circuit.mcp_server --http`
 
-## What papers
+## Related work
 
-- **Draw:** 2023 B1 grinding, 2017 hi-lo punch, 2023 Minor-2 strip feed, 2023 Minor-2 PLC conveyor, 2017 5/3 drill
-- **Calc only** (figure already on the paper): 2018 hi-lo, 2019 meter-in/out, 2016 hoist, 2023 B2 head loss, 2022 grind-given
+- FluidSIM — commercial simulator. We do not export `.ct`.
+- FluidPyPLC (GPL) — **do not copy**. Cascade here is `meta.method: cascade` plus extra `dcv_5_2` valves.
+- spec2schematic, Weave, CADPilot/CADX — model-written geometry. We are stricter: the model never writes geometry.
+- Alive2 — independent src vs tgt check. Our analog is `spec_trace` vs `graph_trace` on the requested run, not SMT, not CompCert.
 
-Full gates: [docs/eval.md](docs/eval.md).
+## Three load-bearing decisions
 
-## Handbook
+1. Fail-closed `draw_yaml`: eval fail → no sheet.
+2. Independent translation validation (T36), not a second call to the synthesizer.
+3. Public ISO pack is vector + two Wikimedia CC-BY 5/2 and 5/3 rasters. Lecture PNG never ships in the public SVG.
 
-- [Solve a question](docs/solve-a-question.md)
-- [What eval checks](docs/eval.md)
-- [Copyright](docs/copyright.md)
+Refused work: physics simulation, FluidSIM, OAuth, hosted LLM, lecture-PDF ingest on the public pack.
 
-Paper identifiers win (`HC1` vs `1A`). Hydraulic and electrical stay on separate sheets.
-
-## Copyright
-
-Code is MIT. Lecture decks and exam scans are not in this repo. Details: [docs/copyright.md](docs/copyright.md).
+Eval failures are listed in `output/*/eval.json`. `circuit verify` writes `verify.json` with `physics: not_evaluated` for checks that were not run.

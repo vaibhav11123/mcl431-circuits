@@ -1,0 +1,6 @@
+{
+  "schema_version": "1.0",
+  "name": "sequence-circuit",
+  "description": "Verification-oriented compiler for ISO pneumatic and hydraulic circuits. The model proposes YAML; the compiler authorizes sheets.",
+  "version": "0.1.0"
+}

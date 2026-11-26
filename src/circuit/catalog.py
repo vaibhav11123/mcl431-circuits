@@ -24,7 +24,9 @@ class Glyph:
 
     @property
     def path(self) -> Path:
-        return STAMPS / self.file
+        from circuit.pack import active_stamp_dir
+
+        return active_stamp_dir() / self.file
 
 
 # Port fractions are (fx, fy) of the placed bbox, origin top-left.
@@ -193,9 +195,14 @@ def glyph(gid: str) -> Glyph:
     if gid not in GLYPHS:
         raise KeyError(f"unknown lecture stamp {gid!r} — do not invent a glyph")
     g = GLYPHS[gid]
-    if not g.path.is_file():
-        raise FileNotFoundError(f"missing lecture stamp {g.path}")
-    return g
+    if g.path.is_file():
+        return g
+    from circuit.pack import load_hooks
+
+    hooks = load_hooks()
+    if hooks is not None and hasattr(hooks, "draw_glyph"):
+        return g
+    raise FileNotFoundError(f"missing lecture stamp {g.path}")
 
 
 def stamp(
@@ -209,14 +216,22 @@ def stamp(
     anchor: str = "nw",
     flip_x: bool = False,
 ) -> dict[str, tuple[float, float]]:
-    """Place a lecture PNG. Returns port name → sheet coordinates."""
+    """Place a lecture PNG (or pack vector). Returns port name → sheet coordinates."""
     g = glyph(gid)
     ww = g.w if w is None else w
     hh = g.h if h is None else h
     if anchor == "center":
         x -= ww / 2
         y -= hh / 2
-    svg.image(g.path, x, y, ww, hh, flip_x=flip_x)
+    if g.path.is_file():
+        svg.image(g.path, x, y, ww, hh, flip_x=flip_x)
+    else:
+        from circuit.pack import load_hooks
+
+        hooks = load_hooks()
+        if hooks is None or not hasattr(hooks, "draw_glyph"):
+            raise FileNotFoundError(f"missing lecture stamp {g.path}")
+        hooks.draw_glyph(svg, gid, x, y, ww, hh, flip_x=flip_x)
     ports = {name: (x + fx * ww, y + fy * hh) for name, (fx, fy) in g.ports.items()}
     if flip_x:
         ports = {name: (x + ww - (sx - x), sy) for name, (sx, sy) in ports.items()}
@@ -286,6 +301,7 @@ def stamp_dcv_5_2(
     solenoids: list[str],
 ) -> dict[str, tuple[float, float]]:
     """ISO 1219-1 5/2; ports on the rest (right) envelope. Lecture solenoid_box."""
+    svg.g_open(data_rest="right")
     g = glyph("dcv_5_2")
     body_w, body_h = g.w, g.h
     ports = stamp(svg, "dcv_5_2", cx, cy, body_w, body_h, anchor="center")
@@ -293,6 +309,7 @@ def stamp_dcv_5_2(
     y_env = cy - body_h / 2
     _stamp_solenoid_operators(svg, x0, cy, body_w, solenoids, sol_h=42.0)
     svg.text(x0 - 4, y_env - 10, tag, 12, "start")
+    svg.g_close()
     return ports
 
 

@@ -1,0 +1,5 @@
+User-agent: GPTBot
+Allow: /llms.txt
+
+User-agent: *
+Allow: /

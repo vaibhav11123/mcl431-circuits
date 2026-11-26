@@ -98,6 +98,7 @@ class Meta(BaseModel):
     patterns: list[PatternId] = Field(default_factory=list)
     exam_id: str | None = None
     figure_given: bool = False
+    method: str | None = None
 
 
 class PlcIoRow(BaseModel):

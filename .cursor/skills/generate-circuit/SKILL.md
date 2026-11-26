@@ -47,7 +47,7 @@ python -m circuit eval <spec.yaml>
 ## Hard rules
 
 - Eval is required. Shipping SVGs without a passing report is incomplete.
-- No image generation.
+- No image generation. Chat path: `get_sheet` with the full YAML if the picture is missing.
 - Electrical agent must not add hydraulic valves. Hydraulic agent must not rewrite L8 path numbers.
 - PLC agents must not emit L8 coils or atlas hydraulic IDs.
 - Only the supervisor runs `draw`.

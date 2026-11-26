@@ -14,8 +14,13 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install
-        run: pip install -e ".[dev]"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y librsvg2-bin
+          pip install -e ".[dev]"
       - name: Test
         run: pytest -q
+      - name: Pack tests
+        run: pytest tests/test_iso_pack.py tests/test_service.py tests/test_provenance.py -q
       - name: Eval goldens
         run: python -m circuit eval --goldens

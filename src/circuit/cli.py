@@ -20,9 +20,12 @@ def main(argv: list[str] | None = None) -> int:
         ("validate", "Validate a circuit.yaml spec"),
         ("draw", "Draw SVG sheets from a spec"),
         ("eval", "Run catalog / graph / sequence / golden checks"),
+        ("verify", "Translation validation + SHA-256 manifest"),
     ):
         p = sub.add_parser(name, help=help_)
         p.add_argument("spec", nargs="?", help="path to circuit.yaml")
+        p.add_argument("--pack", help="symbol pack directory")
+        p.add_argument("--json", action="store_true", help="print the service dict")
         if name == "eval":
             p.add_argument("--goldens", action="store_true")
 
@@ -92,11 +95,32 @@ def main(argv: list[str] | None = None) -> int:
 
     spec = CircuitSpec.from_yaml(spec_path)
     out_dir = question_output_dir(ROOT, spec, spec_path)
+    from circuit.pack import resolve_pack, using_pack
+
+    pack = resolve_pack(getattr(args, "pack", None))
+    with using_pack(pack):
+        return _run_engine(args, spec, spec_path, out_dir, pack)
+
+
+def _run_engine(args, spec, spec_path, out_dir, pack) -> int:
+    as_json = bool(getattr(args, "json", False))
+    if as_json and args.cmd in {"validate", "draw", "eval"} and not getattr(args, "goldens", False):
+        from circuit.service import draw_yaml, dumps, eval_yaml, validate_yaml
+
+        text = spec_path.read_text(encoding="utf-8")
+        if args.cmd == "validate":
+            payload = validate_yaml(text)
+        elif args.cmd == "draw":
+            payload = draw_yaml(text)
+        else:
+            payload = eval_yaml(text)
+        print(dumps(payload))
+        return 0 if payload.get("ok") else 1
 
     if args.cmd == "validate":
         from circuit.validate import all_ok, validate_spec
 
-        checks = validate_spec(spec, ROOT)
+        checks = validate_spec(spec, pack.root)
         for c in checks:
             print(f"{'PASS' if c.ok else 'FAIL'} {c.name}  {c.detail}")
         return 0 if all_ok(checks) else 1
@@ -111,6 +135,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.cmd == "eval":
         from circuit.eval import eval_spec, format_report
+        from circuit.spec import CircuitSpec, question_output_dir
 
         if getattr(args, "goldens", False):
             from circuit.eval import golden_specs
@@ -119,12 +144,19 @@ def main(argv: list[str] | None = None) -> int:
             for path in golden_specs(ROOT):
                 s = CircuitSpec.from_yaml(path)
                 golden_out = question_output_dir(ROOT, s, path)
-                report = eval_spec(s, ROOT, golden_out)
+                report = eval_spec(s, pack.root, golden_out)
                 print(format_report(report))
                 ok = ok and report["pass"]
             return 0 if ok else 1
-        report = eval_spec(spec, ROOT, out_dir)
+        report = eval_spec(spec, pack.root, out_dir)
         print(format_report(report))
         return 0 if report["pass"] else 1
+
+    if args.cmd == "verify":
+        from circuit.verification.manifest import write_manifest
+
+        man = write_manifest(spec, out_dir)
+        print(man.get("path", ""))
+        return 0 if man.get("ok") else 1
 
     return 0
