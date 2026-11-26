@@ -16,7 +16,7 @@ Started 2026-11-26 IST. Zero mandatory spend. Directory login is human-only.
 | Fly.io | SKIPPED_OPTIONAL | not deployed |
 | PyPI | not this release | no package publish |
 | Twitter/X, LinkedIn | copy in `docs/marketing.md` | you post |
-| Demo recording | stills in `docs/release-assets/` (incl. `workspace-demo.png`) | agent recorded a local `web/` walkthrough this release; you still own ChatGPT/Claude client footage |
+| Demo recording | [release mp4](https://github.com/vaibhav11123/mcl431-circuits/releases/download/v0.1.0-distribution/sequence-circuit-workspace-demo.mp4); GIF on README | `docs/release-assets/sequence-circuit-workspace-demo.mp4` + `workspace-demo.gif` |
 
 ## GitHub topics to add (Settings → General, or `gh repo edit`)
 

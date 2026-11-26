@@ -64,6 +64,13 @@ def test_marketing_and_pages_exist() -> None:
     llms = (ROOT / "web" / "llms.txt").read_text()
     assert "untrusted" in llms.lower()
     assert (ROOT / "web" / ".nojekyll").is_file()
+    mp4 = ROOT / "docs" / "release-assets" / "sequence-circuit-workspace-demo.mp4"
+    gif = ROOT / "docs" / "release-assets" / "workspace-demo.gif"
+    assert mp4.is_file() and mp4.stat().st_size > 100_000
+    assert gif.is_file() and gif.stat().st_size > 100_000
+    readme = (ROOT / "README.md").read_text()
+    assert "workspace-demo.gif" in readme
+    assert "sequence-circuit-workspace-demo.mp4" in readme
 
 
 def test_pack_plugin_zip() -> None:

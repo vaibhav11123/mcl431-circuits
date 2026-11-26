@@ -6,6 +6,14 @@ The language model is **untrusted**. It may propose a YAML circuit spec. A deter
 
 This is not an AI circuit generator. The compiler has authority over correctness.
 
+## Demo
+
+Workspace: Example A+ B+ → Generate. Sheets are emitted only if executed checks pass.
+
+[![Sequence Circuit workspace demo](docs/release-assets/workspace-demo.gif)](https://github.com/vaibhav11123/mcl431-circuits/releases/download/v0.1.0-distribution/sequence-circuit-workspace-demo.mp4)
+
+**Video (21s, mp4):** [play / download](https://github.com/vaibhav11123/mcl431-circuits/releases/download/v0.1.0-distribution/sequence-circuit-workspace-demo.mp4) · [in-repo file](docs/release-assets/sequence-circuit-workspace-demo.mp4) (GitHub’s file viewer has the player)
+
 ## Three commands
 
 ```bash
