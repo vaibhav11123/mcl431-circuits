@@ -7,7 +7,7 @@ Started 2026-11-26 IST. Zero mandatory spend. Directory login is human-only.
 | GitHub `main` | this release | merge compiler + PYQ corpus |
 | CLI / PyPI-local | go | `pip install -e ".[dev]"` |
 | Static workspace | go | serve `web/` or GitHub Pages |
-| GitHub Pages | enable in repo Settings → Pages → GitHub Actions | workflow `.github/workflows/pages.yml` |
+| GitHub Pages | **live** `https://vaibhav11123.github.io/mcl431-circuits/` | Actions source; workflow `.github/workflows/pages.yml` |
 | Cursor / Claude Desktop stdio MCP | go | `plugin/mcp.stdio.json` |
 | Loopback HTTP MCP | go | `python -m circuit.mcp_server --http` |
 | Plugin ZIP | go | `python scripts/pack_plugin.py` → `dist/sequence-circuit-plugin.zip` |
@@ -15,7 +15,7 @@ Started 2026-11-26 IST. Zero mandatory spend. Directory login is human-only.
 | Claude directory | **blocked** | needs public HTTPS + paid Claude plan (you). Custom connector is URL-only |
 | Fly.io | SKIPPED_OPTIONAL | not deployed |
 | PyPI | not this release | no package publish |
-| Twitter/X, LinkedIn | copy in `docs/marketing.md` | you post |
+| Twitter/X, LinkedIn | copy in `docs/marketing.md` | GitHub Release `v0.1.0-distribution` posted; X/LinkedIn still need your login |
 | Demo recording | stills in `docs/release-assets/` (incl. `workspace-demo.png`) | agent recorded a local `web/` walkthrough this release; you still own ChatGPT/Claude client footage |
 
 ## GitHub topics to add (Settings → General, or `gh repo edit`)
@@ -33,7 +33,7 @@ Homepage (after Pages is on): `https://vaibhav11123.github.io/mcl431-circuits/`
 ## Checklist you still own
 
 1. Merge/push is done by the agent when you asked to land on `main`.
-2. Enable GitHub Pages (Actions source) if you want a public workspace URL.
+2. ~~Enable GitHub Pages~~ done — workspace URL above.
 3. Host `/mcp` on hardware you already have **only if** you want directory listing.
 4. ChatGPT / Claude login and submit — [HUMAN_ACTIONS_REQUIRED.md](../HUMAN_ACTIONS_REQUIRED.md).
 5. Post the launch copy. Do not say Fly or directory-listed.
