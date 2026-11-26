@@ -4,34 +4,49 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Sequence Circuit</title>
+  <meta name="description" content="Verification-oriented compiler for AI-generated pneumatic and hydraulic circuits. The model proposes YAML; the compiler decides whether a sheet is emitted."/>
+  <meta property="og:title" content="Sequence Circuit"/>
+  <meta property="og:description" content="A language model may propose YAML. The compiler decides whether it becomes a sheet."/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://vaibhav11123.github.io/mcl431-circuits/"/>
+  <meta property="og:image" content="https://raw.githubusercontent.com/vaibhav11123/mcl431-circuits/main/docs/release-assets/workspace-demo.png"/>
+  <meta name="twitter:card" content="summary_large_image"/>
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
   <header class="chrome">
-    <h1>Sequence Circuit</h1>
-    <p class="sub">Verification-oriented compiler — the model is untrusted.</p>
+    <div class="brand">
+      <h1>Sequence Circuit</h1>
+      <p class="sub">The model is untrusted. The compiler decides.</p>
+    </div>
+    <nav class="chrome-links" aria-label="Product">
+      <a href="https://github.com/vaibhav11123/mcl431-circuits">GitHub</a>
+      <a href="https://github.com/vaibhav11123/mcl431-circuits/releases/tag/v0.1.0-distribution">Release</a>
+      <a href="llms.txt">llms.txt</a>
+    </nav>
   </header>
   <aside class="seq">
+    <p class="hint">Paste YAML or load the example. Generate runs validate → draw → verify in the browser.</p>
     <div id="chips" class="sequence-chip-row"></div>
-    <textarea id="yaml" class="yaml" spellcheck="false"></textarea>
+    <textarea id="yaml" class="yaml" spellcheck="false" aria-label="Circuit YAML"></textarea>
     <div class="btns">
-      <button id="example">Example A+ B+</button>
-      <button id="generate">Generate</button>
-      <button id="download">Download SVG</button>
-      <button id="downloadYaml">Export YAML</button>
-      <button id="save">Save</button>
-      <button id="undo">Undo</button>
+      <button type="button" id="example">Example A+ B+</button>
+      <button type="button" id="generate" class="primary">Generate</button>
+      <button type="button" id="download">Download SVG</button>
+      <button type="button" id="downloadYaml">Export YAML</button>
+      <button type="button" id="save">Save</button>
+      <button type="button" id="undo">Undo</button>
     </div>
     <div id="library"></div>
   </aside>
   <main>
-    <nav class="tabs">
-      <button data-tab="pneumatic">Pneumatic</button>
-      <button data-tab="electrical">Electrical</button>
-      <button data-tab="phase">Sequence</button>
-      <button data-tab="explain">Explanation</button>
-      <button data-tab="report">Report</button>
-      <button data-tab="debug">Debug</button>
+    <nav class="tabs" aria-label="Sheets">
+      <button type="button" data-tab="pneumatic">Pneumatic</button>
+      <button type="button" data-tab="electrical">Electrical</button>
+      <button type="button" data-tab="phase">Sequence</button>
+      <button type="button" data-tab="explain">Explanation</button>
+      <button type="button" data-tab="report">Report</button>
+      <button type="button" data-tab="debug">Debug</button>
     </nav>
     <div id="sheet-canvas" class="sheet-canvas"></div>
     <pre id="validate" class="validate"></pre>

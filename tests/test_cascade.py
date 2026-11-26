@@ -46,13 +46,14 @@ def test_four_cyl_cascade_refused() -> None:
 
 
 def test_no_fluidpyplc_in_src() -> None:
-    from pathlib import Path as P
-    import subprocess
-
-    r = subprocess.run(
-        ["rg", "FluidPyPLC", "src/"],
-        cwd=ROOT,
-        capture_output=True,
-        text=True,
-    )
-    assert r.returncode != 0 or not r.stdout.strip()
+    """GPL FluidPyPLC must not be vendored. Search in-process so CI needs no rg."""
+    skip = {"__pycache__", ".pytest_cache"}
+    hits = []
+    for path in (ROOT / "src").rglob("*"):
+        if not path.is_file() or any(part in skip for part in path.parts):
+            continue
+        if path.suffix.lower() not in {".py", ".md", ".txt", ".yaml", ".yml"}:
+            continue
+        if "FluidPyPLC" in path.read_text(encoding="utf-8", errors="ignore"):
+            hits.append(str(path.relative_to(ROOT)))
+    assert hits == []
