@@ -7,6 +7,7 @@ dist/
 build/
 output/
 .DS_Store
+web/circuit/
 
 # Full slide / paper rasters (regenerate with: python -m circuit rasterize)
 lecture/pages/

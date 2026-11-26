@@ -16,6 +16,14 @@ def main(argv: list[str] | None = None) -> int:
     )
     sub = parser.add_subparsers(dest="cmd", required=False)
 
+    compile_p = sub.add_parser("compile", help="Synthesize CircuitGraph and print graph_sha256")
+    compile_p.add_argument("spec", help="path to circuit.yaml")
+    compile_p.add_argument("--pack", help="symbol pack directory")
+    compile_p.add_argument("--json", action="store_true", help="print the compile dict")
+
+    bench_p = sub.add_parser("bench", help="Score SequenceBench v0 (compiler, not LLM)")
+    bench_p.add_argument("root", help="benchmarks/sequencebench")
+
     for name, help_ in (
         ("validate", "Validate a circuit.yaml spec"),
         ("draw", "Draw SVG sheets from a spec"),
@@ -78,6 +86,27 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if not args.cmd:
         parser.print_help()
+        return 0
+
+    if args.cmd == "bench":
+        from circuit.bench import run_bench
+        from circuit.service import dumps
+
+        report = run_bench(Path(args.root))
+        print(dumps({k: v for k, v in report.items() if k != "rows"}))
+        return 0
+
+    if args.cmd == "compile":
+        from circuit.ir.from_spec import compile_report
+        from circuit.pack import resolve_pack, using_pack
+        from circuit.service import dumps
+        from circuit.spec import CircuitSpec
+
+        spec = CircuitSpec.from_yaml(Path(args.spec))
+        pack = resolve_pack(getattr(args, "pack", None))
+        with using_pack(pack):
+            payload = compile_report(spec)
+        print(dumps(payload) if args.json else payload["graph_sha256"])
         return 0
 
     if args.cmd == "rasterize":

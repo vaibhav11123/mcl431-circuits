@@ -1,5 +1,5 @@
 # ADR-001 Untrusted model
 
-Status: accepted
+Canonical: [ADR-001.md](ADR-001.md)
 
-The LLM is a frontend. It does not write geometry and does not override eval.
+Revisit when a proof assistant is in the tree.

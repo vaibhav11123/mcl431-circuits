@@ -1,5 +1,7 @@
 # Sequence Circuit workspace
 
-Generate path: this VM / local demo POSTs YAML to `python -m circuit.web_server` (`/api/draw` → `draw_yaml`). GitHub Pages is a static viewer: paste YAML, download, run the CLI.
+Generate path: **Pyodide first**. `app.js` loads Pyodide 314, `micropip.install` pydantic + pyyaml, unpacks `circuit-iso.zip` (ISO-safe copy of `src/circuit`, no ingest/rasterize/pymupdf), and calls `draw_yaml` in the browser.
 
-Pyodide spike: `spike.html`. If pydantic_core has no WASM wheel, the workspace stays CLI-backed (Ruling).
+If WASM fails, this VM / local demo POSTs YAML to `python -m circuit.web_server` (`/api/draw` → `draw_yaml`). GitHub Pages still works as a YAML editor: paste, download, run the CLI.
+
+Pyodide spike: `spike.html`. No Fly URL. No paid API.

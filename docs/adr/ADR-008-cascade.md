@@ -1,5 +1,5 @@
 # ADR-008 Cascade
 
-Status: accepted
+Canonical: [ADR-008.md](ADR-008.md)
 
-`meta.method: cascade` plus extra 5/2 valves. Do not copy FluidPyPLC. >3 cylinders refused.
+Revisit when the ISO atlas adds a cascade-specific valve.

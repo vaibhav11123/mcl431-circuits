@@ -1,5 +1,5 @@
 # ADR-004 ISO pack
 
-Status: accepted
+Canonical: [ADR-004.md](ADR-004.md)
 
-Public stamps are svgdraw vectors plus Wikimedia CC-BY 5/2 and 5/3. Lecture crops stay private.
+Revisit when Wikimedia stamps are replaced.

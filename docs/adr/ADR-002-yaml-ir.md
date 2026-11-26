@@ -1,5 +1,5 @@
 # ADR-002 YAML IR
 
-Status: accepted
+Canonical: [ADR-002.md](ADR-002.md)
 
-`CircuitSpec` is the IR. No coordinates in YAML.
+Revisit when a drag editor must round-trip.

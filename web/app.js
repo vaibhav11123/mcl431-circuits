@@ -26,6 +26,44 @@ const validateEl = document.getElementById("validate");
 let last = null;
 let tab = "pneumatic";
 let history = [];
+let pyodideReady = null;
+
+async function loadCompiler() {
+  if (pyodideReady) return pyodideReady;
+  pyodideReady = (async () => {
+    if (typeof loadPyodide !== "function") throw new Error("no pyodide");
+    const pyodide = await loadPyodide();
+    await pyodide.loadPackage("micropip");
+    const micropip = pyodide.pyimport("micropip");
+    await micropip.install(["pydantic", "pyyaml"]);
+    const buf = await fetch("./circuit-iso.zip").then((r) => r.arrayBuffer());
+    pyodide.unpackArchive(buf, "zip");
+    return pyodide;
+  })();
+  return pyodideReady;
+}
+
+async function drawInBrowser(text) {
+  const pyodide = await loadCompiler();
+  pyodide.FS.writeFile("/tmp/spec.yaml", text);
+  const raw = await pyodide.runPythonAsync(`
+import json
+from pathlib import Path
+from circuit.service import draw_yaml
+from circuit.ir.from_spec import compile_report
+from circuit.spec import CircuitSpec
+text = Path("/tmp/spec.yaml").read_text()
+out = draw_yaml(text)
+out.pop("pack_files", None)
+try:
+    spec = CircuitSpec.from_yaml("/tmp/spec.yaml")
+    out["graph_sha256"] = compile_report(spec)["graph_sha256"]
+except Exception:
+    pass
+json.dumps(out)
+`);
+  return JSON.parse(raw);
+}
 
 function chipsFrom(text) {
   chips.innerHTML = "";
@@ -59,15 +97,21 @@ async function generate() {
   const body = yamlEl.value;
   let data;
   try {
-    const r = await fetch("/api/draw", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ yaml: body }),
-    });
-    data = await r.json();
+    validateEl.textContent = "Compiling in browser…";
+    data = await drawInBrowser(body);
   } catch (err) {
-    validateEl.textContent = "CLI backend offline. Start: python -m circuit.web_server";
-    return;
+    try {
+      const r = await fetch("/api/draw", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ yaml: body }),
+      });
+      data = await r.json();
+    } catch (err2) {
+      validateEl.textContent =
+        "Pyodide compile failed and CLI backend is offline. Run: python -m circuit.web_server";
+      return;
+    }
   }
   last = data;
   showSheet();
@@ -78,9 +122,24 @@ document.getElementById("example").onclick = () => {
   chipsFrom(EXAMPLE);
 };
 document.getElementById("generate").onclick = generate;
-document.getElementById("download").onclick = () => {
+document.getElementById("download").onclick = async () => {
   if (!last) return;
-  const svg = (last.sheets || {})[tab] || last.card;
+  const sheets = last.sheets || {};
+  if (window.JSZip && Object.keys(sheets).length) {
+    const zip = new JSZip();
+    Object.entries(sheets).forEach(([name, body]) => {
+      zip.file(name + (String(body).startsWith("<svg") ? ".svg" : ".txt"), body);
+    });
+    if (last.card) zip.file("card.svg", last.card);
+    if (last.report) zip.file("report.svg", last.report);
+    const blob = await zip.generateAsync({ type: "blob" });
+    const a = document.createElement("a");
+    a.download = "circuit-pack.zip";
+    a.href = URL.createObjectURL(blob);
+    a.click();
+    return;
+  }
+  const svg = sheets[tab] || last.card;
   const a = document.createElement("a");
   a.download = tab + ".svg";
   a.href = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" }));

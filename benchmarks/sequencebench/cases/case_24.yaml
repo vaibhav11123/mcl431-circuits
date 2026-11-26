@@ -1,0 +1,24 @@
+meta:
+  title: SequenceBench 24 hydraulic two cylinders with PRV
+  domain: hydraulic
+  patterns: [dac_4_3]
+sequence:
+  - { action: 1A+, label: clamp }
+  - { action: 2A+, label: press }
+  - { action: 2A-, label: unpress }
+  - { action: 1A-, label: unclamp }
+power:
+  pumps:
+    - { id: P1 }
+  relief_valves:
+    - { id: RV1, pump: P1 }
+  tank: TANK
+cylinders:
+  1A: { dcv: 1V, sensors: [1B1, 1B2] }
+  2A: { dcv: 2V, sensors: [2B1, 2B2] }
+motors: {}
+valves:
+  1V: { type: dcv_4_3_closed_center, solenoids: [1Y1, 1Y2] }
+  2V: { type: dcv_4_3_closed_center, solenoids: [2Y1, 2Y2] }
+sensors: [1B1, 1B2, 2B1, 2B2]
+electrical: { convention: lecture, paths: [] }

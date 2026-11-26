@@ -1,5 +1,5 @@
 # ADR-005 Translation validation
 
-Status: accepted
+Canonical: [ADR-005.md](ADR-005.md)
 
-Independent `spec_trace` vs `graph_trace`. Not CompCert. Not SMT by default.
+Revisit when 3-cylinder mutex exceeds 2s.

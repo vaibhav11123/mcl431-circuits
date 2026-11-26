@@ -1,5 +1,5 @@
 # ADR-006 PNG in chat
 
-Status: accepted
+Canonical: [ADR-006.md](ADR-006.md)
 
-ImageContent preview ≤800px / 200KB. Full YAML + `get_sheet` for print.
+Revisit when Pyodide cannot install pydantic-core.

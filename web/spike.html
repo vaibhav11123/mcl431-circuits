@@ -2,9 +2,29 @@
 <html><head><meta charset="utf-8"/><title>Pyodide spike</title></head>
 <body>
 <pre id="log"></pre>
-<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<script src="https://cdn.jsdelivr.net/pyodide/v314.0.2/full/pyodide.js"></script>
 <script>
 const log = (m) => { document.getElementById("log").textContent += m + "\n"; };
+const YAML = `meta:
+  title: ISO two-cylinder 5/2 sequence
+  domain: pneumatic_plus_electrical
+  patterns: [ep_dac_5_2, sequence_double_solenoid]
+sequence:
+  - { action: 1A+, label: hold strip }
+  - { action: 2A+, label: feed }
+  - { action: 2A-, label: retract feed }
+  - { action: 1A-, label: release }
+power: { pumps: [], tank: "" }
+cylinders:
+  1A: { dcv: 1V, sensors: [1B1, 1B2] }
+  2A: { dcv: 2V, sensors: [2B1, 2B2] }
+motors: {}
+valves:
+  1V: { type: dcv_5_2_double_solenoid, solenoids: [1Y1, 1Y2] }
+  2V: { type: dcv_5_2_double_solenoid, solenoids: [2Y1, 2Y2] }
+sensors: [1B1, 1B2, 2B1, 2B2]
+electrical: { convention: lecture, paths: [] }
+`;
 async function main() {
   const pyodide = await loadPyodide();
   log("pyodide loaded");
@@ -14,6 +34,19 @@ async function main() {
     await micropip.install(["pydantic", "pyyaml"]);
     await pyodide.runPythonAsync("import pydantic, yaml; print('imports ok')");
     log("import pydantic, yaml");
+    const buf = await fetch("./circuit-iso.zip").then((r) => r.arrayBuffer());
+    pyodide.unpackArchive(buf, "zip");
+    pyodide.FS.writeFile("/tmp/iso.yaml", YAML);
+    const svg = await pyodide.runPythonAsync(`
+from circuit.service import draw_yaml
+from pathlib import Path
+text = Path("/tmp/iso.yaml").read_text()
+out = draw_yaml(text)
+sheet = (out.get("sheets") or {}).get("pneumatic") or out.get("card") or ""
+sheet
+`);
+    log(svg.includes("<svg") && svg.includes("1V") ? "draw_yaml ok" : "draw_yaml missing svg");
+    log(svg.slice(0, 80));
   } catch (e) {
     log("Ruling: " + e);
   }
