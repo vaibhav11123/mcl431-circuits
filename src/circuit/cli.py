@@ -34,6 +34,12 @@ def main(argv: list[str] | None = None) -> int:
             )
         if name == "eval":
             p.add_argument("--goldens", action="store_true")
+        if name == "verify":
+            p.add_argument(
+                "--zip",
+                dest="zip_path",
+                help="verify an exported circuit pack against its included graph",
+            )
 
     rast = sub.add_parser("rasterize", help="Render lecture and PYQ PDFs to PNG")
     rast.add_argument("--dpi", type=int, default=200)
@@ -93,6 +99,13 @@ def main(argv: list[str] | None = None) -> int:
         from circuit.ingest_promote import main as promote_main
 
         return promote_main(ROOT, [Path(p) for p in (args.paths or [])])
+
+    if args.cmd == "verify" and getattr(args, "zip_path", None):
+        from circuit.verification.packcheck import verify_zip
+
+        result = verify_zip(Path(args.zip_path))
+        print(result)
+        return 0 if result.get("ok") else 1
 
     spec_path = Path(args.spec) if getattr(args, "spec", None) else (
         ROOT / "examples/grinding_machine/circuit.yaml"

@@ -90,6 +90,14 @@ def watermark_written(written: dict[str, Path]) -> None:
 def draw_all(spec: CircuitSpec, out_dir: Path, *, verified=None) -> dict[str, Path]:
     if verified is not None:
         spec = verified.spec
+        from circuit.compile_sequence import rendering_verified
+
+        with rendering_verified():
+            return _draw_all_body(spec, out_dir)
+    return _draw_all_body(spec, out_dir)
+
+
+def _draw_all_body(spec: CircuitSpec, out_dir: Path) -> dict[str, Path]:
     out_dir.mkdir(parents=True, exist_ok=True)
     if spec.meta.figure_given:
         written = {

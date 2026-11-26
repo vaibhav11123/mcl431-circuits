@@ -12,6 +12,10 @@ from circuit.spec import CircuitSpec
 from circuit.validate import Check, all_ok, load_atlas_ids, validate_spec
 
 MAX_YAML_BYTES = 256 * 1024
+MAX_YAML_DEPTH = 24
+MAX_CYLINDERS = 8
+MAX_SEQUENCE = 32
+MAX_VALVES = 16
 
 SENTENCE_HAS_PRV = (
     "A fixed pump needs a relief valve. This sheet has nowhere for the oil to go."
@@ -64,17 +68,37 @@ def sentence_for(checks: list[Check] | list[dict]) -> str:
     return SENTENCE_OK
 
 
+def _depth(obj, n: int = 0) -> int:
+    if isinstance(obj, dict):
+        return max([n, *(_depth(v, n + 1) for v in obj.values())], default=n)
+    if isinstance(obj, list):
+        return max([n, *(_depth(v, n + 1) for v in obj)], default=n)
+    return n
+
+
+def _reject(sentence: str, name: str) -> dict:
+    return {
+        "ok": False,
+        "sentence": sentence,
+        "checks": [{"name": name, "ok": False, "detail": sentence}],
+        "sheets": {},
+        "card": "",
+        "report": "",
+    }
+
+
 def _load_spec(text: str) -> tuple[CircuitSpec | None, dict | None]:
     raw = text.encode("utf-8")
     if len(raw) > MAX_YAML_BYTES:
-        return None, {
-            "ok": False,
-            "sentence": SENTENCE_TOO_LARGE,
-            "checks": [{"name": "size", "ok": False, "detail": SENTENCE_TOO_LARGE}],
-            "sheets": {},
-            "card": "",
-            "report": "",
-        }
+        return None, _reject(SENTENCE_TOO_LARGE, "size")
+    import yaml
+
+    try:
+        parsed = yaml.safe_load(text)
+    except Exception as exc:
+        return None, _reject(str(exc), "parse")
+    if parsed is not None and _depth(parsed) > MAX_YAML_DEPTH:
+        return None, _reject("spec too deep", "depth")
     tmp = tempfile.NamedTemporaryFile(suffix=".yaml", delete=False)
     path = Path(tmp.name)
     try:
@@ -82,16 +106,15 @@ def _load_spec(text: str) -> tuple[CircuitSpec | None, dict | None]:
         tmp.close()
         spec = CircuitSpec.from_yaml(path)
     except Exception as exc:
-        return None, {
-            "ok": False,
-            "sentence": str(exc),
-            "checks": [{"name": "parse", "ok": False, "detail": str(exc)}],
-            "sheets": {},
-            "card": "",
-            "report": "",
-        }
+        return None, _reject(str(exc), "parse")
     finally:
         path.unlink(missing_ok=True)
+    if len(spec.cylinders) > MAX_CYLINDERS:
+        return None, _reject("too many cylinders", "limits")
+    if len(spec.sequence) > MAX_SEQUENCE:
+        return None, _reject("sequence too long", "limits")
+    if len(spec.valves) > MAX_VALVES:
+        return None, _reject("too many valves", "limits")
     return spec, None
 
 
@@ -193,6 +216,20 @@ def _report_svg(checks: list[dict], sentence: str, assumptions: list[str]) -> st
     return s.tostring()
 
 
+def _rejected_debug_svg(spec: CircuitSpec, hot: set[str] | None = None) -> str:
+    try:
+        from circuit.draw_electrical import draw_electrical
+        from circuit.svgdraw import watermark_svg
+
+        dbg_dir = Path(tempfile.mkdtemp(prefix="circuit-debug-"))
+        dbg_path = draw_electrical(
+            spec, dbg_dir / "debug.svg", highlight=hot or set()
+        )
+        return watermark_svg(dbg_path.read_text(encoding="utf-8"), "REJECTED")
+    except Exception:
+        return ""
+
+
 def _assumptions(spec: CircuitSpec) -> list[str]:
     types = {v.type for v in spec.valves.values()}
     out = []
@@ -263,15 +300,23 @@ def draw_yaml(text: str) -> dict:
                         "status": vr.status.value,
                     }
                 ]
+                hot: set[str] = set()
+                row = vr.src_row if isinstance(vr.src_row, dict) else {}
+                for key in ("plus", "minus"):
+                    if row.get(key):
+                        hot.add(str(row[key]))
+                debug_svg = _rejected_debug_svg(spec, hot)
                 return {
                     "ok": False,
                     "sentence": sentence,
                     "sheets": {},
+                    "debug": debug_svg,
                     "card": _card_svg(spec, sentence, False),
                     "report": _report_svg(checks, sentence, _assumptions(spec)),
                     "checks": checks,
                     "cex": {"step": vr.cex_step, "src": vr.src_row, "tgt": vr.tgt_row},
                     "status": vr.status.value,
+                    "stats": vr.stats,
                 }
             sealed = seal(spec, from_spec(spec), vr)
             spec = sealed.spec
@@ -286,6 +331,10 @@ def draw_yaml(text: str) -> dict:
             "checks": checks,
         }
         if not ok:
+            if pack.hooks_module == "circuit.packs.iso_sequence" and spec.electrical.paths:
+                result["debug"] = _rejected_debug_svg(
+                    spec, {p.coil for p in spec.electrical.paths if p.coil}
+                )
             return result
         tmpdir = Path(tempfile.mkdtemp(prefix="circuit-draw-"))
         try:

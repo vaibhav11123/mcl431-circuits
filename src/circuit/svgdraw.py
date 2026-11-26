@@ -57,15 +57,24 @@ class SVG:
         size: int = 13,
         anchor: str = "middle",
         color: str = "#000",
+        origin: str | None = None,
     ) -> None:
         escaped = (
             s.replace("&", "&amp;")
             .replace("<", "&lt;")
             .replace(">", "&gt;")
         )
+        origin_attr = ""
+        if origin:
+            oesc = (
+                origin.replace("&", "&amp;")
+                .replace('"', "&quot;")
+                .replace("<", "&lt;")
+            )
+            origin_attr = f' data-origin="{oesc}"'
         self.parts.append(
             f'<text x="{x:.1f}" y="{y:.1f}" font-family="Helvetica, Arial, sans-serif" '
-            f'font-size="{size}" text-anchor="{anchor}" fill="{color}">{escaped}</text>'
+            f'font-size="{size}" text-anchor="{anchor}" fill="{color}"{origin_attr}>{escaped}</text>'
         )
 
     def triangle(self, pts: list[tuple[float, float]], fill: str = "#000") -> None:

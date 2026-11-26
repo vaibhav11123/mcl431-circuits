@@ -44,6 +44,24 @@ def test_drop_latch_fails_or_unsupported() -> None:
     assert vr.ok is False
 
 
+def test_drop_last_transition_fails() -> None:
+    spec = _compiled()
+    spec.electrical.paths = spec.electrical.paths[:-1]
+    with using_pack(ISO_PACK):
+        vr = verify_spec(spec)
+    assert vr.ok is False
+
+
+def test_rewire_completion_sensor_fails() -> None:
+    spec = _compiled()
+    for path in spec.electrical.paths:
+        contacts = [c.replace("1B2", "2B2") for c in (path.contacts or [])]
+        path.contacts = contacts
+    with using_pack(ISO_PACK):
+        vr = verify_spec(spec)
+    assert vr.ok is False
+
+
 def test_flip_nc_to_no_fails() -> None:
     spec = _compiled()
     flipped = False

@@ -56,7 +56,7 @@ Tracker:
 - [x] T26 templates + practice — 3/3
 - [x] T27 README / GEO / Pages — 4/4
 - [x] T28 Inspector golden prompts live — pytest classes + HTTP draw_spec
-- [x] T29 optional Fly — pass skip `no token`
+- [ ] T29 optional Fly — **DEFERRED** (no `FLY_API_TOKEN`; token would not authorize spend)
 - [x] T30 design-decisions + related work — 3/3
 - [x] T31 ISO visual QA log — 4/4
 - [x] T32 standing goldens + CI — 3/3

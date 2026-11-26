@@ -76,6 +76,7 @@ def env_trace(graph: CircuitGraph, *, max_steps: int = 16) -> dict:
         "states": len(rows),
         "exhausted": exhausted,
         "max_steps": max_steps,
+        "valve_memory": dict(state),
     }
 
 
