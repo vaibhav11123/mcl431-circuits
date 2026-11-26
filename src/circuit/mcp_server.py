@@ -256,6 +256,13 @@ def create_server():
             )
         )
 
+    @mcp.custom_route("/.well-known/openai-apps-challenge", methods=["GET"])
+    async def openai_apps_challenge(request: Request):
+        from starlette.responses import PlainTextResponse
+
+        token = _static_page("openai-apps-challenge.txt", "REPLACE_TOKEN").strip()
+        return PlainTextResponse(token)
+
     return mcp
 
 
