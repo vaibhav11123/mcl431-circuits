@@ -1,20 +1,47 @@
 # Sequence Circuit
 
-Verification-oriented compiler for AI-generated engineering systems.
+**Verification-oriented compiler for AI-generated engineering systems.**
 
-The language model is **untrusted**. It may propose a YAML circuit spec. A deterministic compiler decides whether that spec is allowed to become a sheet. A pretty drawing that fails eval is not returned.
+A language model may propose YAML. The compiler decides whether it becomes a sheet.
 
-This is not an AI circuit generator. The compiler has authority over correctness.
+[Open the workspace](https://vaibhav11123.github.io/mcl431-circuits/) · [v0.1 release](https://github.com/vaibhav11123/mcl431-circuits/releases/tag/v0.1.0-distribution) · [Changelog](CHANGELOG.md)
 
-## Demo
+<p align="center">
+  <a href="https://github.com/vaibhav11123/mcl431-circuits/releases/download/v0.1.0-distribution/sequence-circuit-workspace-demo.mp4">
+    <img src="docs/release-assets/workspace-demo.gif" alt="Sequence Circuit workspace demo: Example YAML, Generate, pneumatic sheet, all checks passed" width="920"/>
+  </a>
+</p>
 
-Workspace: Example A+ B+ → Generate. Sheets are emitted only if executed checks pass.
+<p align="center"><em>Example YAML → Generate → pneumatic / electrical / sequence. Status: all executed checks passed.</em></p>
 
-[![Sequence Circuit workspace demo](docs/release-assets/workspace-demo.gif)](https://github.com/vaibhav11123/mcl431-circuits/releases/download/v0.1.0-distribution/sequence-circuit-workspace-demo.mp4)
+<p align="center">
+  <a href="https://github.com/vaibhav11123/mcl431-circuits/releases/download/v0.1.0-distribution/sequence-circuit-workspace-demo.mp4"><strong>Play the 21s video (mp4)</strong></a>
+  ·
+  <a href="docs/release-assets/sequence-circuit-workspace-demo.mp4">file in repo</a>
+  (GitHub’s file viewer has the player)
+</p>
 
-**Video (21s, mp4):** [play / download](https://github.com/vaibhav11123/mcl431-circuits/releases/download/v0.1.0-distribution/sequence-circuit-workspace-demo.mp4) · [in-repo file](docs/release-assets/sequence-circuit-workspace-demo.mp4) (GitHub’s file viewer has the player)
+<p align="center">
+  <img src="docs/release-assets/demo-pneumatic.png" alt="ISO pneumatic sheet" width="420"/>
+  &nbsp;
+  <img src="docs/release-assets/demo-electrical.png" alt="Electrical current-path sheet" width="420"/>
+</p>
 
-## Three commands
+## Why this exists
+
+Most “AI CAD” tools let the model draw. Sequence Circuit does the opposite:
+
+1. You (or a model) write a **YAML** sequence.
+2. The compiler **validates**, **draws**, and **verifies**.
+3. Fail eval → **no sheet**. Fail-closed by default.
+
+Not an AI circuit generator. The compiler has authority over correctness.
+
+## Try it
+
+**In the browser** (no install): [vaibhav11123.github.io/mcl431-circuits](https://vaibhav11123.github.io/mcl431-circuits/)
+
+**On the CLI:**
 
 ```bash
 pip install -e ".[dev]"
@@ -22,45 +49,53 @@ python -m circuit draw examples/iso_sequence/circuit.yaml
 python -m circuit verify examples/iso_sequence/circuit.yaml
 ```
 
-Workspace (editable sheets, download pack, sequence explorer): [`web/`](web/). Use from ChatGPT or Claude **or open the workspace**.
+| Sheet | When |
+| --- | --- |
+| Pneumatic / hydraulic | Power circuit for the domain |
+| Electrical | L8 paths when the paper asks |
+| Sequence | Step–displacement diagram |
+| Report | Executed checks in plain English |
 
-MCP (optional, local): `python -m circuit.mcp_server` (stdio) or `--http`.
+Optional MCP: `python -m circuit.mcp_server` (stdio) or `--http`. Plugin zip: `python scripts/pack_plugin.py`.
 
-SequenceBench:
+## What it refuses
+
+| Ask | What happens |
+| --- | --- |
+| Invented valve id | Refuse — pack symbols only |
+| Pressure drop / FluidSIM `.ct` | Refuse |
+| SVG that fails eval | No emit (or `--unverified` watermark) |
+| Lecture-crop PNG in the public ISO pack | Never ships |
+
+## Benchmarks (offline, no API key)
 
 ```bash
-python -m circuit bench benchmarks/sequencebench
-python -m circuit bench --suite 300
-python -m circuit bench --suite llm
+python -m circuit bench --suite 300   # 220 legal / 80 illegal
+python -m circuit bench --suite llm   # fixtures only
 ```
 
-The 300-case suite and the LLM fixtures call **no paid API**. Fly.io is not required ([docs/self-hosting.md](docs/self-hosting.md); T29 is SKIPPED_OPTIONAL, not deployed).
+## Packs
 
-ChatGPT / Claude directory listing needs a human-operated public HTTPS origin. Local MCP does not make the plugin directory-eligible. See [plugin/SUBMISSION.md](plugin/SUBMISSION.md) and [HUMAN_ACTIONS_REQUIRED.md](HUMAN_ACTIONS_REQUIRED.md).
+| Surface | Symbol pack |
+| --- | --- |
+| Public workspace / plugin | ISO sequence (vector + CC-BY 5/2·5/3) |
+| Local MCL 431 course goldens | Lecture atlas — see [docs/eval.md](docs/eval.md) |
 
-Release notes: [CHANGELOG.md](CHANGELOG.md). Launch copy: [docs/marketing.md](docs/marketing.md). Channel status: [docs/distribution.md](docs/distribution.md).
+## Load-bearing decisions
 
-## Course goldens (MCL 431)
+1. **Fail-closed** draw: eval/verify fail → no sheet.
+2. **Independent** `spec_trace` ⋈ `env_trace` — not a second synthesizer call, not CompCert.
+3. Public SVG never embeds lecture PNGs.
 
-- **Sheets:** 2023 B1 grinding, 2017 hi-lo punch, 2023 Minor-2 strip feed, 2023 Minor-2 PLC conveyor, 2017 5/3 drill, 2016 emboss, L14 PLC set, 2018 air-jet (3Z = `dcv_3_2`), 2020 mill clamp (5 bar), 2022 two-hand stamp, 2023 four-hole drill, majors PLC (oven, sprinkler, lockout, preset counter, tank mix, orange juice, plywood stack, traffic / quiz conveyor)
-- **Solution text** (figure given or numeric only): 2018 hi-lo, 2019 meter-in/out, 2016 hoist, 2023 B2 head loss, 2022 grind-given, 2019 vertical meter-out, 2020/2022 hoist with pipe loss, stepper/servo numbers, 2023 Part A, quiz regen
-- **Not a sheet:** corporate-adaptation prose; CNC part programs until every figure coordinate is in `facts.yaml` (`not_given` otherwise)
+## Docs
 
-Full gates: [docs/eval.md](docs/eval.md). Learnings log: [docs/pyq-solution-run-log.md](docs/pyq-solution-run-log.md).
+| Doc | Audience |
+| --- | --- |
+| [docs/architecture.md](docs/architecture.md) | How the compiler is wired |
+| [docs/self-hosting.md](docs/self-hosting.md) | HTTPS MCP without Fly |
+| [plugin/SUBMISSION.md](plugin/SUBMISSION.md) | ChatGPT / Claude directory paste |
+| [docs/ops/](docs/ops/) | Release audit (maintainers) |
 
-## Related work
+## License
 
-- FluidSIM — commercial simulator. We do not export `.ct`.
-- FluidPyPLC (GPL) — **do not copy**. Cascade here is `meta.method: cascade` plus extra `dcv_5_2` valves.
-- spec2schematic, Weave, CADPilot/CADX — model-written geometry. We are stricter: the model never writes geometry.
-- Alive2 — independent src vs tgt check. Our analog is `spec_trace` vs `env_trace` (sensors from modeled actuators), not SMT, not CompCert.
-
-## Three load-bearing decisions
-
-1. Fail-closed `draw_yaml` and CLI `draw`: eval/verify fail → no sheet. `--unverified` watermarks.
-2. Independent translation validation (T36), not a second call to the synthesizer.
-3. Public ISO pack is vector + two Wikimedia CC-BY 5/2 and 5/3 rasters. Lecture PNG never ships in the public SVG.
-
-Refused work: physics simulation, FluidSIM, OAuth, hosted LLM, lecture-PDF ingest on the public pack.
-
-Eval failures are listed in `output/*/eval.json`. `circuit verify` writes `verify.json` with `physics: not_evaluated` for checks that were not run.
+MIT — [LICENSE](LICENSE).

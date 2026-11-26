@@ -1,6 +1,6 @@
 # Sequence Circuit — executable product plan
 
-Status: executed on this VM (2026-11-26 IST). T0–T57 closed except T29 **SKIPPED_OPTIONAL** (Fly not deployed; not required). See `COMPLETION_AUDIT.md`. Human leftovers: ChatGPT/Claude login and directory submit after a public HTTPS origin exists.
+Status: executed on this VM (2026-11-26 IST). T0–T57 closed except T29 **SKIPPED_OPTIONAL** (Fly not deployed; not required). See `docs/ops/COMPLETION_AUDIT.md`. Human leftovers: ChatGPT/Claude login and directory submit after a public HTTPS origin exists.
 
 **Do not position this as an AI-powered circuit generator.** That is an LLM wrapper. The CS problem is:
 
@@ -561,7 +561,7 @@ Ruling: Docker Engine installed via `apt docker.io` after `policy-rc.d` blocked 
 
 Depends on: T12.
 
-Files: `Dockerfile` (non-root user, `librsvg2-bin`, `pip install .[dev]` not ingest), `fly.toml` (http_service, `/mcp`), `deploy/static/privacy.html`, `terms.html`, `support.html`, `/.well-known/openai-apps-challenge` placeholder `REPLACE_TOKEN`.
+Files: `Dockerfile` (non-root user, `librsvg2-bin`, `pip install .[dev]` not ingest), `deploy/fly.toml.skipped` (http_service, `/mcp`; not deployed), `deploy/static/privacy.html`, `terms.html`, `support.html`, `/.well-known/openai-apps-challenge` placeholder `REPLACE_TOKEN`.
 
 ```dockerfile
 FROM python:3.12-slim

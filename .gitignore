@@ -22,3 +22,6 @@ exams/pyqs/*.pdf
 exams/pyqs/*.jpeg
 exams/pyqs/*.jpg
 exams/pyqs/*.png
+
+# local tunnel binary
+.tools/
