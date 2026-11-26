@@ -1,0 +1,4 @@
+{
+  "decision": "reject",
+  "reason": "deadlock: stalled off rest with no timer charging"
+}

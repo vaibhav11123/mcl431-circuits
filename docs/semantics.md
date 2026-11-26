@@ -10,7 +10,13 @@ Refinement: compressed `env_trace` rows equal `spec_trace` on one cycle back to 
 
 Valve memory: a 5/2 double-solenoid cylinder holds its last commanded bit when both coils are off. Sensors are home iff bit 0 and end iff bit 1.
 
-Timers: `TIMER` steps are `UNSUPPORTED` in `verify_spec`. The environment does not advance wall-clock time.
+Timers: discrete coil ticks, not wall-clock. A coil named `T1_3s` must stay energized for 3 environment steps before contact `T1` is true. That is independent of `spec.sequence` except that the synthesizer emits the coil. Wall-clock seconds are not simulated.
+
+Cascade: `meta.method: cascade` adds extra `dcv_5_2` group valves (`G1`…). Translation validation compares electrical step-memory (`env_trace`) to `spec_trace`. Group-line pneumatic topology is `NOT_EVALUATED`. Do not report cascade as a fluid-physics PASS.
+
+Deadlock: if the environment stalls off rest with no timer charging, `verify_spec` is `FAIL` with `check: deadlock`. Exhausted step budgets stay `INCONCLUSIVE`, never `PASS`.
+
+Pressure waits (`PS` / `PRESSURE`) stay `UNSUPPORTED`. Physics remains `NOT_EVALUATED`.
 
 Status values: `PASS`, `FAIL`, `INCONCLUSIVE`, `UNSUPPORTED`, `NOT_EVALUATED`. Exhausted step budgets and truncated mutex are never `PASS`. Physics is always `NOT_EVALUATED`.
 

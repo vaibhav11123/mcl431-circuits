@@ -1,12 +1,18 @@
 """Independent logical environment. Sensors come from modeled actuator bits.
 
 Do not import the synthesizer. Do not import the source oracle.
+Timers are discrete: a coil named T1_3s must stay energized for 3 env steps
+before contact T1 becomes true. That is not wall-clock physics.
 """
 
 from __future__ import annotations
 
+import re
+
 from circuit.ir.graph import CircuitGraph
 from circuit.semantics.graph_trace import _energized
+
+_TIMER_COIL = re.compile(r"^(T\d+)(?:_(\d+)s)?$")
 
 
 def sensors_from_state(graph: CircuitGraph, state: dict[str, int]) -> dict[str, bool]:
@@ -21,7 +27,19 @@ def sensors_from_state(graph: CircuitGraph, state: dict[str, int]) -> dict[str, 
     return env
 
 
-def env_trace(graph: CircuitGraph, *, max_steps: int = 16) -> dict:
+def timer_coils(graph: CircuitGraph) -> dict[str, tuple[str, int]]:
+    """Map coil id → (done contact, discrete ticks). Independent of spec.sequence."""
+    found: dict[str, tuple[str, int]] = {}
+    for path in graph.paths:
+        coil = path.coil or ""
+        m = _TIMER_COIL.match(coil)
+        if not m:
+            continue
+        found[coil] = (m.group(1), max(int(m.group(2) or 1), 1))
+    return found
+
+
+def env_trace(graph: CircuitGraph, *, max_steps: int = 64) -> dict:
     """Press START after rest. Advance from actual state, not the required sequence."""
     cylinders = [n.id for n in graph.nodes if n.kind == "cylinder"]
     rest = {cid: 0 for cid in cylinders}
@@ -29,14 +47,29 @@ def env_trace(graph: CircuitGraph, *, max_steps: int = 16) -> dict:
     rows = [dict(state)]
     k_hold: dict[str, bool] = {}
     conflict = None
+    deadlock = None
     transitions = 0
     exhausted = False
     prev_on: set[str] | None = None
+    timers = timer_coils(graph)
+    ticks: dict[str, int] = {coil: 0 for coil in timers}
+    done: dict[str, bool] = {name: False for name, _ in timers.values()}
     for t in range(max_steps):
         env = dict(k_hold)
         env["START"] = True
         env.update(sensors_from_state(graph, state))
+        for name, fired in done.items():
+            env[name] = fired
         on = _energized(graph.paths, dict(env))
+        charging = False
+        for coil, (name, need) in timers.items():
+            if coil in on and not done.get(name):
+                ticks[coil] += 1
+                charging = True
+                if ticks[coil] >= need:
+                    done[name] = True
+            elif coil not in on and not done.get(name):
+                ticks[coil] = 0
         nxt = dict(state)
         for cid in cylinders:
             plus = graph.solenoid_plus.get(cid)
@@ -63,20 +96,24 @@ def env_trace(graph: CircuitGraph, *, max_steps: int = 16) -> dict:
             transitions += 1
         if nxt == rest and state != rest:
             break
-        if nxt == state and prev_on == on and t > 0:
+        if nxt == state and prev_on == on and t > 0 and not charging:
+            if nxt != rest:
+                deadlock = {"step": t + 1, "state": dict(nxt), "on": sorted(on)}
             break
         prev_on = set(on)
         state = nxt
     else:
-        exhausted = conflict is None
+        exhausted = conflict is None and deadlock is None
     return {
         "rows": rows,
         "conflict": conflict,
+        "deadlock": deadlock,
         "transitions": transitions,
         "states": len(rows),
         "exhausted": exhausted,
         "max_steps": max_steps,
         "valve_memory": dict(state),
+        "timers_done": dict(done),
     }
 
 

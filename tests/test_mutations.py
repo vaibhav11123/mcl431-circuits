@@ -79,3 +79,30 @@ def test_flip_nc_to_no_fails() -> None:
     with using_pack(ISO_PACK):
         vr = verify_spec(spec)
     assert vr.ok is False
+
+
+def test_drop_timer_coil_fails() -> None:
+    spec = CircuitSpec.from_yaml(
+        ROOT / "benchmarks/sequencebench/cases/case_15.yaml"
+    )
+    with using_pack(ISO_PACK):
+        compiled = apply_compile(spec)
+        compiled.electrical.paths = [
+            p for p in compiled.electrical.paths if "T1" not in (p.coil or "")
+        ]
+        vr = verify_spec(compiled)
+    assert vr.status is Status.FAIL
+    assert vr.ok is False
+
+
+def test_cascade_group_valves_exist_fluid_topology_not_claimed() -> None:
+    spec = CircuitSpec.from_yaml(ROOT / "examples/iso_sequence/circuit.yaml")
+    spec.meta.method = "cascade"
+    from circuit.cascade import apply_cascade
+
+    applied = apply_cascade(spec)
+    assert "G1" in applied.valves
+    with using_pack(ISO_PACK):
+        vr = verify_spec(spec)
+    assert vr.status is Status.PASS
+    assert vr.stats.get("physics") not in {"PASS", "pass"}

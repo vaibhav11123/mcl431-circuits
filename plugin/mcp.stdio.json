@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "sequence-circuit": {
+      "command": "python",
+      "args": ["-m", "circuit.mcp_server"]
+    }
+  }
+}

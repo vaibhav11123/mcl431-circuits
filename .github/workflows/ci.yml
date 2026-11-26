@@ -24,3 +24,8 @@ jobs:
         run: pytest tests/test_iso_pack.py tests/test_service.py tests/test_provenance.py -q
       - name: Eval goldens
         run: python -m circuit eval --goldens
+      - name: SequenceBench
+        run: |
+          python -m circuit bench benchmarks/sequencebench
+          python -m circuit bench --suite 300
+          python -m circuit bench --suite llm

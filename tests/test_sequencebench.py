@@ -64,5 +64,7 @@ def test_sequencebench_expected_traces_independent() -> None:
                 matched += 1
             else:
                 assert vr.status in {Status.FAIL, Status.INCONCLUSIVE}
-    assert unsupported >= 1
+    # v0 TIMER/cascade cases now independently verify. Pressure waits stay
+    # UNSUPPORTED (covered in test_timer_cascade_deadlock).
     assert matched >= 8
+    assert unsupported >= 0

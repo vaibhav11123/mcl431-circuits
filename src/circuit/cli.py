@@ -21,8 +21,16 @@ def main(argv: list[str] | None = None) -> int:
     compile_p.add_argument("--pack", help="symbol pack directory")
     compile_p.add_argument("--json", action="store_true", help="print the compile dict")
 
-    bench_p = sub.add_parser("bench", help="Score SequenceBench v0 (compiler, not LLM)")
-    bench_p.add_argument("root", help="benchmarks/sequencebench")
+    bench_p = sub.add_parser(
+        "bench", help="Score SequenceBench v0, 300, or LLM fixtures (compiler, not a paid API)"
+    )
+    bench_p.add_argument("root", nargs="?", default="benchmarks/sequencebench")
+    bench_p.add_argument(
+        "--suite",
+        choices=["v0", "300", "llm"],
+        default="v0",
+        help="v0: YAML folder; 300: generated 300-case suite; llm: fixture model outputs",
+    )
 
     for name, help_ in (
         ("validate", "Validate a circuit.yaml spec"),
@@ -89,10 +97,27 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.cmd == "bench":
-        from circuit.bench import run_bench
         from circuit.service import dumps
 
-        report = run_bench(Path(args.root))
+        suite = getattr(args, "suite", "v0")
+        if suite == "300":
+            from circuit.bench300 import run_bench300
+
+            report = run_bench300()
+        elif suite == "llm":
+            from circuit.bench_llm import run_bench_llm
+
+            root = ROOT / "benchmarks" / "sequencebench_llm"
+            requested = Path(args.root) if args.root else root
+            if requested != Path("benchmarks/sequencebench") and (
+                (requested / "cases").is_dir() or list(requested.glob("llm_*.yaml"))
+            ):
+                root = requested
+            report = run_bench_llm(root)
+        else:
+            from circuit.bench import run_bench
+
+            report = run_bench(Path(args.root))
         print(dumps({k: v for k, v in report.items() if k != "rows"}))
         return 0
 

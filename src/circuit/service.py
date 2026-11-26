@@ -284,9 +284,7 @@ def draw_yaml(text: str) -> dict:
         checks = ev["checks"]
         ok = all_ok(val) and bool(ev["pass"])
         sentence = sentence_for(val if not all_ok(val) else checks)
-        skip_verify = (spec.meta.method or "") == "cascade" or any(
-            s.action == "TIMER" for s in spec.sequence
-        )
+        skip_verify = any(s.action in {"PS", "PRESSURE"} for s in spec.sequence)
         sealed = None
         if ok and pack.hooks_module == "circuit.packs.iso_sequence" and not skip_verify:
             from circuit.verification.artifact import seal

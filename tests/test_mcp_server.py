@@ -22,6 +22,12 @@ def test_list_tools_annotations() -> None:
     assert "get_sheet" in names
     listing = next(t for t in tools if t.name == "list_symbols")
     assert listing.annotations and listing.annotations.readOnlyHint is True
+    assert listing.title
+    draw = next(t for t in tools if t.name == "draw_spec")
+    assert draw.annotations.readOnlyHint is False
+    assert draw.annotations.openWorldHint is False
+    sheet = next(t for t in tools if t.name == "get_sheet")
+    assert sheet.annotations.readOnlyHint is True
 
 
 def test_draw_spec_iso_has_image() -> None:

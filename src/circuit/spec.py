@@ -190,6 +190,11 @@ class CircuitSpec(BaseModel):
         data: dict[str, Any] = yaml.safe_load(Path(path).read_text()) or {}
         return cls.model_validate(data)
 
+    @classmethod
+    def from_yaml_text(cls, text: str) -> CircuitSpec:
+        data: dict[str, Any] = yaml.safe_load(text) or {}
+        return cls.model_validate(data)
+
     def to_yaml(self) -> str:
         return yaml.safe_dump(self.model_dump(mode="json"), sort_keys=False)
 

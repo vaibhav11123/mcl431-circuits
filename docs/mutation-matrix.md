@@ -12,5 +12,8 @@ Measured by `tests/test_mutations.py` and `tests/test_planted_miscompile.py` on 
 | START dual-solenoid plant | — | FAIL | no pneumatic sheet |
 | Fluid port to coil | E210 | — | — |
 | Truncated mutex bound | — | INCONCLUSIVE | — |
+| Dropped TIMER coil `T1_*s` | — | FAIL | — |
+| Cascade `G1` present | structural | electrical PASS ≠ fluid topology | fluid topology `NOT_EVALUATED` |
+| START-only `1Y1` stall | — | FAIL deadlock | no sheet |
 
-Physical dynamics are `NOT_EVALUATED`.
+Physical dynamics are `NOT_EVALUATED`. Pressure waits are `UNSUPPORTED`.

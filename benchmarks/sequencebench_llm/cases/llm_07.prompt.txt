@@ -1,0 +1,1 @@
+Clamp, wait 2 seconds, feed, retract, unclamp.

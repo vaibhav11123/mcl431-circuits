@@ -189,7 +189,7 @@ def main() -> None:
     timers = [
         ("15", 2, [("1A+", "press", None), ("TIMER", "dwell", 2), ("2A+", "feed", None), ("2A-", "return", None), ("1A-", "release", None)]),
         ("16", 3, [("1A+", "clamp", None), ("2A+", "feed", None), ("TIMER", "wait", 3), ("2A-", "return", None), ("1A-", "release", None)]),
-        ("17", 4, [("1A+", "hold", None), ("TIMER", "soak", 4), ("1A-", "open", None), ("2A+", "index", None), ("2A-", "home", None)]),
+        ("17", 4, [("2A+", "index", None), ("1A+", "hold", None), ("TIMER", "soak", 4), ("1A-", "open", None), ("2A-", "home", None)]),
         ("18", 5, [("2A+", "gate", None), ("1A+", "ram", None), ("TIMER", "cure", 5), ("1A-", "back", None), ("2A-", "ungate", None)]),
     ]
     for stem, sec, acts in timers:
@@ -197,7 +197,7 @@ def main() -> None:
             f"case_{stem}",
             pneu(f"SequenceBench {stem} timer {sec}s", acts),
             "accept",
-            "TIMER drawn; independent verify is UNSUPPORTED",
+            "TIMER drawn; discrete T1 ticks in env_trace",
         )
 
     write_case(
