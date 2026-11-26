@@ -126,3 +126,13 @@ class SVG:
             + "".join(self.parts)
             + "</svg>\n"
         )
+
+
+def watermark_svg(svg: str, label: str = "UNVERIFIED") -> str:
+    mark = (
+        '<text x="12" y="22" font-family="Helvetica, Arial, sans-serif" '
+        f'font-size="16" fill="#c00">{label}</text>'
+    )
+    if "</svg>" in svg:
+        return svg.replace("</svg>", mark + "</svg>", 1)
+    return svg + mark

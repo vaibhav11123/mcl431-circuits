@@ -23,8 +23,11 @@ def test_iso_verify_ok() -> None:
 
 
 def test_refine_mismatch_step_zero() -> None:
+    from circuit.verification.status import Status
+
     r = refine([{"1A": 0, "2A": 0}], [{"1A": 1, "2A": 0}])
     assert r.ok is False
+    assert r.status is Status.FAIL
     assert r.cex_step == 0
 
 

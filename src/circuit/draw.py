@@ -79,7 +79,17 @@ def draw_calc_only(spec: CircuitSpec, dest: Path) -> Path:
     return dest
 
 
-def draw_all(spec: CircuitSpec, out_dir: Path) -> dict[str, Path]:
+def watermark_written(written: dict[str, Path]) -> None:
+    from circuit.svgdraw import watermark_svg
+
+    for path in written.values():
+        if getattr(path, "suffix", "") == ".svg" and path.is_file():
+            path.write_text(watermark_svg(path.read_text(encoding="utf-8")))
+
+
+def draw_all(spec: CircuitSpec, out_dir: Path, *, verified=None) -> dict[str, Path]:
+    if verified is not None:
+        spec = verified.spec
     out_dir.mkdir(parents=True, exist_ok=True)
     if spec.meta.figure_given:
         written = {

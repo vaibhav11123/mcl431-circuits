@@ -22,7 +22,73 @@ def extra_checks(spec: CircuitSpec) -> list[Check]:
 
 
 def compile_override(spec: CircuitSpec):
-    return None
+    """Step memories so sensors from actuator state cannot fire the wrong solenoid."""
+    domain = spec.meta.domain.value
+    if domain.startswith("plc") or spec.meta.figure_given:
+        return None
+    if (spec.meta.method or "") == "cascade":
+        return None
+    if any(s.action == "TIMER" for s in spec.sequence):
+        return None
+    motions = [
+        s for s in spec.sequence if s.action.endswith("+") or s.action.endswith("-")
+    ]
+    if len(motions) < 2 or not spec.cylinders:
+        return None
+
+    from circuit.compile_sequence import (
+        _opposing_solenoid,
+        _renumber,
+        _solenoid_for,
+        _start_and_latch,
+        nc,
+    )
+    from circuit.spec import CurrentPath
+
+    def complete(step) -> str | None:
+        cid = step.action[:-1]
+        cyl = spec.cylinders.get(cid)
+        if not cyl or not cyl.sensors:
+            return None
+        return cyl.sensors[-1] if step.action.endswith("+") else cyl.sensors[0]
+
+    start, _latch = _start_and_latch(spec)
+    n = len(motions)
+    ks = [f"K{i}" for i in range(1, n + 1)]
+    paths: list[CurrentPath] = []
+    for i, step in enumerate(motions):
+        ki = ks[i]
+        nxt = ks[i + 1] if i + 1 < n else None
+        if i == 0:
+            set_contacts = list(start)
+        else:
+            set_contacts = [ks[i - 1]]
+            prev_done = complete(motions[i - 1])
+            if prev_done:
+                set_contacts.append(prev_done)
+        if nxt:
+            set_contacts.append(nc(nxt))
+        paths.append(CurrentPath(number=0, kind="control", contacts=set_contacts, coil=ki))
+        hold = [ki]
+        if nxt:
+            hold.append(nc(nxt))
+        else:
+            last_done = complete(step)
+            if last_done:
+                hold.append(nc(last_done))
+        paths.append(CurrentPath(number=0, kind="control", contacts=hold, coil=ki))
+        coil = _solenoid_for(spec, step.action)
+        if coil:
+            contacts = [ki]
+            cid = step.action[:-1]
+            valve = spec.valves.get(spec.cylinders[cid].dcv) if cid in spec.cylinders else None
+            opp = _opposing_solenoid(coil)
+            if valve and opp in valve.solenoids:
+                contacts.append(nc(opp))
+            paths.append(
+                CurrentPath(number=0, kind="main", contacts=contacts, coil=coil)
+            )
+    return _renumber(paths)
 
 
 def solution_extra(spec: CircuitSpec) -> list[str]:

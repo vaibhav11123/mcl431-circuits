@@ -23,11 +23,11 @@ MCP (optional): `python -m circuit.mcp_server --http`
 - FluidSIM — commercial simulator. We do not export `.ct`.
 - FluidPyPLC (GPL) — **do not copy**. Cascade here is `meta.method: cascade` plus extra `dcv_5_2` valves.
 - spec2schematic, Weave, CADPilot/CADX — model-written geometry. We are stricter: the model never writes geometry.
-- Alive2 — independent src vs tgt check. Our analog is `spec_trace` vs `graph_trace` on the requested run, not SMT, not CompCert.
+- Alive2 — independent src vs tgt check. Our analog is `spec_trace` vs `env_trace` (sensors from modeled actuators), not SMT, not CompCert.
 
 ## Three load-bearing decisions
 
-1. Fail-closed `draw_yaml`: eval fail → no sheet.
+1. Fail-closed `draw_yaml` and CLI `draw`: eval/verify fail → no sheet. `--unverified` watermarks.
 2. Independent translation validation (T36), not a second call to the synthesizer.
 3. Public ISO pack is vector + two Wikimedia CC-BY 5/2 and 5/3 rasters. Lecture PNG never ships in the public SVG.
 

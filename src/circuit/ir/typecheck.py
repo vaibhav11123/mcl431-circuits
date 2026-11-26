@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from circuit.ir.graph import CircuitGraph
+from circuit.ir.graph import CircuitGraph, GraphEdge
+from circuit.ir.ports import Port, compatible
 from circuit.spec import CircuitSpec
 from circuit.validate import Check, validate_spec
 
@@ -25,13 +26,43 @@ def typecheck(spec: CircuitSpec, root=None) -> list[Check]:
     return checks
 
 
+def _ports_of(edge: GraphEdge) -> tuple[Port | None, Port | None]:
+    src = edge.src_typed
+    dst = edge.dst_typed
+    if src is None and edge.src_port in _FLUID:
+        src = Port(
+            component_id=edge.src,
+            port_id=edge.src_port,
+            domain="fluid",
+            role="supply" if edge.src_port in {"P", "S"} else "actuator",
+        )
+    if dst is None and edge.dst_port in _FLUID:
+        dst = Port(
+            component_id=edge.dst,
+            port_id=edge.dst_port,
+            domain="fluid",
+            role="actuator",
+        )
+    return src, dst
+
+
 def typecheck_graph(graph: CircuitGraph) -> list[Check]:
     checks: list[Check] = []
     kinds = {n.id: n.kind for n in graph.nodes}
     domains = {n.id: n.domain for n in graph.nodes}
     for e in graph.edges:
-        src_d = domains.get(e.src, "fluid" if e.src_port in _FLUID else "electrical")
-        dst_d = domains.get(e.dst, "fluid" if e.dst_port in _FLUID else "electrical")
+        src_p, dst_p = _ports_of(e)
+        if src_p and dst_p and not compatible(src_p, dst_p):
+            checks.append(
+                Check(
+                    "E210",
+                    False,
+                    "E210 Compatible fluid-domain port mixed with electrical",
+                )
+            )
+            continue
+        src_d = domains.get(e.src, src_p.domain if src_p else "fluid")
+        dst_d = domains.get(e.dst, dst_p.domain if dst_p else "electrical")
         if src_d != dst_d and {src_d, dst_d} == {"fluid", "electrical"}:
             checks.append(
                 Check(

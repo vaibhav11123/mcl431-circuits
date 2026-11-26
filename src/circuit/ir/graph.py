@@ -4,6 +4,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
+from circuit.ir.ports import Port
 from circuit.spec import CurrentPath
 
 Kind = Literal[
@@ -30,6 +31,8 @@ class GraphEdge(BaseModel):
     src_port: str
     dst: str
     dst_port: str
+    src_typed: Port | None = None
+    dst_typed: Port | None = None
 
 
 class CircuitGraph(BaseModel):

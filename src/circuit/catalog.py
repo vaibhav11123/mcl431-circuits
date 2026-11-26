@@ -24,9 +24,20 @@ class Glyph:
 
     @property
     def path(self) -> Path:
-        from circuit.pack import active_stamp_dir
+        from circuit.pack import active_stamp_dir, current_pack
 
-        return active_stamp_dir() / self.file
+        p = active_stamp_dir() / self.file
+        pack = current_pack()
+        if pack is not None and pack.hooks_module == "circuit.packs.iso_sequence":
+            lecture = (ROOT / "lecture" / "crops").resolve()
+            try:
+                p.resolve().relative_to(lecture)
+            except ValueError:
+                return p
+            raise FileNotFoundError(
+                f"public pack cannot load lecture stamp {self.file}"
+            )
+        return p
 
 
 # Port fractions are (fx, fy) of the placed bbox, origin top-left.
