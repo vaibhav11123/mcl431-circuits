@@ -1,0 +1,27 @@
+version: 1
+symbols:
+- id: dcv_5_2_double_solenoid
+  kind: pneumatic
+  ports: [1, 2, 3, 4, 5]
+  deenergized: true
+  crop: stamps/dcv_5_2.png
+- id: dcv_5_3
+  kind: pneumatic
+  ports: [1, 2, 3, 4, 5]
+  deenergized: true
+  crop: stamps/dcv_5_3.png
+- id: dcv_4_3_closed_center
+  kind: hydraulic
+  ports: [P, T, A, B]
+  deenergized: true
+  crop: stamps/dcv_5_3.png
+- id: prv
+  kind: hydraulic
+  ports: [P, T]
+  deenergized: true
+  crop: stamps/dcv_5_2.png
+- id: pump_fixed
+  kind: hydraulic
+  ports: [P, S]
+  deenergized: true
+  crop: stamps/dcv_5_2.png

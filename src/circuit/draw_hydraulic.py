@@ -32,12 +32,10 @@ def _draw_single_pump(s: SVG, spec: CircuitSpec) -> tuple[float, float, float, f
     # Tee on the P-rail, PRV across P→T, dedicated tank drop (L3/L4 power unit).
     rvx, rvy = px + 118, p_rail_y + 48
     prv = stamp(s, "prv", rvx, rvy, anchor="center")
-    if spec.meta.exam_id == "2023_selfstudy_b1":
-        from circuit.calc import grinding_hc1_pressure_bar
+    from circuit.pack import call_hook
 
-        s.text(rvx, rvy - 44, f"RV1 {grinding_hc1_pressure_bar():.2f} bar", 12)
-    else:
-        s.text(rvx, rvy - 44, prv_id, 12)
+    label = call_hook("relief_label", spec, default=None) or prv_id
+    s.text(rvx, rvy - 44, label, 12)
     s.line(px, p_rail_y, prv["P"][0], p_rail_y)
     s.dot(prv["P"][0], p_rail_y)
     s.line(prv["P"][0], p_rail_y, prv["P"][0], prv["P"][1])

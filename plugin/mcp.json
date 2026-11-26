@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "sequence-circuit": {
+      "url": "https://REPLACE_ON_DEPLOY/mcp"
+    }
+  }
+}

@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from circuit.catalog import glyph, stamp, stamp_dcv_5_2, stamp_dcv_5_3
+from circuit.pack import call_hook
 from circuit.spec import CircuitSpec
 from circuit.svgdraw import SVG
 
@@ -22,8 +23,9 @@ def draw_pneumatic(spec: CircuitSpec, dest: Path) -> Path:
     five2 = any(v.type == "dcv_5_2_double_solenoid" for v in spec.valves.values())
     span = 520 if five3 else 480 if five2 else 420
     width = max(1200, 180 + n * span)
-    if spec.meta.exam_id == "2016_minor1_emboss":
-        width = max(width, 1480)
+    extra_w = call_hook("pneumatic_width", spec, default=None)
+    if extra_w:
+        width = max(width, extra_w)
     s = SVG(width, 800)
     s.text(width / 2, 22, spec.meta.title, 18)
     if five3:
@@ -104,23 +106,15 @@ def draw_pneumatic(spec: CircuitSpec, dest: Path) -> Path:
         s.triangle([(sx - 9, sy + 44), (sx + 9, sy + 44), (sx, sy + 64)], fill="#fff")
         s.text(sx + 16, sy + 60, "compressed air supply", 11, "start")
 
-    if spec.meta.exam_id == "2016_minor1_emboss":
-        bx = width - 310
-        s.rect(bx, 58, 290, 220)
-        s.text(bx + 145, 80, "Bill of material", 13)
-        for i, line in enumerate(
-            (
-                "1A1 clamp DAC    2A1 emboss DAC",
-                "1V, 2V  5/2 double solenoid",
-                "1Y1/1Y2   2Y1/2Y2",
-                "1B1/1B2   2B1/2B2  end sensors",
-                "S0 magazine proximity",
-                "S1 start",
-                "PS P/E converter  4 bar",
-                "FRL on supply",
-            )
-        ):
-            s.text(bx + 12, 104 + i * 20, line, 11, "start")
+    used = {c.dcv for c in spec.cylinders.values()}
+    extras = [vid for vid in spec.valves if vid not in used]
+    for i, vid in enumerate(extras):
+        gx = 120 + i * 200
+        gy = 720
+        valve = spec.valves[vid]
+        stamp_dcv_5_2(s, gx, gy, vid, list(valve.solenoids))
+
+    call_hook("pneumatic_overlay", spec, s, default=None)
 
     dest.write_text(s.tostring())
     return dest

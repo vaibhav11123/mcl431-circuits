@@ -1,0 +1,7 @@
+Sequence Circuit is a verification-oriented compiler for AI-generated pneumatic and hydraulic circuits. The language model is untrusted. It may propose YAML; the compiler decides whether a sheet is emitted.
+
+Job: from an engineering sequence to a verified ISO 1219 / L8 drawing.
+
+Refusals: FluidSIM .ct export, pressure physics simulation, invented valve ids, lecture-PDF ingest on the public pack, cascade beyond three cylinders without confirmation.
+
+Do not describe this product as an AI circuit generator.

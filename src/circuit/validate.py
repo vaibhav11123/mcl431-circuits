@@ -33,13 +33,19 @@ class Check:
         return self.ok
 
 
+def _atlas_path(root: Path) -> Path:
+    from circuit.pack import pack_from_root
+
+    return pack_from_root(root).atlas_path
+
+
 def load_atlas_ids(root: Path) -> set[str]:
-    atlas = yaml.safe_load((root / "lecture" / "atlas.yaml").read_text()) or {}
+    atlas = yaml.safe_load(_atlas_path(root).read_text()) or {}
     return {s["id"] for s in atlas.get("symbols") or [] if "id" in s}
 
 
 def load_atlas_crops(root: Path) -> dict[str, str | None]:
-    atlas = yaml.safe_load((root / "lecture" / "atlas.yaml").read_text()) or {}
+    atlas = yaml.safe_load(_atlas_path(root).read_text()) or {}
     return {s["id"]: s.get("crop") for s in atlas.get("symbols") or [] if "id" in s}
 
 
@@ -133,7 +139,12 @@ def validate_spec(spec: CircuitSpec, root: Path | None = None) -> list[Check]:
         sneaky = [v for v in spec.valves.values() if "flow" in v.type or "meter" in v.type]
         checks.append(Check("no_extra_fcv", not sneaky, "question did not ask for FCV"))
 
-    coils = [s for v in spec.valves.values() for s in v.solenoids]
+    coils = [
+        s
+        for vid, v in spec.valves.items()
+        if not str(vid).startswith("G")
+        for s in v.solenoids
+    ]
     paths = spec.electrical.paths
     if not paths and coils and not spec.meta.figure_given:
         from circuit.compile_sequence import apply_compile

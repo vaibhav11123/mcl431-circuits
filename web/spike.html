@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"/><title>Pyodide spike</title></head>
+<body>
+<pre id="log"></pre>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<script>
+const log = (m) => { document.getElementById("log").textContent += m + "\n"; };
+async function main() {
+  const pyodide = await loadPyodide();
+  log("pyodide loaded");
+  await pyodide.loadPackage("micropip");
+  const micropip = pyodide.pyimport("micropip");
+  try {
+    await micropip.install(["pydantic", "pyyaml"]);
+    await pyodide.runPythonAsync("import pydantic, yaml; print('imports ok')");
+    log("import pydantic, yaml");
+  } catch (e) {
+    log("Ruling: " + e);
+  }
+}
+main();
+</script>
+</body></html>

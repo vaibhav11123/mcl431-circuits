@@ -1,0 +1,25 @@
+from __future__ import annotations
+
+import hashlib
+import json
+from pathlib import Path
+
+from circuit.spec import CircuitSpec
+from circuit.verification.refine import verify_spec
+
+
+def write_manifest(spec: CircuitSpec, out_dir: Path) -> dict:
+    vr = verify_spec(spec)
+    payload = {
+        "title": spec.meta.title,
+        "ok": vr.ok,
+        "refine": "passed" if vr.ok else "failed",
+        "physics": "not_evaluated",
+        "cex_step": vr.cex_step,
+        "sha256_spec": hashlib.sha256(spec.to_yaml().encode()).hexdigest(),
+    }
+    out_dir.mkdir(parents=True, exist_ok=True)
+    path = out_dir / "verify.json"
+    path.write_text(json.dumps(payload, indent=2) + "\n")
+    payload["path"] = str(path)
+    return payload

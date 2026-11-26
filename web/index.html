@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Sequence Circuit</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <header class="chrome">
+    <h1>Sequence Circuit</h1>
+    <p class="sub">Verification-oriented compiler — the model is untrusted.</p>
+  </header>
+  <aside class="seq">
+    <div id="chips" class="sequence-chip-row"></div>
+    <textarea id="yaml" class="yaml" spellcheck="false"></textarea>
+    <div class="btns">
+      <button id="example">Example A+ B+</button>
+      <button id="generate">Generate</button>
+      <button id="download">Download SVG</button>
+      <button id="downloadYaml">Export YAML</button>
+      <button id="save">Save</button>
+      <button id="undo">Undo</button>
+    </div>
+    <div id="library"></div>
+  </aside>
+  <main>
+    <nav class="tabs">
+      <button data-tab="pneumatic">Pneumatic</button>
+      <button data-tab="electrical">Electrical</button>
+      <button data-tab="phase">Sequence</button>
+      <button data-tab="explain">Explanation</button>
+      <button data-tab="report">Report</button>
+    </nav>
+    <div id="sheet-canvas" class="sheet-canvas"></div>
+    <pre id="validate" class="validate"></pre>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
