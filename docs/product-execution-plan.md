@@ -1,10 +1,18 @@
 # Sequence Circuit — executable product plan
 
-Status: not started. Score: 0/32 tasks. This is the contract an agent executes on **this Linux cloud VM**. Do not implement until the user says to execute. Fill every Actual cell from a command that ran. A pretty file that has no measure is not done.
+Status: not started. Score: 0/45 tasks. This is the contract an agent executes on **this Linux cloud VM**. Do not implement until the user says to execute. Fill every Actual cell from a command that ran. A pretty file that has no measure is not done.
 
-Product sentence: **From engineering problem to verified circuit. Draw it, understand it, modify it, explain it.**
+**Do not position this as an AI-powered circuit generator.** That is an LLM wrapper. The CS problem is:
 
-Engineering sentence: ChatGPT is untrusted. A closed-world ISO/L8 compiler is the authority. A pretty sheet that fails eval is not returned.
+> How do you let a probabilistic model propose an engineering artifact without giving it authority over correctness?
+
+Product sentence (students): **From engineering problem to verified circuit. Draw it, understand it, modify it, explain it.**
+
+Engineering sentence (staff loop): **A deterministic compiler decides whether an AI-generated design is allowed to become an artifact.** Pneumatics are the demonstration domain, not the thesis.
+
+GitHub subtitle: `Verification-oriented compiler for AI-generated engineering systems.` Do **not** write “formally verified compiler” unless a proof assistant is in the tree (it will not be). Bounded translation validation ≠ CompCert.
+
+References this layer is copied *from as principles*, not as code: [Alive2](https://github.com/AliveToolkit/alive2) (independent src vs tgt check + counterexample), [Csmith](https://github.com/csmith-project/csmith) (generate well-defined programs, differential oracle, then reduce), [Hypothesis stateful](https://hypothesis.readthedocs.io/en/latest/stateful.html), [MLIR verifiers](https://mlir.llvm.org/docs/LangRef/) (pass-local invariants, not LLVM in this repo). No Kubernetes, no Rust rewrite, no Z3 until exhaustive BFS is too small.
 
 How this document is written: one task = files + what to write + interfaces later tasks consume + tests written first (red) + commands with Expected + a live check when the output is a picture or a page. Pattern from this repo’s [ship-execution-plan.md](ship-execution-plan.md) and from [writing-plans](https://github.com/obra/superpowers/blob/main/skills/writing-plans/SKILL.md) (RED-GREEN, exact paths, expected output). Live MCP checks use the [Inspector CLI](https://modelcontextprotocol.io/docs/2026-07-28/tools/inspector/cli) (`tools/list`, `tools/call`, exit 5 on `isError`). Visual sheets follow [plc-visual-qa.md](plc-visual-qa.md): open the PNG, score it, do not trust pytest alone.
 
@@ -15,6 +23,7 @@ How this document is written: one task = files + what to write + interfaces late
 - `rg` with no matches exits 1. For those rows, pass means **empty output**, not exit 0.
 - Do not start the next task while the current one is short. Stop on red. If the plan is wrong, write `Ruling:` under the task and stop for the user — do not stub.
 - Regression bar after every phase: `pytest -q` and `python -m circuit eval --goldens` both exit 0.
+- After T36 exists, also `pytest tests/test_refine.py tests/test_planted_miscompile.py -q`. A green draw with a red oracle is not done.
 
 Tracker:
 
@@ -51,6 +60,19 @@ Tracker:
 - [ ] T30 design-decisions + related work — 0/3
 - [ ] T31 ISO visual QA log — 0/4
 - [ ] T32 standing goldens + CI — 0/3
+- [ ] T33 typed graph IR + port-role errors — 0/5
+- [ ] T34 spec-trace oracle (must not import compile_paths) — 0/4
+- [ ] T35 circuit-graph interpreter (second implementation) — 0/5
+- [ ] T36 translation validation (Alive2 analog) — 0/5
+- [ ] T37 planted miscompile caught — 0/3
+- [ ] T38 bounded mutex exploration + counterexample — 0/5
+- [ ] T39 Hypothesis properties + edit state machine — 0/5
+- [ ] T40 verification manifest + `circuit verify` — 0/5
+- [ ] T41 SequenceBench v0 (30 original cases, no PYQs) — 0/5
+- [ ] T42 ADR-001..008 + B1 postmortem + architecture.md — 0/4
+- [ ] T43 cross-runtime graph hash (CLI vs in-process) — 0/3
+- [ ] T44 bounded synthesis (two legal 5/2 topologies, pick smaller) — 0/3
+- [ ] T45 layout metrics (crossings/overlaps logged, no optimizer required) — 0/3
 
 ## Locked decisions
 
@@ -66,6 +88,40 @@ Do not relitigate.
 8. Execution is this VM. No Darwin `qlmanage`. Install `librsvg2-bin`.
 9. Hooks follow `eval_spec(spec, root)` / `using_pack(resolve_pack())` from `root`, not from a leftover `CIRCUIT_PACK` in the environment, so goldens stay green when someone has ISO in env.
 10. Agent does not submit to OpenAI/Anthropic directories.
+11. Do not claim CompCert, SMT completeness, or physical safety. Logical verification only. Manifest checks that were not run are `not_evaluated`, never `passed`.
+12. SequenceBench must not contain `exams/transcribed`, lecture crops, or near-duplicates of goldens that would inflate scores. Original sequences only.
+13. The graph interpreter in T35 must live in a file that does **not** import `compile_paths`. A second call to the synthesizer is not an oracle.
+14. Do not add LLVM, MLIR, Z3, Kafka, or a second language “for the resume.” Exhaustive BFS first. Z3 is a later `Ruling:` if 3-cylinder mutex enumeration exceeds 2s.
+15. Do not rearrange the whole repo into `ir/passes/semantics` on T1. Grow those packages from T33. Architecture must be visible in import graph, not only in docs.
+
+## Compiler pipeline (what “compiler” means here)
+
+Do not dump this into `draw_pneumatic`. Each pass is a function with a typed in/out. Tests may call a pass without drawing.
+
+| Pass | In | Out | First lives in |
+| --- | --- | --- | --- |
+| Parse | YAML | `CircuitSpec` | [spec.py](../src/circuit/spec.py) `from_yaml` |
+| Normalize | spec | spec with sorted ids, canonical solenoid order | T33 `ir/normalize.py` |
+| Typecheck | spec | ok / `E2xx` port-role errors | T33 `ir/typecheck.py` |
+| Behavioral lowering | spec.sequence | `SpecTrace` (actuator 0/1 per step) | T34 — **must not** import `compile_paths` |
+| Synthesize | spec | `CircuitGraph` (nodes=components, edges=nets or L8 paths) | today’s `compile_paths` + valve map, re-exported from `ir/synthesize.py` |
+| Semantic verify | SpecTrace × Graph | pass or `Counterexample` | T36 |
+| Bounded check | Graph | mutex/deadlock/cex | T38 |
+| Provenance | Graph × SVG | P001/P002 + element→spec origins | T8 then T33 |
+| Layout | Graph | coordinates | existing drawers |
+| Emit | layout | SVG/PDF/manifest | T9, T40 |
+
+`draw_yaml` after T36: typecheck → synthesize → **verify** → layout → emit. If verify fails, no sheet (same as eval fail).
+
+Port-role error example (exact test string T33): connecting a valve `P` port to a coil tag yields `E210` and `Compatible fluid-domain port` in the detail. Not `invalid circuit`.
+
+Independent verification (Alive2 analog, domain-sized):
+
+- **Source:** `spec_trace(spec)` = required actuator states after each sequence action (same 0/1 machine as [draw_phase.py](../src/circuit/draw_phase.py) `_next_state`, but copied into `semantics/spec_trace.py` and **not** used by the synthesizer).
+- **Target:** `graph_trace(graph)` = simulate L8 paths: a coil is ON iff all contacts true under a sensor/button assignment; a cylinder extends iff its `+` solenoid is ON. Walk the requested step sensors; record cylinder bits.
+- **Refinement:** for each step, target bits == source bits. Failure returns the shortest prefix (counterexample table). We check equivalence on the requested run, not LLVM-style UB refinement. Document that limit in `docs/semantics.md`.
+
+Do not call this physical safety. Do not call this a proof.
 
 ## Standing test pyramid (every later task uses these)
 
@@ -76,6 +132,9 @@ Do not relitigate.
 | Byte | ISO SVG bytes + `PYTHONHASHSEED` | `tests/test_iso_pack.py` | nondeterministic draw |
 | Provenance | tags in SVG ⊆ spec | `tests/test_provenance.py` | hardcoded `1Y1` |
 | Visual | rsvg PNG + vision/marker list | `docs/iso-visual-qa.md` | marker would reject |
+| Translation validation | spec_trace vs graph_trace | T36–T37 | synthesizer lied |
+| Property | Hypothesis `@given` / `RuleBasedStateMachine` | T39 | silent invariant break |
+| Bench | SequenceBench cases | T41 | no public evidence |
 | MCP | Inspector CLI + in-process FastMCP Client | T11, T28 | chat would get no picture or a fake sheet |
 | Browser | open `web/`, click, download | T16 | workspace is dead HTML |
 | Docker | `curl /health` and `/mcp` initialize | T13 | host lie |
@@ -766,13 +825,13 @@ Templates in `web/templates/`: `two_cylinder_52.yaml` (ISO example), `hydraulic_
 
 Depends on: T15.
 
-README first screen: product sentence, related work (FluidSIM, FluidPyPLC GPL do-not-copy, spec2schematic, Weave, CADPilot), three commands, workspace URL `web/`, MCP optional. GitHub topics listed in README for the human to click (agent cannot set topics unless `gh` allows — try `gh repo edit --add-topic iso-1219,pneumatics,hydraulics,mcp,electropneumatic`; if denied, Actual = denied, not fail the task).
+README first screen: **Sequence Circuit** then subtitle `Verification-oriented compiler for AI-generated engineering systems.` First paragraph: the model is untrusted; the compiler authorizes artifacts. Related work (FluidSIM, FluidPyPLC GPL do-not-copy, spec2schematic, Weave, Alive2 analog, CADPilot — we are stricter: model never writes geometry). Three commands including `circuit verify`. Workspace `web/`. MCP optional. Never lead with “AI circuit generator.” GitHub topics: try `gh repo edit --add-topic iso-1219,pneumatics,compilers,mcp`; if denied, Actual = denied, not fail.
 
 `web/llms.txt` job sentence + refusals. `web/robots.txt` allow GPTBot on llms.txt.
 
 | ID | Check | Expected | Actual | Pass |
 | --- | --- | --- | --- | --- |
-| M27.1 | README contains `FluidPyPLC` and `do not copy` | yes | | |
+| M27.1 | README contains `untrusted` or `authority`, and `FluidPyPLC` `do not copy` | yes | | |
 | M27.2 | README contains workspace path `web/` | yes | | |
 | M27.3 | `web/llms.txt` exists | yes | | |
 | M27.4 | pytest + goldens | exit 0 | | |
@@ -852,14 +911,313 @@ Modify [.github/workflows/ci.yml](../.github/workflows/ci.yml): keep pytest + go
 
 ---
 
-## Out of this plan (Phase 10)
+## T33 — typed graph IR + port-role errors
 
-Physics simulation. FluidSIM `.ct`. Native apps. User accounts. Hosted LLM. Directory submit. Buying Fly as a requirement. Copying FluidPyPLC. New atlas ids. Photograph-to-netlist.
+Depends on: T5.
+
+Files: create `src/circuit/ir/__init__.py`, `normalize.py`, `typecheck.py`, `graph.py`. Tests `tests/test_typecheck.py`.
+
+`CircuitGraph` pydantic: `nodes: list[{id, kind, domain}]` where kind ∈ `cylinder|valve|solenoid|contact|coil|sensor|pump|tank|relief`; `edges: list[{src, src_port, dst, dst_port}]`; `paths: list[CurrentPath]` (reuse spec.CurrentPath).
+
+`normalize(spec)`: sort cylinder/valve dict keys; solenoid lists left as authored (do not silently swap +/−).
+
+`typecheck(spec) -> list[Check]`:
+- Atlas ids (delegate validate).
+- Port roles: `P,T,A,B,1,2,3,4,5` are `fluid`; coil/contact tags are `electrical`. An edge fluid→electrical is `E210`.
+- Until drawers emit an explicit edge list, typecheck the **spec** (valve.type domain vs electrical.paths coil names). A fixture YAML that sets `electrical.paths[0].coil` to a fluid port id `1` must fail E210.
+
+Error detail must contain `E210` and `Compatible fluid-domain port`.
+
+Do not restructure all of `src/circuit/` this task.
+
+| ID | Check | Expected | Actual | Pass |
+| --- | --- | --- | --- | --- |
+| M33.1 | `pytest tests/test_typecheck.py -q` | exit 0 | | |
+| M33.2 | ISO spec typecheck | all ok | | |
+| M33.3 | fixture fluid-port-as-coil | not ok, detail contains `E210` | | |
+| M33.4 | `rg "invalid circuit" src/circuit/ir/typecheck.py` | empty | | |
+| M33.5 | goldens | exit 0 | | |
+
+---
+
+## T34 — spec-trace oracle
+
+Depends on: T33.
+
+Files: `src/circuit/semantics/spec_trace.py`. **Forbidden imports:** `compile_sequence`, `draw_phase`, `eval`. Copy the 0/1 rules from `draw_phase._next_state` / `_initial_state` by re-implementing (yes, duplicate on purpose — this is the source semantics). Add a comment `ORACLE: do not use in synthesize`.
+
+`spec_trace(spec) -> list[dict[str, int]]` one dict per step plus initial. Keys = cylinder ids. Values 0/1.
+
+Test: strip-feed/ISO `1A+, 2A-, 1A-, 2A+` — write the expected table in the test as literals, not by calling draw_phase.
+
+| ID | Check | Expected | Actual | Pass |
+| --- | --- | --- | --- | --- |
+| M34.1 | `pytest tests/test_spec_trace.py -q` | exit 0 | | |
+| M34.2 | `rg "compile_paths\|draw_phase" src/circuit/semantics/spec_trace.py` | empty | | |
+| M34.3 | ISO initial | all zeros | | |
+| M34.4 | after first `1A+` | `1A==1` | | |
+
+---
+
+## T35 — circuit-graph interpreter (second implementation)
+
+Depends on: T34, T4.
+
+Files: `src/circuit/semantics/graph_trace.py`. **Forbidden imports:** `spec_trace`, `compile_sequence.compile_paths`. Allowed: `CircuitGraph`, `CurrentPath`.
+
+Semantics (document in `docs/semantics.md` this task):
+- Environment: map tag → bool (sensors, START, coils already latched).
+- A path’s coil is energized iff every contact is true (`!X` is not X).
+- Cylinder `C` bit is 1 iff its `+` solenoid coil is energized, 0 iff its `−` solenoid is energized, else hold previous (interlock assumed).
+- Drive the graph with the **sensor pattern implied by each sequence step’s end positions**, not by replaying `spec.sequence` actions as a script. If you cheat by switching on `step.action`, M35.4 fails: a unit test passes a graph whose labels do not match the sequence strings and still traces from contacts.
+
+Build the graph from `apply_compile` output in a thin adapter `ir/from_spec.py` that copies paths + solenoid map. The adapter may call `compile_paths`. The tracer may not.
+
+| ID | Check | Expected | Actual | Pass |
+| --- | --- | --- | --- | --- |
+| M35.1 | `pytest tests/test_graph_trace.py -q` | exit 0 | | |
+| M35.2 | `rg "compile_paths\|spec_trace\|SeqStep" src/circuit/semantics/graph_trace.py` | empty | | |
+| M35.3 | ISO compiled graph, step 0 | all cylinders 0 | | |
+| M35.4 | graph with swapped coil map vs sequence names | tracer follows coils, not action strings | | |
+| M35.5 | goldens | exit 0 | | |
+
+---
+
+## T36 — translation validation
+
+Depends on: T35.
+
+Files: `src/circuit/verification/refine.py`. `refine(src: list[dict], tgt: list[dict]) -> VerifyResult` with `ok`, `cex_step`, `src_row`, `tgt_row`.
+
+`verify_spec(spec) -> VerifyResult`: spec_trace vs graph_trace(from_spec(spec)).
+
+Hook into `draw_yaml` after T6: if not verify.ok, `ok: false`, no sheets, sentence `Generated control graph does not preserve the sequence at step {n}.` plus cex table in `report`.
+
+Alive2 we are **not**: no SMT, no UB, no refinement-vs-equivalence. `docs/semantics.md` states that.
+
+| ID | Check | Expected | Actual | Pass |
+| --- | --- | --- | --- | --- |
+| M36.1 | `pytest tests/test_refine.py -q` | exit 0 | | |
+| M36.2 | ISO verify | ok true | | |
+| M36.3 | src `[0,0]` vs tgt `[1,0]` at step 0 | ok false, cex_step 0 | | |
+| M36.4 | `draw_yaml` on a spec whose graph is stubbed to mismatch | sheets empty | | |
+| M36.5 | goldens | exit 0 | | |
+
+---
+
+## T37 — planted miscompile must be caught
+
+Depends on: T36.
+
+The validator-is-wrong interview question. Files: `tests/test_planted_miscompile.py`.
+
+Construct CurrentPaths that energize **both** solenoids of `1V` when START is true. `graph_trace` / mutex check must fail. `refine` must fail. `draw_yaml` must not emit pneumatic SVG.
+
+This is the demo: “model-plausible ladder, compiler rejects.”
+
+| ID | Check | Expected | Actual | Pass |
+| --- | --- | --- | --- | --- |
+| M37.1 | planted dual-solenoid ON | verify ok false | | |
+| M37.2 | `draw_yaml` that spec | no `pneumatic` sheet | | |
+| M37.3 | cex table has two steps or mentions both solenoids | yes | | |
+
+Live: print the cex in the workspace report tab (if T16 exists; else CLI `--json`).
+
+---
+
+## T38 — bounded mutex exploration + counterexample
+
+Depends on: T37.
+
+Files: `src/circuit/verification/explore.py`. Exhaustive BFS over sensor bools, bound `MAX_STEPS=16`, `MAX_STATES=4096`. Invariant V014: never `Ya+` and `Ya-` both energized. On violation return shortest path as list of env dicts.
+
+No Z3. If a 3-cylinder ISO fixture exceeds 2s, `Ruling:` raise bound or add symmetry — do not add SMT silently.
+
+`Box not (Y+ and Y-)` is this invariant. `Diamond final` = after following the sequence sensors we reach the last spec_trace row (already T36). Deadlock = no enabled transition and not final — only if we model START edge; skip deadlock in v1 if it needs extra semantics; document as `not_evaluated` in the manifest.
+
+| ID | Check | Expected | Actual | Pass |
+| --- | --- | --- | --- | --- |
+| M38.1 | pytest test_explore | exit 0 | | |
+| M38.2 | ISO graph V014 | pass | | |
+| M38.3 | planted dual-ON | fail, cex length ≥ 1 | | |
+| M38.4 | ISO explore wall time | < 2s | | |
+| M38.5 | `rg z3 src/circuit` | empty | | |
+
+---
+
+## T39 — Hypothesis properties + edit state machine
+
+Depends on: T17, T36.
+
+Add `hypothesis>=6.100` to `[project.optional-dependencies] dev`.
+
+`tests/test_properties.py`:
+- `@given` lists of 2–4 unique cylinder ids and sequences of `+/-` with no two identical consecutive actions on the same cylinder beyond what `_compile_chain` supports. Assert: `verify_spec` ok **or** typecheck fail (never: ok draw with refine fail).
+- YAML key reorder: dump spec with sorted vs reversed keys; graph sha256 equal (T40 hash helper may live here).
+- `@settings(max_examples=50)` on CI; 200 locally if time.
+
+`tests/test_edits_stateful.py`: `RuleBasedStateMachine` with rules `insert_timer`, `undo`, `draw`. Invariant: undo restores previous sha256 of YAML. Use `hypothesis.stateful.rule` and `precondition` ([docs](https://hypothesis.readthedocs.io/en/latest/stateful.html)).
+
+Invalid fuzz: `@given(st.text())` `validate_yaml` never raises uncaught; returns ok false.
+
+Do not claim 10,000 tests. Report `max_examples` in Actual.
+
+| ID | Check | Expected | Actual | Pass |
+| --- | --- | --- | --- | --- |
+| M39.1 | `pytest tests/test_properties.py tests/test_edits_stateful.py -q` | exit 0 | | |
+| M39.2 | key-reorder hash | equal | | |
+| M39.3 | garbage YAML | no traceback, ok false | | |
+| M39.4 | stateful undo | no Hypothesis falsifying example | | |
+| M39.5 | goldens | exit 0 | | |
+
+---
+
+## T40 — verification manifest + `circuit verify`
+
+Depends on: T36, T9.
+
+Files: `src/circuit/verification/manifest.py`. `draw_yaml` writes `manifest.json` in the pack:
+
+```json
+{
+  "schema_version": "1.0",
+  "compiler_version": "0.1.0",
+  "pack": "iso_sequence",
+  "spec_sha256": "...",
+  "graph_sha256": "...",
+  "artifact_sha256": "...",
+  "checks": [{"id": "SEQ001", "status": "passed"}, {"id": "PHY001", "status": "not_evaluated"}],
+  "assumptions": [],
+  "verification_scope": "logical"
+}
+```
+
+`PHY001` **must** be `not_evaluated`. A test fails if any `not_evaluated` check is stored as `passed`.
+
+CLI: `python -m circuit verify <dir-or-zip>` recomputes hashes, reruns `verify_spec`, exits 1 on mismatch. This is the independent rerun, not “trust the file.”
+
+| ID | Check | Expected | Actual | Pass |
+| --- | --- | --- | --- | --- |
+| M40.1 | ISO pack contains manifest.json | yes | | |
+| M40.2 | PHY001 status | `not_evaluated` | | |
+| M40.3 | `circuit verify output/iso_sequence` | exit 0 | | |
+| M40.4 | flip one SVG byte then verify | exit 1 | | |
+| M40.5 | pytest test_manifest | exit 0 | | |
+
+---
+
+## T41 — SequenceBench v0
+
+Depends on: T36, T38.
+
+Dir `benchmarks/sequencebench/`: `README.md` (methodology, **no lecture PYQs**), `cases/*.yaml` + `cases/*.expected.json` with `{decision: accept|reject, reason}`.
+
+v0 **30 original** cases, not 300. Categories (counts are exact for v0):
+
+- 10 basic sequences (2 cylinders, legal)
+- 5 electrical interlock / mutex
+- 4 TIMER
+- 3 cascade (2 accept as 5/2 groups or reject with recovery — match T23)
+- 3 hydraulic with/without PRV
+- 3 invalid (invented id, opposing solenoids in authored paths, empty sequence)
+- 2 adversarial (`.ct` request in a `prompt.txt` sibling — engine reject)
+
+`python -m circuit bench benchmarks/sequencebench` prints JSON: accepted_error_rate, reject_invalid_rate, reject_valid_rate, p50_ms. No LLM calls in v0 (that is SequenceBench v1, human+API, out of agent unless user provides keys). v0 scores **the compiler**, not ChatGPT.
+
+Forbidden: copying `examples/grinding_machine` or any `exam_id`.
+
+| ID | Check | Expected | Actual | Pass |
+| --- | --- | --- | --- | --- |
+| M41.1 | `ls benchmarks/sequencebench/cases/*.yaml \| wc -l` | 30 | | |
+| M41.2 | `rg "exam_id\|2023_selfstudy\|emboss_2016" benchmarks/` | empty | | |
+| M41.3 | `python -m circuit bench benchmarks/sequencebench` | exit 0, JSON has `accepted_error_rate` | | |
+| M41.4 | invented-id case | decision reject | | |
+| M41.5 | legal A+B+B-A- case | decision accept | | |
+
+300-case target and LLM baselines stay in README as **future**, not this execution.
+
+---
+
+## T42 — ADRs, postmortem, architecture, README story
+
+Depends on: T36, T37.
+
+Files:
+- `docs/architecture.md` — pipeline table + import graph (no LLVM).
+- `docs/semantics.md` — spec_trace, graph_trace, limits.
+- `docs/adr/ADR-001.md` … `ADR-008.md`: LLM untrusted; separate IRs; independent verify; closed catalog; shared CLI/browser; public vs course pack; fail-closed; no mandatory host. Each: context, alternatives, decision, tradeoffs, **revisit when**.
+- `docs/postmortems/b1-2y1-kstart.md`: wrong artifact (2Y1 on K_START), repro YAML, invariant (`2y1_not_kstart` already in eval), root cause, why tests missed it, fix, regression test name from [test_eval.py](../tests/test_eval.py).
+- README H1: Sequence Circuit. Subtitle: verification-oriented compiler… Why this exists: LLMs propose; compiler authorizes. Reproduce: three commands + `circuit verify`. Related work: FluidSIM, FluidPyPLC (do not copy), spec2schematic, Weave, Alive2 (analog), CADPilot (we are stricter: model never writes geometry).
+
+Interview opening lives in `docs/interview-narrative.md` (one page). Not a microsite.
+
+| ID | Check | Expected | Actual | Pass |
+| --- | --- | --- | --- | --- |
+| M42.1 | eight ADR files | yes | | |
+| M42.2 | each ADR contains `Revisit when` | yes | | |
+| M42.3 | postmortem contains `2Y1` and `K_START` | yes | | |
+| M42.4 | README first 40 lines contain `untrusted` or `authority` | yes | | |
+
+---
+
+## T43 — cross-runtime graph hash
+
+Depends on: T40, T14 (if Pyodide passed).
+
+Same spec: `graph_sha256` from CLI `circuit compile --json` (add thin wrapper around synthesize) vs `from circuit.ir.from_spec`. Equal.
+
+If T14 passed: Pyodide `graph_sha256` equal too. If T14 Ruling to CLI-only, skip Pyodide row with Pass=pass and Actual=`spike failed`.
+
+PDF/PNG hashes are **not** required equal.
+
+| ID | Check | Expected | Actual | Pass |
+| --- | --- | --- | --- | --- |
+| M43.1 | CLI vs in-process graph hash ISO | equal | | |
+| M43.2 | two process `PYTHONHASHSEED` graph hash | equal | | |
+| M43.3 | Pyodide or skip | equal or documented skip | | |
+
+---
+
+## T44 — bounded synthesis (optional algorithmic extra)
+
+Depends on: T36, T23.
+
+Not a general CAD synthesizer. For a 2-cylinder sequence, enumerate at most two legal graphs: (1) `_compile_chain` relay, (2) cascade groups if `method` unset — if both verify, pick fewer valve nodes. Explain in `principle.txt`. Graph search depth ≤ 2. No ILP.
+
+If this slips schedule, `Ruling:` defer; do not ship a fake “optimizer” that always returns chain.
+
+| ID | Check | Expected | Actual | Pass |
+| --- | --- | --- | --- | --- |
+| M44.1 | pytest test_synthesize_choice | exit 0 | | |
+| M44.2 | both candidates verify.ok | true | | |
+| M44.3 | chosen graph valve count ≤ other | true | | |
+
+---
+
+## T45 — layout metrics (measure before optimize)
+
+Depends on: T7.
+
+`src/circuit/layout/metrics.py`: count SVG line crossings (axis-aligned segments), text bbox overlaps (from text x,y,size heuristic), path length. Log in manifest `layout: {crossings, overlaps, ms}`. **Do not** build a Sugiyama router this execution unless crossings on ISO pneumatic exceed 20 (then `Ruling:` simple lane shift only).
+
+Prioritize T36 over this.
+
+| ID | Check | Expected | Actual | Pass |
+| --- | --- | --- | --- | --- |
+| M45.1 | ISO metrics dict has `crossings` | yes | | |
+| M45.2 | overlaps == 0 on ISO electrical title vs banner **or** documented fail in visual QA | number in Actual | | |
+| M45.3 | goldens | exit 0 | | |
+
+---
+
+## Out of this plan
+
+Physics simulation. FluidSIM `.ct`. Native apps. User accounts. Hosted LLM. Directory submit. Paid Fly as a requirement. Copying FluidPyPLC. New atlas ids. Photograph-to-netlist. CompCert proofs. LLVM/MLIR in tree. Z3 unless T38 Ruling. SequenceBench 300 + LLM baselines (v1). Student study 15–30 people (human: faculty/TA; agent writes the protocol in `docs/user-study.md` as a template only — T42 may add a one-page protocol, not fake results). Kubernetes, Kafka, vector DB, multi-agent orchestration, GPU inference, Rust rewrite.
 
 ## Rollback
 
-T3–T5: restore exam branches into engine files if goldens fail. T14 fail: workspace is YAML+CLI, not a fake WASM draw. T29 fail: ignore.
+T3–T5: restore exam branches into engine files if goldens fail. T14 fail: workspace is YAML+CLI, not a fake WASM draw. T29 fail: ignore. T35/T36 fail: **stop** — do not ship draw_yaml without an oracle; do not “skip verify.” T44 fail: omit optimizer.
 
 ## Score
 
-32 tasks. Done at 32/32 with every Actual from a real command on this VM.
+45 tasks. Done at 45/45 with every Actual from a real command on this VM. Three contributions that must exist or the project is still an MCP wrapper: **(1)** T36+T37 translation validation with a planted miscompile, **(2)** T41 SequenceBench v0, **(3)** T16 workspace or CLI pack a student can use offline.
