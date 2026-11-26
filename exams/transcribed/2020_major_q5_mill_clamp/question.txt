@@ -1,0 +1,1 @@
+Clamp 1A to 5 bar; feed 2A with cutter motor on; 1A must not open until 2A home.

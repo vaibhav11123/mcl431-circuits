@@ -1,0 +1,40 @@
+id: whatsapp_2025_09_14_workings
+solution_files:
+- exams/pyqs/WhatsApp Image 2025-09-14 at 20.39.31_8d4dc431.jpg
+solution: readable
+items:
+- claim: Several photos are CNC part-program workings (Major 2017/2019 family) — do not invent vertices into locked facts
+  source: solution
+  lecture_ok: true
+  disposition: ignore
+  lands_in: none
+- claim: Apple-packing ladder photo is same_as plc_l14_apple_packing
+  source: solution
+  lecture_ok: true
+  disposition: adopt
+  lands_in: exams/transcribed/plc_l14_apple_packing/learnings.yaml
+- claim: Tank-mix latch photo is same_as 2017_major_q2_tank_mix
+  source: solution
+  lecture_ok: true
+  disposition: adopt
+  lands_in: exams/transcribed/2017_major_q2_tank_mix/learnings.yaml
+- claim: Oven 2017 setpoint band photo is same_as 2017_major_q1_oven
+  source: solution
+  lecture_ok: true
+  disposition: adopt
+  lands_in: exams/transcribed/2017_major_q1_oven/learnings.yaml
+- claim: Air-jet electro photo is same_as 2018_major_q1_airjet
+  source: solution
+  lecture_ok: true
+  disposition: adopt
+  lands_in: exams/transcribed/2018_major_q1_airjet/learnings.yaml
+- claim: 06-Nov-2024 midterm photo set → new id 2024_midterm_q1_press
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: exams/transcribed/2024_midterm_q1_press/facts.yaml
+- claim: Screenshot of 6.5 kN press is same_as MCL431_minor twin — keep_locked 1.6 kN-cm
+  source: solution
+  lecture_ok: true
+  disposition: keep_locked
+  lands_in: exams/transcribed/MCL431_minor/learnings.yaml

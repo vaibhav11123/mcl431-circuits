@@ -366,6 +366,10 @@ def compile_paths(spec: CircuitSpec) -> list[CurrentPath]:
     override = call_hook("compile_override", spec, default=None)
     if override is not None:
         return override
+    if spec.meta.exam_id == "2016_minor1_emboss":
+        return _compile_emboss_2016(spec)
+    if spec.meta.exam_id in {"Fall17-Minor2", "MCL431_Minor2_2017-18_Sem1", "2023_major_b1_fourhole"}:
+        return _compile_indexing_drill(spec)
     if spec.cylinders and all(
         spec.valves[c.dcv].type == "dcv_5_3" for c in spec.cylinders.values()
     ):

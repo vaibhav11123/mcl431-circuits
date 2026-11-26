@@ -1,0 +1,24 @@
+id: 2017_major_q2_tank_mix
+year: 2017
+paper: Major 22-Nov-2017 Q2
+source: exams/pyqs/MCL431_Major-22Nov2017.pdf
+domain: plc
+identifiers:
+- START
+- STOP
+- A
+- B
+deliverable_sheets:
+- plc_connection
+- plc_ladder
+deliverable_calcs: []
+plc:
+  agitate_ton_s: 180
+  solenoids:
+  - A
+  - B
+  sensors:
+  - empty
+  - full
+question_excerpt: Fill with sol A until full; agitate 3 min; empty with sol B until
+  empty sensor opens; START/STOP.

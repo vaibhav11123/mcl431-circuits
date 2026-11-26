@@ -1,0 +1,20 @@
+id: 2023_major_b1_fourhole
+solution_files:
+- Major_07May2023_Solution.pdf
+solution: readable
+items:
+- claim: Mechanism is drill_2017 with hole order 1-3-4-2 and sensor types from paper
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/fourhole_2023/circuit.yaml
+- claim: K1–K13 numbers on solution page are not copied
+  source: lecture
+  lecture_ok: true
+  disposition: reject_lecture_wins
+  lands_in: examples/fourhole_2023/circuit.yaml
+- claim: Solution text layer is structural twin for bands, not paste
+  source: solution_scan
+  lecture_ok: true
+  disposition: adopt
+  lands_in: docs/pyq-solution-run-log.md

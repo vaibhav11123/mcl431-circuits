@@ -1,0 +1,31 @@
+# Extracted from exams/pyqs/MCL431_Re_Major_2022-23.pdf (photo scan, handwritten student marks ignored). No invented answers.
+id: 2023_remajor_q3_bottle_fill
+year: 2023
+paper: Re-Major 03-Jan-2023 Q3
+date: 2023-01-03
+marks: 25
+domain: electrical_only
+figure_given: true
+pneumatic_figure_on_paper: true
+identifiers: [1A, 2A, 3A, START]
+identifier_style: nA
+actuators:
+  1A: cylinder A — retract only when bottle at position 1 and START given
+  2A: cylinder B role — table indexing (B+)
+  3A: cylinder C role — open filling valve, hold ~2 s, reclose
+valves_on_figure: [1Y, 2Y, 3Y]
+sensors_on_figure: [1S1, 1S2, 2B1, 2B2, 3B1, 3B2]
+air_supply_labels: [0Z1, 0Z2]
+sequence:
+- 1A retract (bottle at position 1 AND START continuous/single cycle)
+- B+ index (signal bottle on indexing table, position 2)
+- C opens filling valve when bottle at position 3
+- C stays open about 2 s then recloses
+timer_s: 2
+manual_index_if_no_bottle_at_station_3: true
+bottle_sensing_simulated_by: push button
+start_modes: [continuous, single cycle]
+deliverable_sheets: [electrical]
+deliverable_calcs: []
+figure_note: pneumatic figure is on paper; valve spring/solenoid symbols only partly legible in scan — not_given beyond labels above
+question_excerpt: Bottle filling carousel — A retracts on bottle+START, B+ indexes, C opens filling valve 2 s; electrical diagram with contact element tables.

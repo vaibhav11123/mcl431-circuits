@@ -1,0 +1,9 @@
+id: 2018_major_q5_cnc_fillin
+solution_files: []
+solution: absent
+items:
+- claim: Program lines only if every coordinate is in facts; else not_given
+  source: lecture
+  lecture_ok: true
+  disposition: not_given
+  lands_in: solution.txt

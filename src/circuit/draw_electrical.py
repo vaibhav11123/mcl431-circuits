@@ -111,7 +111,10 @@ def draw_electrical(
     paths = spec.electrical.paths
     n = max(len(paths), 1)
     n_control = sum(1 for p in paths if p.kind != "main")
-    tight = spec.meta.domain == Domain.PNEUMATIC_PLUS_ELECTRICAL
+    tight = spec.meta.domain in {
+        Domain.PNEUMATIC_PLUS_ELECTRICAL,
+        Domain.ELECTRICAL_ONLY,
+    }
     n_cols, n_rows = _grid(n, n_control=n_control, tight=tight)
     col_w = 128 if n > 10 else 140
     width = max(90 + n_cols * col_w + 50, 980)

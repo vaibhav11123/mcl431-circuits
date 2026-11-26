@@ -1,0 +1,9 @@
+id: 2016_minor1_emboss
+solution_files: []
+solution: absent
+items:
+- claim: PS 4 bar; retract from PS not 2B2
+  source: lecture
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/emboss_2016/circuit.yaml

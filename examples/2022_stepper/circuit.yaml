@@ -1,0 +1,14 @@
+meta:
+  title: 2022 Major Q2 stepper numbers
+  domain: hydraulic
+  exam_id: 2022_major_q2_stepper
+  figure_given: true
+  patterns: []
+
+sequence: []
+power: { pumps: [], tank: "" }
+cylinders: {}
+motors: {}
+valves: {}
+sensors: []
+electrical: { convention: lecture, paths: [] }

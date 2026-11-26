@@ -1,0 +1,14 @@
+meta:
+  title: 2017 Major Q3 two-cylinder with losses
+  domain: hydraulic
+  exam_id: 2017_major_q3_two_cyl_loss
+  figure_given: true
+  patterns: []
+
+sequence: []
+power: { pumps: [], tank: "" }
+cylinders: {}
+motors: {}
+valves: {}
+sensors: []
+electrical: { convention: lecture, paths: [] }

@@ -1,0 +1,9 @@
+id: 2018_major_q3_lockout
+solution_files: []
+solution: absent
+items:
+- claim: CTU PV=5 plus TON 5 min and hour window from question text
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/plc_lockout_2018/circuit.yaml

@@ -1,0 +1,14 @@
+id: 2017_major_q3_two_cyl_loss
+solution_files: []
+solution: absent
+items:
+- claim: Missing pipe cells are not_given; do not invent lengths
+  source: lecture
+  lecture_ok: true
+  disposition: not_given
+  lands_in: src/circuit/calc.py
+- claim: Use head-loss family only for cells present in facts
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: src/circuit/calc.py

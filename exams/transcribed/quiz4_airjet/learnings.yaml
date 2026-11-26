@@ -1,0 +1,9 @@
+id: quiz4_airjet
+solution_files: []
+solution: absent
+items:
+- claim: same_as 2018_major_q1_airjet
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/airjet_2018/circuit.yaml

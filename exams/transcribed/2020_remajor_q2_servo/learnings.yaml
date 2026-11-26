@@ -1,0 +1,9 @@
+id: 2020_remajor_q2_servo
+solution_files: []
+solution: absent
+items:
+- claim: same_as 2017_major_servo calc
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: src/circuit/calc.py

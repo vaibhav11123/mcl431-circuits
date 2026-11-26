@@ -30,6 +30,14 @@ The 300-case suite and the LLM fixtures call **no paid API**. Fly.io is not requ
 
 ChatGPT / Claude directory listing needs a human-operated public HTTPS origin. Local MCP does not make the plugin directory-eligible. See [plugin/SUBMISSION.md](plugin/SUBMISSION.md) and [HUMAN_ACTIONS_REQUIRED.md](HUMAN_ACTIONS_REQUIRED.md).
 
+## Course goldens (MCL 431)
+
+- **Sheets:** 2023 B1 grinding, 2017 hi-lo punch, 2023 Minor-2 strip feed, 2023 Minor-2 PLC conveyor, 2017 5/3 drill, 2016 emboss, L14 PLC set, 2018 air-jet (3Z = `dcv_3_2`), 2020 mill clamp (5 bar), 2022 two-hand stamp, 2023 four-hole drill, majors PLC (oven, sprinkler, lockout, preset counter, tank mix, orange juice, plywood stack, traffic / quiz conveyor)
+- **Solution text** (figure given or numeric only): 2018 hi-lo, 2019 meter-in/out, 2016 hoist, 2023 B2 head loss, 2022 grind-given, 2019 vertical meter-out, 2020/2022 hoist with pipe loss, stepper/servo numbers, 2023 Part A, quiz regen
+- **Not a sheet:** corporate-adaptation prose; CNC part programs until every figure coordinate is in `facts.yaml` (`not_given` otherwise)
+
+Full gates: [docs/eval.md](docs/eval.md). Learnings log: [docs/pyq-solution-run-log.md](docs/pyq-solution-run-log.md).
+
 ## Related work
 
 - FluidSIM — commercial simulator. We do not export `.ct`.

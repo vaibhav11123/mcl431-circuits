@@ -18,19 +18,20 @@ python -m circuit eval --goldens
 
 1. `lecture/atlas.yaml`, `lecture/diagrams.yaml`, and crops — symbols, rest position, connections, L8 drawing law
 2. `exams/index.yaml` and `exams/transcribed/` — how the paper asks, tags, deliverables
+2.5. `learnings.yaml` on a transcribed folder — solution-scan claims to check; never outranks the question or the atlas
 3. Golden specs in `examples/` and `lecture/goldens/`
 4. The user question
 
-Never invent a symbol ID. Never skip `eval`. Hydraulic and electrical are separate sheets.
+Never invent a symbol ID. Never skip `eval`. Hydraulic and electrical are separate sheets; `electrical_only` draws electrical+phase only. CNC and Part A objectives are `solution.txt` only (or `not_given`).
 
 ## PLC notes vs problems (local)
 
 - **Notes (L11–L13):** `lecture/MCL431_L11_PLC_Basics.pdf`, `…_L12_…`, `…_L13_…` (gitignored). Ingest → `lecture/ingest/` drafts only. Do **not** promote into the atlas.
 - **Problems (L14):** `lecture/MCL431_L14_PLC_Problems.pdf`. Locked facts under `exams/transcribed/plc_l14_*` + index rows. Goldens under `examples/plc_l14_*` and `examples/plc_conveyor_2023`.
-- PLC sheets use `domain: plc` and a `plc:` IR block (`io`, `field`, `scaling`, `rungs`). Rung kinds: `contact`, `coil`, `mov`, `cmp`, `ctu`, `ton`, `res`, `ons`, `otl`, `otu`. Draw writes `plc_connection.svg` + `plc_ladder.svg` — never L8 coils. No atlas PLC glyphs. Visual/answer gates: [docs/plc-visual-qa.md](docs/plc-visual-qa.md).
+- PLC sheets use `domain: plc` and a `plc:` IR block (`io`, `field`, `scaling`, `rungs`). Rung kinds: `contact`, `coil`, `mov`, `cmp`, `ctu`, `ton`, `res`, `ons`, `otl`, `otu`, `block`. Draw writes `plc_connection.svg` + `plc_ladder.svg` — never L8 coils. No atlas PLC glyphs. Visual/answer gates: [docs/plc-visual-qa.md](docs/plc-visual-qa.md). Corpus log: [docs/pyq-solution-run-log.md](docs/pyq-solution-run-log.md).
 
 ## Solve a question
 
 Follow `.cursor/skills/generate-circuit/SKILL.md`. Fan out four subagents, merge YAML, then validate → draw → eval. Sheets land in `output/<exam_id>/`.
 
-The product contract is [docs/product-execution-plan.md](docs/product-execution-plan.md) (T0–T45: compiler, workspace, independent translation validation, SequenceBench). T1–T10 detail also lives in [docs/ship-execution-plan.md](docs/ship-execution-plan.md). Do not start either unless the user asks to execute. The project is a verification-oriented compiler, not an LLM wrapper.
+The product contract is [docs/product-execution-plan.md](docs/product-execution-plan.md) (T0–T57 executed; T29 Fly is SKIPPED_OPTIONAL). T1–T10 detail also lives in [docs/ship-execution-plan.md](docs/ship-execution-plan.md). The project is a verification-oriented compiler, not an LLM wrapper. PYQ corpus log: [docs/pyq-solution-run-log.md](docs/pyq-solution-run-log.md).

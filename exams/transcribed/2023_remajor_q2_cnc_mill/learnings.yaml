@@ -1,0 +1,14 @@
+id: 2023_remajor_q2_cnc_mill
+solution_files: []
+solution: absent
+items:
+- claim: two equal DOC passes of 0.375/2 = 0.1875 in each
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: solution.txt
+- claim: vertex coordinates and hole centres not dimensioned in Fig 2(b) legibly; keep not_given
+  source: question
+  lecture_ok: true
+  disposition: not_given
+  lands_in: solution.txt

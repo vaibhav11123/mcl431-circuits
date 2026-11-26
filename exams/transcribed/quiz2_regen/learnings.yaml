@@ -1,0 +1,9 @@
+id: quiz2_regen
+solution_files: []
+solution: absent
+items:
+- claim: Use l4 regen formulas; lecture_regen golden family
+  source: lecture
+  lecture_ok: true
+  disposition: adopt
+  lands_in: src/circuit/calc.py

@@ -1,0 +1,17 @@
+id: 2020_major_q2_apple
+year: 2020
+paper: Major Selfstudy 11-Jul-2020 Q2
+source: exams/pyqs/MCL431_Major_Selfstudy_11July2020A.pdf
+domain: plc
+same_as: plc_l14_apple_packing
+identifiers:
+- START
+- STOP
+deliverable_sheets:
+- plc_connection
+- plc_ladder
+deliverable_calcs: []
+plc:
+  apple_count: 12
+  delay_s: 5
+question_excerpt: Apple packing 12 apples, 5 s delay — same as L14.

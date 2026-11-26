@@ -1,0 +1,18 @@
+id: quiz5_traffic_lights
+year: null
+paper: Quiz 5 PLC
+source: exams/pyqs/Quiz 5 - PLC.jpeg.jpg
+domain: plc
+readable: true
+identifiers:
+- START
+- STOP
+deliverable_sheets:
+- plc_connection
+- plc_ladder
+deliverable_calcs: []
+plc:
+  red_s: 10
+  yellow_s: 5
+  green_s: 15
+question_excerpt: 'Traffic lights: red 10 s, yellow 5 s, green 15 s; START/STOP.'

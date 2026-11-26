@@ -1,0 +1,1 @@
+Stack 20 sheets; convey to B; paint 10.6 s; convey to C; blink lamp 1 s; STOP anytime.

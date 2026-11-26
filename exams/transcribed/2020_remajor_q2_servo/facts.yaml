@@ -1,0 +1,20 @@
+id: 2020_remajor_q2_servo
+year: 2020
+paper: Re-Major 03-Jan-2020 Q2
+source: exams/pyqs/MCL431_ReMajor-3Jan2020.pdf
+domain: cnc_numeric
+same_as: 2017_major_servo
+figure_given: true
+identifiers: []
+deliverable_sheets: []
+deliverable_calcs:
+- control resolution
+- rpm
+- encoder freq
+- accuracy
+given:
+  pitch_mm: 6.25
+  encoder_slots: 200
+  x0: 87.5
+  y0: 35.0
+question_excerpt: Same servo block as 2017 major.

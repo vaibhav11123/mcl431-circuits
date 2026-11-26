@@ -1,0 +1,18 @@
+id: 2023_major_b2_plywood
+year: 2023
+paper: Major 07-May-2023 B2
+source: exams/pyqs/Major_07May2023.pdf
+domain: plc
+identifiers:
+- 'ON'
+- STOP
+deliverable_sheets:
+- plc_connection
+- plc_ladder
+deliverable_calcs: []
+plc:
+  stack_count: 20
+  paint_ton_s: 10.6
+  blink_ton_s: 1
+question_excerpt: Stack 20 sheets; convey to B; paint 10.6 s; convey to C; blink lamp
+  1 s; STOP anytime.

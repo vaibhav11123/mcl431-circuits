@@ -16,7 +16,9 @@ A passing `eval` means the **spec is legal for that exam**. It does not mean the
 | 2023 Minor-2 Q1 strip feed | Domain pneumatic, two 5/2, coils `1Y1 2Y2 1Y2 2Y1` | Hydraulic 4/3 on a 5/2 paper |
 | 2018 hi-lo | `figure_given` calc cites `exams/transcribed/2018_minor1_hilo/facts.yaml` | Draw a figure the paper already printed |
 | 2019 meter-in / meter-out | `figure_given`; bore `not_given` | Invent a table size |
-| 2016 hoist | `figure_given`; load 5.4 ton from facts | Invent pipe losses |
+| 2016 hoist | `figure_given`; load 5.4 ton from facts | Invent pipe losses **on this 2016 paper** |
+| 2020 / 2022 hoist with pipe loss | `figure_given`; paper pipe lengths and efficiencies | Invent missing elbow K; reuse 2016 ban |
+| 2019 Major meter-out | `figure_given`; bore 50/32, 3 t, 4 l/min meter-out | Invent pipe ΔP |
 | 2023 Self-Study B2 | `figure_given`; Ap/Ar from facts | Invent Q |
 | 2022 grind-on-given hi-lo | `figure_given`; HC1 50/25 from facts | Redraw the given figure |
 | 2017 Minor-2 indexing drill | Three `dcv_5_3`, S0, 12 motions, KM | Stamp a 5/2 or invent a 5/3 box |
@@ -26,6 +28,20 @@ A passing `eval` means the **spec is legal for that exam**. It does not mean the
 | L14 counter eject | CTU PV=15 + RES | Allow S1 after DN without reset story |
 | L14 stamping | Full LS1–3 / LSUP / LSDN / Up / Dn / CONV / lamps I/O | Drop lamp addresses |
 | L14 apple packing | CTU=12 + TON 5 s | Skip delay or wrong count |
+| Oven setpoint (2017/2020/2022) | OTL/OTU band latch; 597/603 and 796/804; 2022 adds AO 2/8 kW + TON 5 s display | Single-window CMP only |
+| Sprinkler clock 2019 | CTU cascade + open 06:30:45 for 5 min | Invent a clock rung kind |
+| Lockout 2018 | CTU=5; TON 5 min; OTL permanent | Drop RESET path |
+| Preset counter 2018 | presets 300/175/50 | Schema change to float preset |
+| Tank mix 2017 | TON 180 s agitate | Extra heater |
+| Orange juice 2020 | pumps together; pump3 10 s | Solo pump run |
+| Plywood 2023 | CTU=20; paint 10.6 s | Wrong count |
+| Air-jet 2018 | `dcv_3_2_spring_offset` for 3Z | Nozzle glyph or 5/2 for jet |
+| Mill clamp 2020 | PS 5 bar; 1A waits for 2A home | Emboss 2B2 retract copy |
+| Four-hole 2023 | three `dcv_5_3`; 12 motions; no 5/2 | Stamp a 5/2 |
+| Two-hand 2022 | `electrical_only`; two-hand start; ESTOP in paths | Draw pneumatic sheet; rename eject B without note |
+| 2023 Part A / quiz regen / servo / stepper | `figure_given` solution lines cite facts | Paste solution scan |
+| 2023 B3 CNC | figure dims in facts; G71 DOC 0.09 / U0.014 W0.003 | Solution-scan DOC 0.08/0.015/0.005; `not_given` while figure is on the paper |
+| Other CNC programs | `not_given` until figure coords in facts | Invent profile vertices |
 
 Also: every stamp PNG the drawer uses must exist. B1 SVG must name HC1, HC2, HM1.
 
@@ -41,7 +57,7 @@ Eval PASS is not handwriting. The sheet still has to look like an exam answer:
 - **Contact-element table** under each K and T1 coil (coil name, A1/A2, aux terms used).
 - **L8:** coils at the bottom of numbered current paths; sheet drawn de-energized.
 - **Hydraulic:** ISO hop (polyline, no filled dot) at P/T crossings; B1 uses `cylinder_da`, not the L10 air cylinder; RV1 setpoint on B1 is **15.72 bar** (2.5 kN is the relief setting, not a pressure switch).
-- Hydraulic-only papers skip electrical/phase sheets; electro papers write both; PLC papers write `plc_connection` + `plc_ladder`.
+- Hydraulic-only papers skip electrical/phase sheets; electro papers write both; `electrical_only` writes electrical+phase only; PLC papers write `plc_connection` + `plc_ladder`.
 - Outputs go to `output/<exam_id>/`.
 - **Strip-feed:** H1 lamp on a main path; start contacts S1/S3, not JOB.
 - **Emboss (2016 Q2):** PS on the 2A1+ line, 4 bar; retract 2A1 from the pressure switch, not 2B2.

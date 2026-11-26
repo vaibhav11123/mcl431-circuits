@@ -71,7 +71,9 @@ def draw_pneumatic(spec: CircuitSpec, dest: Path) -> Path:
         s.line(ports["2"][0], jog_y, ports["2"][0], ports["2"][1])
         s.text(ports["2"][0] + 10, ports["2"][1] - 6, "2", 10, "start")
 
-        if name == "2A1" and "PS" in spec.sensors:
+        if "PS" in spec.sensors and (
+            name == "2A1" or (name == "1A" and spec.meta.exam_id == "2020_major_q5_mill_clamp")
+        ):
             tee_y = (cports["cap"][1] + ports["4"][1]) / 2
             p4x = ports["4"][0]
             s.dot(p4x, tee_y)
@@ -81,7 +83,8 @@ def draw_pneumatic(spec: CircuitSpec, dest: Path) -> Path:
             cy = tee_y - p_fy * g.h + g.h / 2
             ps = stamp(s, "pressure_switch", cx, cy, anchor="center")
             s.line(p4x, tee_y, ps["P"][0], ps["P"][1])
-            s.text(cx, cy + g.h / 2 + 14, "PS  4 bar", 11)
+            ps_bar = "5 bar" if spec.meta.exam_id == "2020_major_q5_mill_clamp" else "4 bar"
+            s.text(cx, cy + g.h / 2 + 14, f"PS  {ps_bar}", 11)
             s.text(cx, cy + g.h / 2 + 28, "RD +24  BU 0 V  BK", 9)
 
         for pid, label_dx in (("5", -12), ("3", 10)):
@@ -106,13 +109,35 @@ def draw_pneumatic(spec: CircuitSpec, dest: Path) -> Path:
         s.triangle([(sx - 9, sy + 44), (sx + 9, sy + 44), (sx, sy + 64)], fill="#fff")
         s.text(sx + 16, sy + 60, "compressed air supply", 11, "start")
 
-    used = {c.dcv for c in spec.cylinders.values()}
-    extras = [vid for vid in spec.valves if vid not in used]
-    for i, vid in enumerate(extras):
-        gx = 120 + i * 200
-        gy = 720
-        valve = spec.valves[vid]
-        stamp_dcv_5_2(s, gx, gy, vid, list(valve.solenoids))
+    used = {cyl.dcv for cyl in spec.cylinders.values()}
+    orphan_i = 0
+    extra_i = 0
+    for vid, valve in spec.valves.items():
+        if vid in used:
+            continue
+        if valve.type == "dcv_3_2_spring_offset":
+            g = glyph("dcv_3_2")
+            ox = width - 220 - orphan_i * 140
+            oy = 200
+            ports = stamp(s, "dcv_3_2", ox, oy, g.w, g.h, anchor="center")
+            sols = list(valve.solenoids)
+            if sols:
+                stamp(s, "solenoid_box", ox - g.w / 2 - 50, oy - 21, 56, 42)
+                s.text(ox - g.w / 2 - 22, oy + 35, sols[0], 11)
+            s.text(ox, oy - g.h / 2 - 12, vid, 12)
+            s.text(ox, oy + g.h / 2 + 28, "air jet", 11)
+            if "P" in ports and first_1:
+                s.line(ports["P"][0], ports["P"][1], ports["P"][0], supply_y)
+                s.line(ports["P"][0], supply_y, first_1[0], supply_y)
+            if "T" in ports:
+                _exhaust(s, ports["T"][0], ports["T"][1])
+            orphan_i += 1
+            continue
+        if "5_2" in valve.type:
+            gx = 120 + extra_i * 200
+            gy = 720
+            stamp_dcv_5_2(s, gx, gy, vid, list(valve.solenoids))
+            extra_i += 1
 
     call_hook("pneumatic_overlay", spec, s, default=None)
 

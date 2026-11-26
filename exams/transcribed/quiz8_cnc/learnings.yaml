@@ -1,0 +1,9 @@
+id: quiz8_cnc
+solution_files: []
+solution: absent
+items:
+- claim: Partial dims in facts; full program not_given until every vertex read
+  source: lecture
+  lecture_ok: true
+  disposition: not_given
+  lands_in: solution.txt

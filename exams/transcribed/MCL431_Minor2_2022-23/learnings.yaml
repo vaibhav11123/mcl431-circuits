@@ -1,0 +1,9 @@
+id: MCL431_Minor2_2022-23
+solution_files: []
+solution: absent
+items:
+- claim: strip feed + PLC conveyor
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: exams/transcribed/MCL431_Minor2_2022-23

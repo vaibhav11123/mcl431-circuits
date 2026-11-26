@@ -1,0 +1,1 @@
+Two cylinders extending; pump 70 bar 150 lpm; find F1 and F2 with frictional losses.

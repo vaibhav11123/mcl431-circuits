@@ -1,0 +1,9 @@
+id: 2020_major_q2_apple
+solution_files: []
+solution: absent
+items:
+- claim: same_as plc_l14_apple_packing
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/plc_l14_apple_packing/circuit.yaml

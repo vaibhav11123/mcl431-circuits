@@ -1,0 +1,9 @@
+id: Fall17-Minor1
+solution_files: []
+solution: absent
+items:
+- claim: same_as 2017_minor1_hilo
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: exams/transcribed/Fall17-Minor1

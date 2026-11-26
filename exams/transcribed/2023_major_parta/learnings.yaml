@@ -1,0 +1,10 @@
+id: 2023_major_parta
+solution_files:
+- Major_S.pdf
+solution: unreadable
+items:
+- claim: Short derived lines from lecture; stop item if OCR disagrees
+  source: lecture
+  lecture_ok: true
+  disposition: adopt
+  lands_in: src/circuit/calc.py

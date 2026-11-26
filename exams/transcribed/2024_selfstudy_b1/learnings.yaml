@@ -1,0 +1,9 @@
+id: 2024_selfstudy_b1
+solution_files: []
+solution: absent
+items:
+- claim: Reuse grinding_machine golden pattern; numbers match 2023 B1 family
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/grinding_machine/circuit.yaml

@@ -1,0 +1,12 @@
+id: 2019_major_q3_cnc
+year: 2019
+paper: Major 21-Nov-2019 Q3
+source: exams/pyqs/MCL431_Major-21Nov2019.pdf
+domain: cnc_program
+figure_given: true
+identifiers: []
+deliverable_sheets: []
+deliverable_calcs:
+- part_program
+question_excerpt: Mill circular contour with G41/42/43; drill 0.500 with G81; tools
+  T01–T05 listed.
