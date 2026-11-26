@@ -2,7 +2,23 @@
 
 from __future__ import annotations
 
+from contextlib import contextmanager
+from contextvars import ContextVar
+from typing import Iterator
+
 from circuit.spec import CircuitSpec, CurrentPath, SeqStep
+
+_forbid_synthesize: ContextVar[bool] = ContextVar("circuit_forbid_synthesize", default=False)
+
+
+@contextmanager
+def rendering_verified() -> Iterator[None]:
+    """Renderers must not call the synthesizer. Used after VerifiedCircuit.seal."""
+    token = _forbid_synthesize.set(True)
+    try:
+        yield
+    finally:
+        _forbid_synthesize.reset(token)
 
 
 def nc(tag: str) -> str:
@@ -368,6 +384,10 @@ def displacement_rows(sequence: list[SeqStep]) -> list[dict[str, str]]:
 
 
 def apply_compile(spec: CircuitSpec) -> CircuitSpec:
+    if spec.electrical.paths:
+        return spec.model_copy(deep=True)
+    if _forbid_synthesize.get():
+        raise RuntimeError("renderer must not synthesize; G_verified has no paths")
     compiled = spec.model_copy(deep=True)
     compiled.electrical.paths = compile_paths(spec)
     return compiled

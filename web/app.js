@@ -47,6 +47,7 @@ function showSheet() {
     phase: sheets.phase,
     report: last.report,
     explain: last.explain,
+    debug: last.debug,
   };
   const svg = map[tab] || last.card || "";
   canvas.innerHTML = svg;
@@ -109,6 +110,12 @@ document.querySelectorAll(".tabs button").forEach((b) => {
     b.classList.add("active");
     showSheet();
   };
+});
+canvas.addEventListener("click", (event) => {
+  const node = event.target.closest("[data-origin]");
+  if (node) {
+    validateEl.textContent = node.getAttribute("data-origin") || "";
+  }
 });
 yamlEl.value = EXAMPLE;
 chipsFrom(EXAMPLE);

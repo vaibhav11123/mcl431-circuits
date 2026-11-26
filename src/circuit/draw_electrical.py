@@ -100,7 +100,12 @@ def _aux_terms_for_coil(paths: list[CurrentPath], coil_name: str) -> str:
     return ", ".join(tokens)
 
 
-def draw_electrical(spec: CircuitSpec, dest: Path) -> Path:
+def draw_electrical(
+    spec: CircuitSpec,
+    dest: Path,
+    *,
+    highlight: set[str] | None = None,
+) -> Path:
     spec = apply_compile(spec)
     dest.parent.mkdir(parents=True, exist_ok=True)
     paths = spec.electrical.paths
@@ -156,6 +161,7 @@ def draw_electrical(spec: CircuitSpec, dest: Path) -> Path:
                 data_tag=bare(contact),
                 data_terms=f"{a},{b}",
                 data_actuated=str(act).lower(),
+                data_origin=f"spec:contact:{bare(contact)}",
             )
             g = stamp(s, gid, cx, y, anchor="center")
             top_y = g.get("in", (x, top_y))[1]
@@ -173,17 +179,25 @@ def draw_electrical(spec: CircuitSpec, dest: Path) -> Path:
         rail_0 = y0 + dy
         if path.coil:
             gid = _coil_glyph(path.coil)
+            hot = bool(highlight and path.coil in highlight)
+            s.g_open(
+                data_origin="spec:coil",
+                data_path=str(path.number),
+            )
+            if hot:
+                s.rect(x - 28, coil_y - 22, 56, 44, 2.2, fill="#ffd6d6")
             coil = stamp(s, gid, x, coil_y, anchor="center")
             label = path.coil
             if gid == "timer_pull_in":
-                s.text(x + 36, coil_y + 5, label, 10, "start")
+                s.text(x + 36, coil_y + 5, label, 10, "start", origin="spec:coil")
             else:
-                s.text(x + 28, coil_y + 5, label, 10, "start")
+                s.text(x + 28, coil_y + 5, label, 10, "start", origin="spec:coil")
             a1 = coil.get("A1", (x, coil_y - 12))
             a2 = coil.get("A2", (x, coil_y + 12))
             s.text(a1[0] - 10, a1[1] + 8, "A1", 8, "end")
             s.text(a2[0] - 10, a2[1] + 2, "A2", 8, "end")
             s.line(x, a2[1], x, rail_0)
+            s.g_close()
         else:
             s.line(x, coil_y - 14, x, rail_0)
         s.dot(x, rail_0)

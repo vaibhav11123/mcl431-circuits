@@ -8,6 +8,10 @@ Target (`env_trace`): sensors are derived from modeled actuator bits. START is p
 
 Refinement: compressed `env_trace` rows equal `spec_trace` on one cycle back to rest. Not LLVM-style UB. Not physical safety. Not a proof.
 
+Valve memory: a 5/2 double-solenoid cylinder holds its last commanded bit when both coils are off. Sensors are home iff bit 0 and end iff bit 1.
+
+Timers: `TIMER` steps are `UNSUPPORTED` in `verify_spec`. The environment does not advance wall-clock time.
+
 Status values: `PASS`, `FAIL`, `INCONCLUSIVE`, `UNSUPPORTED`, `NOT_EVALUATED`. Exhausted step budgets and truncated mutex are never `PASS`. Physics is always `NOT_EVALUATED`.
 
 Mutex: START-only dual-solenoid ON is a planted miscompile. Full sensor-product enumeration that truncates the sensor set returns `INCONCLUSIVE`.

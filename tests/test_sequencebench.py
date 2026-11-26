@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 from circuit.ir.from_spec import from_spec
@@ -46,7 +47,9 @@ def test_sequencebench_expected_traces_independent() -> None:
     with using_pack(ISO_PACK):
         for path in cases:
             spec = CircuitSpec.from_yaml(path)
-            want = expected_trace(
+            fixture = BENCH / "expected" / f"{path.stem}.json"
+            want = json.loads(fixture.read_text())
+            assert want == expected_trace(
                 [s.action for s in spec.sequence],
                 list(spec.cylinders),
             )
