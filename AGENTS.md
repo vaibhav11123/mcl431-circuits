@@ -22,7 +22,7 @@ python -m circuit eval --goldens
 3. Golden specs in `examples/` and `lecture/goldens/`
 4. The user question
 
-Never invent a symbol ID. Never skip `eval`. Hydraulic and electrical are separate sheets. CNC and Part A objectives are `solution.txt` only (or `not_given`).
+Never invent a symbol ID. Never skip `eval`. Hydraulic and electrical are separate sheets; `electrical_only` draws electrical+phase only. CNC and Part A objectives are `solution.txt` only (or `not_given`).
 
 ## PLC notes vs problems (local)
 

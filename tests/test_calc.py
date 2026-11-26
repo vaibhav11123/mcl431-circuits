@@ -122,3 +122,14 @@ def test_2016_hoist_still_no_pipe_invention() -> None:
     # 2020 hoist-with-loss does name pipes
     lines20 = "\n".join(solution_lines_for("2020_major_q3_hoist_loss"))
     assert "pipes:" in lines20
+
+
+def test_2023_b3_g71_uses_question_doc_and_figure() -> None:
+    lines = "\n".join(solution_lines_for("2023_major_b3_cnc"))
+    assert "facts.yaml" in lines
+    assert "U0.09" in lines and "U0.014" in lines and "W0.003" in lines
+    assert "Z-4.60" in lines and "R0.750" in lines
+    assert "U.08" not in lines and "U0.015" not in lines
+    spec = CircuitSpec.from_yaml(ROOT / "examples/2023_b3_cnc/circuit.yaml")
+    report = eval_spec(spec, ROOT)
+    assert report["pass"], [c for c in report["checks"] if not c["ok"]]

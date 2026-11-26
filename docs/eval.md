@@ -38,9 +38,10 @@ A passing `eval` means the **spec is legal for that exam**. It does not mean the
 | Air-jet 2018 | `dcv_3_2_spring_offset` for 3Z | Nozzle glyph or 5/2 for jet |
 | Mill clamp 2020 | PS 5 bar; 1A waits for 2A home | Emboss 2B2 retract copy |
 | Four-hole 2023 | three `dcv_5_3`; 12 motions; no 5/2 | Stamp a 5/2 |
-| Two-hand 2022 | two-hand start; ESTOP in paths | Rename eject B away from paper tags without note |
+| Two-hand 2022 | `electrical_only`; two-hand start; ESTOP in paths | Draw pneumatic sheet; rename eject B without note |
 | 2023 Part A / quiz regen / servo / stepper | `figure_given` solution lines cite facts | Paste solution scan |
-| CNC programs | `not_given` until figure coords in facts | Adopt solution-only G71 numbers |
+| 2023 B3 CNC | figure dims in facts; G71 DOC 0.09 / U0.014 W0.003 | Solution-scan DOC 0.08/0.015/0.005; `not_given` while figure is on the paper |
+| Other CNC programs | `not_given` until figure coords in facts | Invent profile vertices |
 
 Also: every stamp PNG the drawer uses must exist. B1 SVG must name HC1, HC2, HM1.
 
@@ -56,7 +57,7 @@ Eval PASS is not handwriting. The sheet still has to look like an exam answer:
 - **Contact-element table** under each K and T1 coil (coil name, A1/A2, aux terms used).
 - **L8:** coils at the bottom of numbered current paths; sheet drawn de-energized.
 - **Hydraulic:** ISO hop (polyline, no filled dot) at P/T crossings; B1 uses `cylinder_da`, not the L10 air cylinder; RV1 setpoint on B1 is **15.72 bar** (2.5 kN is the relief setting, not a pressure switch).
-- Hydraulic-only papers skip electrical/phase sheets; electro papers write both; PLC papers write `plc_connection` + `plc_ladder`.
+- Hydraulic-only papers skip electrical/phase sheets; electro papers write both; `electrical_only` writes electrical+phase only; PLC papers write `plc_connection` + `plc_ladder`.
 - Outputs go to `output/<exam_id>/`.
 - **Strip-feed:** H1 lamp on a main path; start contacts S1/S3, not JOB.
 - **Emboss (2016 Q2):** PS on the 2A1+ line, 4 bar; retract 2A1 from the pressure switch, not 2B2.

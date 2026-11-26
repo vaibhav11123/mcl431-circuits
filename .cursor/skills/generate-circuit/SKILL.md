@@ -68,13 +68,13 @@ Eval PASS is not handwriting. After draw, check the sheet as an exam marker woul
 - **Contact-element table** under each K and T1 coil (coil name, A1/A2, aux terms used).
 - **L8:** coils at the bottom of numbered current paths; sheet drawn de-energized.
 - **Hydraulic:** ISO hop (polyline, no filled dot) at P/T crossings; B1 uses `cylinder_da`, not the L10 air cylinder; RV1 setpoint on B1 is **15.72 bar** (2.5 kN is the relief setting, not a pressure switch).
-- Hydraulic-only papers skip electrical/phase sheets; electro papers write both.
+- Hydraulic-only papers skip electrical/phase sheets; electro papers write both; `electrical_only` writes electrical+phase only.
 - **PLC:** `plc_connection.svg` + `plc_ladder.svg` from `plc:` IR (I/O table, connection, ladder with CMP/MOV/CTU/TON as needed). Not an L8 relay sheet. Quote YAML `sense: "NO"` / `"NC"` (bare `NO` becomes boolean false).
 - Outputs go to `output/<exam_id>/`.
 - **Strip-feed:** H1 lamp on a main path; start contacts S1/S3, not JOB.
 - **Emboss:** PS≥4 bar holds 2A1; do not retract on 2B2.
-- **Air jet 3Z:** `dcv_3_2_spring_offset` — no nozzle glyph.
-- **Two-hand:** series start; ESTOP drops both coils.
+- **Air jet 3Z:** `dcv_3_2_spring_offset` (L9 p4 lecture crop) — no nozzle glyph.
+- **Two-hand:** `electrical_only`; series start; ESTOP drops both coils.
 - **Mill clamp:** PS 5 bar; 1A waits for 2A home.
 - **Pneumatic air (notes p6, p14, p22):** 5/2 for air (4/2 is hydraulics). Port 1 = P supply, 2/4 = actuator, 3/5 = exhaust with open triangles and no continuing pipe. Cylinder over the valve; cap → 4, rod jog → 2. Solenoid boxes flush on the envelopes (no stem). Label contacts with the tag (`K5`), not `!K5`. FRL is on the supply path but has no atlas glyph — name it in the BOM, do not invent a stamp.
 - Missing atlas crop (`dcv_5_3` etc.) → stop. Do not draw a generic ISO box.

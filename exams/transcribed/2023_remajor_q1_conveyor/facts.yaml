@@ -1,0 +1,28 @@
+id: 2023_remajor_q1_conveyor
+year: 2023
+paper: Re-Major 03-Jan-2023 Q1
+source: exams/pyqs/MCL431_Re_Major_2022-23.pdf
+domain: plc
+readable: true
+same_as: quiz6_conveyor_weight
+identifiers:
+- START
+- STOP
+deliverable_sheets:
+- plc_connection
+- plc_ladder
+deliverable_calcs:
+- AI/AO counts
+plc:
+  ai_max_kg: 920
+  ai_bits: 10
+  ao_max_rpm: 4600
+  ao_bits: 12
+  zones:
+  - kg: 470
+    rpm: 2250
+  - kg: 580
+    rpm: 3545
+  - kg: 220
+    rpm: 1185
+question_excerpt: Three-speed conveyor 0–920 kg 10-bit AI; AO 12-bit 0–4600 rpm; lamps.

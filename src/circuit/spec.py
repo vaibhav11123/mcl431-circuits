@@ -19,6 +19,7 @@ class Domain(str, Enum):
     PNEUMATIC = "pneumatic"
     HYDRAULIC_PLUS_ELECTRICAL = "hydraulic_plus_electrical"
     PNEUMATIC_PLUS_ELECTRICAL = "pneumatic_plus_electrical"
+    ELECTRICAL_ONLY = "electrical_only"
     PLC = "plc"
 
 

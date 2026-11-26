@@ -76,6 +76,8 @@ def main() -> None:
     _save(Image.open(CROPS / "limit_switch.png"), "limit_switch.png")
     _save(Image.open(CROPS / "lamp.png"), "lamp.png")
     _save(Image.open(CROPS / "dcv_4_3_spring_centered.png"), "dcv_4_3_spring_centered.png")
+    # L9 p4 envelopes+spring only (solenoid_box stamped at draw); matches catalog dcv_3_2 ports
+    _save(_page("MCL431_L9_ElectropneumaticRelayCircuits_p04").crop((600, 1085, 1045, 1485)), "dcv_3_2.png")
     _save(Image.open(CROPS / "flow_control.png"), "flow_control.png")
 
     coil = Image.open(CROPS / "solenoid_coil.png")

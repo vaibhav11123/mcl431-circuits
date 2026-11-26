@@ -467,6 +467,21 @@ def math_checks(spec: CircuitSpec) -> list[Check]:
     if exam == "2018_major_q1_airjet":
         types = [v.type for v in spec.valves.values()]
         checks.append(Check("airjet_3_2", "dcv_3_2_spring_offset" in types, ",".join(types)))
+        crop = root / "lecture/crops/dcv_3_2_spring_offset.png"
+        checks.append(Check("airjet_3_2_crop", crop.is_file() and crop.stat().st_size > 2000, str(crop.stat().st_size if crop.is_file() else 0)))
+    if exam == "2022_major_q4_twohand":
+        checks.append(
+            Check(
+                "twohand_electrical_only",
+                spec.meta.domain == Domain.ELECTRICAL_ONLY,
+                spec.meta.domain.value,
+            )
+        )
+    if exam == "2023_major_b3_cnc":
+        lines = "\n".join(solution_lines_for(exam))
+        checks.append(Check("b3_g71_doc", "U0.09" in lines and "U0.014" in lines and "W0.003" in lines, "DOC/allowances"))
+        checks.append(Check("b3_g71_profile", "Z-4.60" in lines and "R0.750" in lines, "figure profile"))
+        checks.append(Check("b3_not_solution_doc", "U.08" not in lines and "U0.015" not in lines, "reject solution DOC"))
     if exam == "2020_major_q5_mill_clamp":
         checks.append(Check("mill_ps", "PS" in spec.sensors, ",".join(spec.sensors)))
         lines = "\n".join(solution_lines_for(exam))
@@ -548,6 +563,7 @@ def golden_specs(root: Path) -> list[Path]:
         root / "examples/airjet_2018/circuit.yaml",
         root / "examples/mill_clamp_2020/circuit.yaml",
         root / "examples/twohand_2022/circuit.yaml",
+        root / "examples/2023_b3_cnc/circuit.yaml",
         root / "examples/fourhole_2023/circuit.yaml",
         root / "examples/2019_major_meter_out/circuit.yaml",
         root / "examples/2020_hoist_loss/circuit.yaml",

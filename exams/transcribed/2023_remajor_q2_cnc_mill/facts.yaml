@@ -1,0 +1,50 @@
+# Extracted from exams/pyqs/MCL431_Re_Major_2022-23.pdf p1-p2 (photo scan). No invented coordinates.
+id: 2023_remajor_q2_cnc_mill
+year: 2023
+paper: Re-Major 03-Jan-2023 Q2
+date: 2023-01-03
+marks: 25
+domain: cnc_program
+figure_given: true
+identifiers: []
+material: alloy steel
+units: inch
+step_depth_in: 0.375
+doc_passes: 2
+doc_per_pass_in: 0.1875
+overall_thickness_in: 1.0
+holes:
+  count: 4
+  drill_dia_in: 0.375
+  through: true
+  counterbore_dia_in: 0.500
+  counterbore_depth_in: 0.375
+ij_arcs_required: at least 2 of 4 radii use I and J
+compensation: [tool length, cutter diameter]
+tools:
+  T01: face mill 3.0 in carbide
+  T02: end mill 2-flute 1/8
+  T03: end mill 2-flute 3/8
+  T04: end mill 2-flute 9/16
+  T05: end mill 2-flute 1.0
+  T06: end mill 4-flute 3/8
+  T07: end mill 4-flute 1/2
+  T08: end mill 4-flute 5/8
+  T09: end mill 4-flute 3/4
+  T10: end mill 4-flute 1.0
+  T11: roughing end mill 4-flute 1.0
+  T12: center drill
+figure_dims_read:
+  overall_x_in: 4.250
+  overall_y_in: 3.750
+  edge_offsets_in: [0.125, 0.375, 0.250, 0.375]
+  other_labels_in: [0.562, 0.413]
+  radii_in: [0.250, 0.313, 0.562, 0.750]
+  mapping_of_offsets_and_radii_to_edges: not_given
+  hole_centre_xy: not_given
+  minimum_endmill_diameter: not_given
+deliverable_sheets: []
+deliverable_calcs:
+- part_program
+- min_end_mill_selection
+question_excerpt: Mill stepped contour in two DOC passes of 0.1875 in; I/J on 2 of 4 radii; drill 4x0.375 then counterbore 0.500 x 0.375 deep; tools T01-T12.

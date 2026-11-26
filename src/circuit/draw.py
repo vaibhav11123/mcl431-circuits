@@ -181,9 +181,11 @@ def draw_all(spec: CircuitSpec, out_dir: Path) -> dict[str, Path]:
             print("PNG skipped: install librsvg or use macOS")
         written.update(pngs)
         return written
+    elec_only = spec.meta.domain == Domain.ELECTRICAL_ONLY
     ep = spec.meta.domain in {
         Domain.HYDRAULIC_PLUS_ELECTRICAL,
         Domain.PNEUMATIC_PLUS_ELECTRICAL,
+        Domain.ELECTRICAL_ONLY,
     }
     pneu = spec.meta.domain in {Domain.PNEUMATIC, Domain.PNEUMATIC_PLUS_ELECTRICAL}
     written: dict[str, Path] = {
@@ -192,7 +194,9 @@ def draw_all(spec: CircuitSpec, out_dir: Path) -> dict[str, Path]:
     if ep:
         written["electrical"] = draw_electrical(spec, out_dir / "electrical_circuit.svg")
         written["phase"] = draw_phase(spec, out_dir / "step_displacement.svg")
-    if pneu:
+    if elec_only:
+        pass
+    elif pneu:
         written["pneumatic"] = draw_pneumatic(spec, out_dir / "pneumatic_circuit.svg")
     else:
         written["hydraulic"] = draw_hydraulic(spec, out_dir / "hydraulic_circuit.svg")

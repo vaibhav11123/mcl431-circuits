@@ -102,11 +102,13 @@ Filled as each wave closes.
 
 | Basename | Status | Note |
 | --- | --- | --- |
-| Major_07May2023_Solution.pdf | readable | K-ladder twin for B1; plywood I/O; G71 program on p7 (coordinates from solution only → B3 stays not_given) |
+| Major_07May2023_Solution.pdf | readable | K-ladder twin for B1; plywood I/O; G71 on p7 — B3 figure dims are on the *question* page → program adopted with question DOC 0.09 |
 | Major 2022 Solution.pdf | readable (partial OCR) | stepper workings messy; two-hand marking mentions 1A/2A sequence |
-| Major_S.pdf, major q + sol.pdf, lab.pdf, MCL431_Re_Major_2022-23.pdf | unreadable | image-only |
-| Quiz 2/4/5/6/8, 2024 self study | readable via ocrmac | cards added; WhatsApp photos stay unreadable_without_full_pass |
-| WhatsApp Image … (all) | unreadable | workings photos; evidence only if matched later |
+| Major_S.pdf, major q + sol.pdf | unreadable | image-only |
+| lab.pdf | readable (ocrmac) | **out of scope** — SBL100 biology buffers/microscopy, not MCL431 |
+| MCL431_Re_Major_2022-23.pdf | readable (ocrmac) | 03-Jan-2023 Re-Major: Q1=quiz6 conveyor same_as; Q2 CNC mill not_given; Q3 bottle-fill electrical_only |
+| Quiz 2/4/5/6/8, 2024 self study | readable via ocrmac | cards added |
+| WhatsApp Image … (all) | readable (partial) | mapped to apple/tank/oven/same_as + new 2024_midterm_q1_press; 6.5 kN twin stays keep_locked |
 
 | ID | Check | Actual | Pass |
 | --- | --- | --- | --- |

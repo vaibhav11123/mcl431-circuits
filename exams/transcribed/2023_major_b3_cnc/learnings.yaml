@@ -1,9 +1,20 @@
 id: 2023_major_b3_cnc
-solution_files: []
-solution: absent
+solution_files:
+- exams/pyqs/Major_07May2023_Solution.pdf
+solution: readable
 items:
-- claim: not_given until figure coordinates transcribed
-  source: lecture
+- claim: Figure dims are on the question page (not solution-only) — adopt into facts.yaml
+  source: question
   lecture_ok: true
-  disposition: not_given
-  lands_in: solution.txt
+  disposition: adopt
+  lands_in: exams/transcribed/2023_major_b3_cnc/facts.yaml
+- claim: G71 uses question DOC 0.09 and finish U0.014 W0.003 (solution scan used 0.08/0.015/0.005 — rejected)
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: src/circuit/calc.py
+- claim: Profile path from figure (nose 2.000, R0.750, body 3.750, groove, flange 5.000, Z-4.600)
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: src/circuit/calc.py

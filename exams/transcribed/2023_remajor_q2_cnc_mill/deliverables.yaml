@@ -1,0 +1,11 @@
+sheets: []
+calcs:
+- part_program
+- minimum diameter end mill
+paper_asks:
+- Program contour milling with linear and circular interpolation, tool length and cutter diameter compensation
+- Select correct minimum diameter end mill to cut the entire step in one axial pass
+- Use I and J for at least two of the four radii
+- Drill four 0.375 holes then counterbore 0.500 to 0.375 depth
+marks: 25
+note: solution.txt only. Figure coordinates not fully dimensioned in facts — stay not_given.

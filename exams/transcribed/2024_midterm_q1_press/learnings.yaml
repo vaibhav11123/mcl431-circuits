@@ -1,0 +1,14 @@
+id: 2024_midterm_q1_press
+solution_files: []
+solution: absent
+items:
+- claim: same hi-lo forming-press head-loss pattern as 2023_selfstudy_b2 with new numbers; question photo outranks any workings scan
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: exams/transcribed/2024_midterm_q1_press/facts.yaml
+- claim: photo read of units (cm3/s) and Ar=10 cm2 is from a contrast-enhanced phone image; re-verify against a clean copy before locking calc inputs
+  source: question
+  lecture_ok: true
+  disposition: not_given
+  lands_in: none

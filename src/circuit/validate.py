@@ -57,6 +57,7 @@ def validate_spec(spec: CircuitSpec, root: Path | None = None) -> list[Check]:
         Domain.PNEUMATIC,
         Domain.PNEUMATIC_PLUS_ELECTRICAL,
     }
+    elec_only = spec.meta.domain == Domain.ELECTRICAL_ONLY
     plc = spec.meta.domain == Domain.PLC
     if spec.meta.figure_given:
         checks.append(Check("figure_given", True, "calc only — circuit is on the paper"))
@@ -64,6 +65,8 @@ def validate_spec(spec: CircuitSpec, root: Path | None = None) -> list[Check]:
         checks.append(Check("has_pump", True, ",".join(p.id for p in spec.power.pumps)))
     elif pneu:
         checks.append(Check("has_pump", True, "pneumatic — no hydraulic pump"))
+    elif elec_only:
+        checks.append(Check("has_pump", True, "electrical_only — no hydraulic pump"))
     elif plc:
         checks.append(Check("has_pump", True, "plc — no hydraulic pump"))
     else:
