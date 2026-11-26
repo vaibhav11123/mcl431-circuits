@@ -26,6 +26,12 @@ def main(argv: list[str] | None = None) -> int:
         p.add_argument("spec", nargs="?", help="path to circuit.yaml")
         p.add_argument("--pack", help="symbol pack directory")
         p.add_argument("--json", action="store_true", help="print the service dict")
+        if name == "draw":
+            p.add_argument(
+                "--unverified",
+                action="store_true",
+                help="emit watermarked sheets without translation validation",
+            )
         if name == "eval":
             p.add_argument("--goldens", action="store_true")
 
@@ -126,9 +132,39 @@ def _run_engine(args, spec, spec_path, out_dir, pack) -> int:
         return 0 if all_ok(checks) else 1
 
     if args.cmd == "draw":
-        from circuit.draw import draw_all
+        from circuit.draw import draw_all, watermark_written
+        from circuit.service import draw_yaml
 
-        written = draw_all(spec, out_dir)
+        if getattr(args, "unverified", False):
+            written = draw_all(spec, out_dir)
+            watermark_written(written)
+            for k, p in written.items():
+                print(f"{k}: {p}")
+            print("UNVERIFIED")
+            return 0
+
+        payload = draw_yaml(spec_path.read_text(encoding="utf-8"))
+        out_dir.mkdir(parents=True, exist_ok=True)
+        names = {
+            "pneumatic": "pneumatic_circuit.svg",
+            "electrical": "electrical_circuit.svg",
+            "hydraulic": "hydraulic_circuit.svg",
+            "phase": "step_displacement.svg",
+            "connection": "plc_connection.svg",
+            "ladder": "plc_ladder.svg",
+            "solution": "solution.txt",
+            "calc": "calc_only.svg",
+        }
+        written: dict[str, Path] = {}
+        for key, svg in (payload.get("sheets") or {}).items():
+            dest = out_dir / names.get(key, f"{key}.svg")
+            dest.write_text(svg, encoding="utf-8")
+            written[key] = dest
+        (out_dir / "card.svg").write_text(payload.get("card") or "", encoding="utf-8")
+        (out_dir / "report.svg").write_text(payload.get("report") or "", encoding="utf-8")
+        if not payload.get("ok"):
+            print(payload.get("sentence") or "FAIL")
+            return 1
         for k, p in written.items():
             print(f"{k}: {p}")
         return 0

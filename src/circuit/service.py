@@ -228,9 +228,13 @@ def draw_yaml(text: str) -> dict:
         spec = apply_cascade(spec)
     pack = _active_or_resolved()
     with using_pack(pack):
-        from circuit.eval import eval_spec
+        from circuit.compile_sequence import apply_compile
         from circuit.draw import draw_all
+        from circuit.eval import eval_spec
+        from circuit.ir.from_spec import from_spec
+        from circuit.verification.status import Status
 
+        spec = apply_compile(spec)
         val = validate_spec(spec, pack.root)
         ev = eval_spec(spec, pack.root)
         checks = ev["checks"]
@@ -239,27 +243,38 @@ def draw_yaml(text: str) -> dict:
         skip_verify = (spec.meta.method or "") == "cascade" or any(
             s.action == "TIMER" for s in spec.sequence
         )
+        sealed = None
         if ok and pack.hooks_module == "circuit.packs.iso_sequence" and not skip_verify:
-            try:
-                from circuit.verification.refine import verify_spec
+            from circuit.verification.artifact import seal
+            from circuit.verification.refine import verify_spec
 
-                vr = verify_spec(spec)
-                if not vr.ok:
-                    sentence = (
-                        f"Generated control graph does not preserve the sequence at step {vr.cex_step}."
-                    )
-                    checks = list(checks) + [{"name": "refine", "ok": False, "detail": sentence}]
-                    return {
+            vr = verify_spec(spec)
+            if vr.status is not Status.PASS:
+                sentence = (
+                    f"Generated control graph does not preserve the sequence at step {vr.cex_step}."
+                    if vr.status is Status.FAIL
+                    else f"Verification {vr.status.value}."
+                )
+                checks = list(checks) + [
+                    {
+                        "name": "refine",
                         "ok": False,
-                        "sentence": sentence,
-                        "sheets": {},
-                        "card": _card_svg(spec, sentence, False),
-                        "report": _report_svg(checks, sentence, _assumptions(spec)),
-                        "checks": checks,
-                        "cex": {"step": vr.cex_step, "src": vr.src_row, "tgt": vr.tgt_row},
+                        "detail": sentence,
+                        "status": vr.status.value,
                     }
-            except ImportError:
-                pass
+                ]
+                return {
+                    "ok": False,
+                    "sentence": sentence,
+                    "sheets": {},
+                    "card": _card_svg(spec, sentence, False),
+                    "report": _report_svg(checks, sentence, _assumptions(spec)),
+                    "checks": checks,
+                    "cex": {"step": vr.cex_step, "src": vr.src_row, "tgt": vr.tgt_row},
+                    "status": vr.status.value,
+                }
+            sealed = seal(spec, from_spec(spec), vr)
+            spec = sealed.spec
         card = _card_svg(spec, sentence, ok)
         report = _report_svg(checks, sentence, _assumptions(spec))
         result: dict[str, Any] = {
@@ -274,7 +289,7 @@ def draw_yaml(text: str) -> dict:
             return result
         tmpdir = Path(tempfile.mkdtemp(prefix="circuit-draw-"))
         try:
-            written = draw_all(spec, tmpdir)
+            written = draw_all(spec, tmpdir, verified=sealed)
             sheets: dict[str, str] = {}
             for key, path in written.items():
                 if key.endswith("_png"):

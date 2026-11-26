@@ -1,6 +1,8 @@
 from pathlib import Path
 
-from circuit.ir.typecheck import typecheck
+from circuit.ir.graph import CircuitGraph, GraphEdge, GraphNode
+from circuit.ir.ports import Port
+from circuit.ir.typecheck import typecheck, typecheck_graph
 from circuit.pack import Pack, using_pack
 from circuit.spec import CircuitSpec, CurrentPath
 from circuit.validate import all_ok
@@ -32,3 +34,37 @@ def test_fluid_port_as_coil_e210() -> None:
     assert any("E210" in (c.name + c.detail) and "Compatible fluid-domain port" in c.detail for c in failed)
     src = (ROOT / "src/circuit/ir/typecheck.py").read_text()
     assert "invalid circuit" not in src
+
+
+def test_typed_port_fluid_to_coil_e210() -> None:
+    graph = CircuitGraph(
+        nodes=[
+            GraphNode(id="P1", kind="pump", domain="fluid"),
+            GraphNode(id="K1", kind="coil", domain="electrical"),
+        ],
+        edges=[
+            GraphEdge(
+                src="P1",
+                src_port="P",
+                dst="K1",
+                dst_port="A1",
+                src_typed=Port(
+                    component_id="P1",
+                    port_id="P",
+                    domain="fluid",
+                    role="supply",
+                ),
+                dst_typed=Port(
+                    component_id="K1",
+                    port_id="A1",
+                    domain="electrical",
+                    role="coil",
+                ),
+            )
+        ],
+    )
+    failed = [c for c in typecheck_graph(graph) if not c.ok]
+    assert any(
+        "E210" in (c.name + c.detail) and "Compatible fluid-domain port" in c.detail
+        for c in failed
+    )

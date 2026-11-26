@@ -38,6 +38,14 @@ def test_using_pack_draw_grinding_svg(tmp_path: Path) -> None:
     assert "<svg" in svg
 
 
+def test_iso_pack_cannot_resolve_lecture_crops() -> None:
+    iso = resolve_pack(ROOT / "src/circuit/packs/iso_sequence")
+    with using_pack(iso):
+        g = glyph("cylinder_da")
+        assert "lecture" not in str(g.path)
+        assert "crops" not in str(g.path)
+
+
 def test_using_pack_missing_stamp_raises(tmp_path: Path) -> None:
     (tmp_path / "atlas.yaml").write_text("symbols: []\n")
     (tmp_path / "stamps").mkdir()

@@ -21,7 +21,7 @@ def test_verify_manifest(tmp_path: Path) -> None:
     with using_pack(ISO_PACK):
         man = write_manifest(spec, tmp_path)
     assert man["physics"] == "not_evaluated"
-    assert man["refine"] in {"passed", "failed"}
+    assert man["refine"] in {"PASS", "FAIL", "INCONCLUSIVE", "UNSUPPORTED", "NOT_EVALUATED"}
     data = (tmp_path / "verify.json").read_text()
     assert "not_evaluated" in data
     assert hashlib.sha256(spec.to_yaml().encode()).hexdigest() == man["sha256_spec"]

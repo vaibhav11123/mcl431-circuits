@@ -7,4 +7,4 @@ RUN pip install --no-cache-dir ".[mcp]" \
     && useradd -r -u 10001 app && chown -R app /app
 USER 10001
 EXPOSE 8080
-CMD ["python","-m","circuit.mcp_server","--http","--port","8080"]
+CMD ["python","-m","circuit.mcp_server","--http","--host","0.0.0.0","--port","8080"]

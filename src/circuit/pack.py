@@ -98,7 +98,10 @@ def using_pack(pack: Pack) -> Iterator[Pack]:
 
 
 def active_stamp_dir() -> Path:
-    return _stamp_dir.get() or _LECTURE_STAMPS
+    current = _stamp_dir.get()
+    if current is not None:
+        return current
+    return engine_pack().stamp_dir
 
 
 def current_pack() -> Pack | None:
