@@ -1,6 +1,8 @@
-# Execution plan
+# Execution plan (T1–T10 subset)
 
-Status: not started. Score: 0/10 tasks, 0/39 measures. This is the plan to ship the studio as a product. Do not implement it until asked.
+**Superseded for product scope by [product-execution-plan.md](product-execution-plan.md).** That file has T0–T32, live VM tests, workspace, exports, and measure tables. This file remains the detailed T1–T10 engine/MCP slice; execute it only as part of the product plan (Phase 01), with the deltas listed there (ISO from strip-feed, `using_pack` on stamps, `get_sheet` takes full YAML).
+
+Status: not started. Score: 0/10 tasks, 0/39 measures. Do not implement until asked.
 
 ## Customer flow
 
