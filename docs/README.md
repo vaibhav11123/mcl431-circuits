@@ -12,6 +12,7 @@ How to use this repo if you are taking **MCL 431 CAM and Automation** at IIT Del
 - [Ship the studio (T1–T10 subset)](ship-execution-plan.md) — pack/MCP slice subsumed by the product plan.
 - [Distribution record](distribution.md) — channels, Pages, plugin ZIP, what is still human-only
 - [Marketing copy](marketing.md) — one-liners and launch post; do not call this an AI circuit generator
+- [Ops / release audit](ops/) — completion, readiness, human leftovers (not the product front door)
 
 ## Gallery
 

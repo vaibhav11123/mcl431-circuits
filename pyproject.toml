@@ -3,9 +3,9 @@ requires = ["setuptools>=69"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "mcl431-circuit"
+name = "sequence-circuit"
 version = "0.1.0"
-description = "MCL 431 lecture-locked hydraulic and electropneumatic circuit drawings"
+description = "Verification-oriented compiler for AI-generated engineering systems"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
