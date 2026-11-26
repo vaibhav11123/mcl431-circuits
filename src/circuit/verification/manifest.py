@@ -4,6 +4,7 @@ import hashlib
 import json
 from pathlib import Path
 
+from circuit.ir.from_spec import from_spec, graph_sha256
 from circuit.spec import CircuitSpec
 from circuit.verification.refine import verify_spec
 from circuit.verification.status import Status
@@ -19,6 +20,8 @@ def write_manifest(spec: CircuitSpec, out_dir: Path) -> dict:
         "cex_step": vr.cex_step,
         "stats": vr.stats,
         "sha256_spec": hashlib.sha256(spec.to_yaml().encode()).hexdigest(),
+        "graph_sha256": graph_sha256(from_spec(spec)),
+        "layout": {"crossings": None, "overlaps": None, "ms": None},
     }
     out_dir.mkdir(parents=True, exist_ok=True)
     path = out_dir / "verify.json"

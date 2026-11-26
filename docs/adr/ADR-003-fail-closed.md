@@ -1,5 +1,5 @@
-# ADR-003 Fail-closed draw_yaml
+# ADR-003 Fail-closed
 
-Status: accepted
+Canonical: [ADR-003.md](ADR-003.md)
 
-Eval or refine failure returns no sheet. CLI `draw` without `--json` stays a lab escape hatch.
+Revisit when `--unverified` is used in a graded hand-in.

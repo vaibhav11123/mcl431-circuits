@@ -127,3 +127,10 @@ def test_l4_regen_not_attached_to_b1() -> None:
     report = eval_spec(spec, ROOT)
     names = [c["name"] for c in report["checks"]]
     assert "golden_l4_regen_ratio" not in names
+
+
+def test_2y1_not_on_kstart() -> None:
+    spec = CircuitSpec.from_yaml(ROOT / "examples/grinding_machine/circuit.yaml")
+    report = eval_spec(spec, ROOT)
+    row = next(c for c in report["checks"] if c["name"] == "2y1_not_kstart")
+    assert row["ok"], row

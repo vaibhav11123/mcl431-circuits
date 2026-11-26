@@ -1,5 +1,5 @@
 # ADR-007 No physics
 
-Status: accepted
+Canonical: [ADR-007.md](ADR-007.md)
 
-Logical 0/1 traces only. Pressure simulation is a refusal.
+Revisit when a separate physics product is requested.

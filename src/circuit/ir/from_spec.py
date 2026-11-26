@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
+
 from circuit.compile_sequence import apply_compile
 from circuit.ir.graph import CircuitGraph, GraphEdge, GraphNode
 from circuit.ir.ports import Port
@@ -69,3 +72,20 @@ def from_spec(spec: CircuitSpec) -> CircuitGraph:
         sensors_home=home,
         sensors_end=end,
     )
+
+
+def graph_sha256(graph: CircuitGraph) -> str:
+    payload = graph.model_dump(mode="json")
+    blob = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(blob.encode()).hexdigest()
+
+
+def compile_report(spec: CircuitSpec) -> dict:
+    graph = from_spec(spec)
+    return {
+        "ok": True,
+        "graph_sha256": graph_sha256(graph),
+        "nodes": len(graph.nodes),
+        "edges": len(graph.edges),
+        "paths": len(graph.paths),
+    }

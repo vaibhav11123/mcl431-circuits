@@ -3,7 +3,8 @@ from pathlib import Path
 from circuit.pack import Pack, using_pack
 from circuit.service import draw_yaml
 from circuit.spec import CircuitSpec
-from circuit.verification.layout import layout_metrics
+from circuit.layout.metrics import layout_metrics
+from circuit.verification.layout import layout_metrics as line_metrics
 from circuit.verification.synthesize import pick_smaller, two_topologies
 
 
@@ -19,9 +20,13 @@ def test_layout_metrics_iso() -> None:
     )
     with using_pack(pack):
         out = draw_yaml((ROOT / "examples/iso_sequence/circuit.yaml").read_text())
-    m = layout_metrics(out["sheets"]["pneumatic"])
+    svg = out["sheets"]["pneumatic"]
+    m = layout_metrics(svg)
     assert m["lines"] > 0
     assert "crossings" in m
+    assert "overlaps" in m
+    assert "ms" in m
+    assert line_metrics(svg)["crossings"] == m["crossings"]
 
 
 def test_pick_smaller_topology() -> None:

@@ -1,0 +1,21 @@
+meta:
+  title: SequenceBench 04 hold strip
+  domain: pneumatic_plus_electrical
+  patterns: [ep_dac_5_2, sequence_double_solenoid]
+sequence:
+  - { action: 1A+, label: hold }
+  - { action: 2A+, label: advance }
+  - { action: 2A-, label: back }
+  - { action: 1A-, label: open }
+power: { pumps: [], tank: "" }
+cylinders:
+  1A: { dcv: 1V, sensors: [1B1, 1B2] }
+  2A: { dcv: 2V, sensors: [2B1, 2B2] }
+motors: {}
+valves:
+  1V: { type: dcv_5_2_double_solenoid, solenoids: [1Y1, 1Y2] }
+  2V: { type: dcv_5_2_double_solenoid, solenoids: [2Y1, 2Y2] }
+sensors: [1B1, 1B2, 2B1, 2B2]
+electrical:
+  convention: lecture
+  paths: []

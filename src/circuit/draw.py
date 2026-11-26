@@ -104,11 +104,14 @@ def _draw_all_body(spec: CircuitSpec, out_dir: Path) -> dict[str, Path]:
             "calc": draw_calc_only(spec, out_dir / "calc_only.svg"),
             "solution": write_solution(spec, out_dir / "solution.txt"),
         }
-        from circuit.png import svg_to_png
-
-        png = svg_to_png(written["calc"])
-        if png is not None:
-            written["calc_png"] = png
+        try:
+            from circuit.png import svg_to_png
+        except ImportError:
+            svg_to_png = None  # type: ignore[assignment]
+        if svg_to_png is not None:
+            png = svg_to_png(written["calc"])
+            if png is not None:
+                written["calc_png"] = png
         return written
     if spec.meta.domain == Domain.PLC:
         written = {
@@ -116,13 +119,16 @@ def _draw_all_body(spec: CircuitSpec, out_dir: Path) -> dict[str, Path]:
             "connection": draw_plc_connection(spec, out_dir / "plc_connection.svg"),
             "ladder": draw_plc_ladder(spec, out_dir / "plc_ladder.svg"),
         }
-        from circuit.png import svg_to_png
-
+        try:
+            from circuit.png import svg_to_png
+        except ImportError:
+            svg_to_png = None  # type: ignore[assignment]
         pngs: dict[str, Path] = {}
-        for key in ("connection", "ladder"):
-            png = svg_to_png(written[key])
-            if png is not None:
-                pngs[f"{key}_png"] = png
+        if svg_to_png is not None:
+            for key in ("connection", "ladder"):
+                png = svg_to_png(written[key])
+                if png is not None:
+                    pngs[f"{key}_png"] = png
         if not pngs:
             print("PNG skipped: install librsvg or use macOS")
         written.update(pngs)
@@ -142,15 +148,18 @@ def _draw_all_body(spec: CircuitSpec, out_dir: Path) -> dict[str, Path]:
         written["pneumatic"] = draw_pneumatic(spec, out_dir / "pneumatic_circuit.svg")
     else:
         written["hydraulic"] = draw_hydraulic(spec, out_dir / "hydraulic_circuit.svg")
-    from circuit.png import svg_to_png
-
+    try:
+        from circuit.png import svg_to_png
+    except ImportError:
+        svg_to_png = None  # type: ignore[assignment]
     pngs: dict[str, Path] = {}
-    for key in ("hydraulic", "pneumatic", "electrical", "phase"):
-        if key not in written:
-            continue
-        png = svg_to_png(written[key])
-        if png is not None:
-            pngs[f"{key}_png"] = png
+    if svg_to_png is not None:
+        for key in ("hydraulic", "pneumatic", "electrical", "phase"):
+            if key not in written:
+                continue
+            png = svg_to_png(written[key])
+            if png is not None:
+                pngs[f"{key}_png"] = png
     if not pngs:
         print("PNG skipped: install librsvg or use macOS")
     written.update(pngs)

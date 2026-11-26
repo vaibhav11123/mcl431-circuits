@@ -27,6 +27,8 @@ SENTENCE_CASCADE = (
     "Here is the electropneumatic 5/2 equivalent."
 )
 SENTENCE_OK = "All executed checks passed."
+SENTENCE_CT = "We do not export FluidSIM .ct files."
+SENTENCE_PHYSICS = "No pressure physics. Use the sequence explorer for 0/1 actuator states."
 FOOTER_SAFETY = "Logical checks only — not a machine-safety certificate."
 
 
@@ -91,6 +93,11 @@ def _load_spec(text: str) -> tuple[CircuitSpec | None, dict | None]:
     raw = text.encode("utf-8")
     if len(raw) > MAX_YAML_BYTES:
         return None, _reject(SENTENCE_TOO_LARGE, "size")
+    low = text.lower()
+    if ".ct" in low or "fluidsim" in low:
+        return None, _reject(SENTENCE_CT, "refuse_ct")
+    if "simulate pressure" in low or "pressure drop" in low:
+        return None, _reject(SENTENCE_PHYSICS, "refuse_physics")
     import yaml
 
     try:
