@@ -6,7 +6,7 @@ Audit date: 2026-11-26 IST. Auditor: coding agent on this repository. Tracker la
 
 | Command | Result (this VM, 2026-11-26 IST) |
 | --- | --- |
-| `python3 -m pytest -q` | **229 passed, 2 skipped** |
+| `python3 -m pytest -q` | **238 passed, 2 skipped** (this tree after merge + distribution tests) |
 | `python3 -m circuit eval --goldens` | exit 0 |
 | `python3 -m circuit bench benchmarks/sequencebench` | n=30, `accepted_error_rate` 0.0, `reject_invalid_rate` 1.0 |
 | `python3 -m circuit bench --suite 300` | n=300, fingerprint `c502bcc32db7a8803669a257821679e0a4033a36414eb6fee3a0a2226d4ec5bf`, `accepted_error_rate` 0.0, `reject_invalid_rate` 1.0 |

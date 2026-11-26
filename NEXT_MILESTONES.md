@@ -37,7 +37,7 @@ Physics and pressure simulation. FluidSIM `.ct`. CompCert/SMT completeness. Paid
 | --- | --- |
 | Core compiler and workspace | present; pytest 229 passed, 2 skipped; goldens exit 0 |
 | Independent completion audit | this file set; not a rubber stamp of T0–T57 |
-| Public distribution | pending human HTTPS + login |
+| Public distribution | GitHub + CLI + static workspace + Pages workflow in-repo; ChatGPT/Claude directory still pending human HTTPS + login |
 | Full temporal and cascade verification | TIMER discrete ticks PASS; cascade electrical PASS; fluid cascade NOT_EVALUATED; multi-cycle rest UNSUPPORTED-by-oracle |
 | 300-case reproducible benchmark | yes, fingerprint above, error rates 0 / 1 |
 | External engineering validation | pending (study + directory + live models) |

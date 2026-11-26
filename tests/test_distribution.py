@@ -53,6 +53,34 @@ def test_static_legal_pages_exist() -> None:
         assert "<h1" in text.lower() or "<h1>" in text
 
 
+def test_marketing_and_pages_exist() -> None:
+    for rel in ("CHANGELOG.md", "docs/marketing.md", "docs/distribution.md"):
+        text = (ROOT / rel).read_text(encoding="utf-8")
+        assert "compiler" in text.lower()
+    marketing = (ROOT / "docs" / "marketing.md").read_text()
+    assert "Do **not** call this an AI circuit generator" in marketing
+    pages = (ROOT / ".github" / "workflows" / "pages.yml").read_text()
+    assert "path: web" in pages
+    llms = (ROOT / "web" / "llms.txt").read_text()
+    assert "untrusted" in llms.lower()
+    assert (ROOT / "web" / ".nojekyll").is_file()
+
+
+def test_pack_plugin_zip() -> None:
+    import subprocess
+    import sys
+    import zipfile
+
+    dest = ROOT / "dist" / "sequence-circuit-plugin.zip"
+    subprocess.check_call([sys.executable, str(ROOT / "scripts" / "pack_plugin.py")], cwd=ROOT)
+    assert dest.is_file() and dest.stat().st_size > 100
+    with zipfile.ZipFile(dest) as zf:
+        names = zf.namelist()
+    assert "plugin.json" in names
+    assert "mcp.json" in names
+    assert "PRIVACY.md" in names
+
+
 def test_handover_docs_exist() -> None:
     for name in (
         "COMPLETION_AUDIT.md",

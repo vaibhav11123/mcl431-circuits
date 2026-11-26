@@ -2,6 +2,12 @@ Sequence Circuit is a verification-oriented compiler for AI-generated pneumatic 
 
 Job: from an engineering sequence to a verified ISO 1219 / L8 drawing.
 
+Install: pip install -e ".[dev]" then python -m circuit draw examples/iso_sequence/circuit.yaml
+
+Workspace: this static site runs the ISO pack in Pyodide. No Fly. No account.
+
+SequenceBench: python -m circuit bench --suite 300  (compiler score, not an LLM score)
+
 Refusals: FluidSIM .ct export, pressure physics simulation, invented valve ids, lecture-PDF ingest on the public pack, cascade beyond three cylinders without confirmation.
 
 Do not describe this product as an AI circuit generator.

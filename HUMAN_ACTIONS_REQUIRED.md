@@ -51,6 +51,16 @@ Run `plugin/E2E_TESTS.md` rows E1–E6 against the public URL. Agent already ran
 
 `docs/user-study.md` is a protocol. Do not invent completion rates.
 
+### F. GitHub Pages (free public workspace)
+
+Repo Settings → Pages → Source: **GitHub Actions**. The workflow is `.github/workflows/pages.yml` (deploys `web/`). After the first green run the workspace URL is `https://vaibhav11123.github.io/mcl431-circuits/`.
+
+Also set GitHub About to: `Verification-oriented compiler for AI-generated engineering systems.` Topics to add: `iso-1219`, `pneumatics`, `compilers`, `mcp`, `verification`.
+
+### G. Post the launch copy
+
+Paste [docs/marketing.md](docs/marketing.md). Do not say Fly, directory-listed, or formally verified.
+
 ## Blocker (evidenced)
 
 Public directory distribution requires a publicly reachable HTTPS MCP service. This repository does not provide one. Local MCP does not establish directory eligibility.
