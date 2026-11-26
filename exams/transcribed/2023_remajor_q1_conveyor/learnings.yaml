@@ -1,0 +1,9 @@
+id: 2023_remajor_q1_conveyor
+solution_files: []
+solution: absent
+items:
+- claim: same_as quiz6_conveyor_weight (identical AI/AO numbers and zone RPMs)
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/plc_quiz6_conveyor/circuit.yaml

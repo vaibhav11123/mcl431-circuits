@@ -1,0 +1,11 @@
+sheets: []
+circuit_figure_on_paper: true
+calcs:
+  - head loss in pipes
+  - head loss in valves
+  - head loss in fittings
+  - pressure rating of pump P1
+  - pressure rating of pump P2
+paper_asks:
+  - Considering Head Loss in Pipes, Valves and Fitting, find the pressure ratings of pumps P1 and P2 considering 82% overall efficiency.
+marks: 40

@@ -1,0 +1,14 @@
+id: 2023_remajor_q3_bottle_fill
+solution_files: []
+solution: absent
+items:
+- claim: question uses lecture-style labels 1A/2A/3A with 1Y/2Y/3Y valves and 1S1/2B1/3B1 sensors — use paper identifiers
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: exams/transcribed/2023_remajor_q3_bottle_fill
+- claim: student scan marks suggest K-relays for START/hold, sequence 1A- 1A+ B+ C+ — does not match the printed 'A retract only' wording; unverified
+  source: solution
+  lecture_ok: false
+  disposition: reject
+  lands_in: none

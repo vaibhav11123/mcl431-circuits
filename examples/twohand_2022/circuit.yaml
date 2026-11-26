@@ -1,6 +1,6 @@
 meta:
   title: 2022 Major Q4 two-hand stamp and eject
-  domain: pneumatic_plus_electrical
+  domain: electrical_only
   exam_id: 2022_major_q4_twohand
   patterns:
     - ep_dac_5_2

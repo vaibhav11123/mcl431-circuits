@@ -7,14 +7,13 @@ items:
   lecture_ok: true
   disposition: adopt
   lands_in: examples/twohand_2022/circuit.yaml
-- claim: Cylinder tags stay A/B as paper; do not rename to 1A
+- claim: Cylinder tags stay A/B as paper; sheet maps eject B → 2A
   source: question
   lecture_ok: true
   disposition: adopt
   lands_in: examples/twohand_2022/circuit.yaml
-- claim: Paper asked electrical; process names cylinders so pneumatic sheet is drawn
-    for the valves the coils drive
-  source: lecture
+- claim: Paper asks electrical only — use domain electrical_only (no pneumatic sheet)
+  source: question
   lecture_ok: true
   disposition: adopt
   lands_in: examples/twohand_2022/circuit.yaml

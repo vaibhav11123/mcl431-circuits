@@ -1,0 +1,1 @@
+Three-speed conveyor PLC; load cell 0–920 kg 10-bit AI slot3 ch2; speed AO 12-bit 0–4600 rpm; zones 470→2250, >580→3545, <220→1185; START/STOP.

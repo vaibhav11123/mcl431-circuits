@@ -17,5 +17,6 @@ Source of truth, in order: (1) `lecture/atlas.yaml` + lecture PDFs, (2) `exams/i
 - You write `circuit.yaml` only. Code draws. Never use an image generator.
 - Always run `python -m circuit validate` then `draw` then `eval`. A pretty SVG that fails eval is not done.
 - If an atlas ID is missing, stop and ask. Do not substitute a generic ISO glyph.
-- An air jet named like `3Z` uses atlas id `dcv_3_2_spring_offset` (no nozzle glyph).
+- An air jet named like `3Z` uses atlas id `dcv_3_2_spring_offset` from the L9 lecture crop (no nozzle glyph).
+- Papers that ask for the electrical sheet only use `domain: electrical_only` (no pneumatic/hydraulic sheet).
 - A CNC part program is `solution.txt` only; a missing figure dimension stays `not_given`.

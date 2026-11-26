@@ -2,7 +2,7 @@ id: 2022_major_q4_twohand
 year: 2022
 paper: Major 20-Nov-2022 Q4
 source: exams/pyqs/Major 2022.pdf
-domain: pneumatic_plus_electrical
+domain: electrical_only
 identifiers:
 - A
 - B
@@ -15,6 +15,5 @@ sequence:
 deliverable_sheets:
 - electrical
 deliverable_calcs: []
-note: Paper asks electrical only; draw electrical+phase; skip inventing Domain.ELECTRICAL
-  by using pneumatic_plus_electrical with valves for A/B as process requires coils
+note: Paper asks electrical only — Domain.electrical_only draws electrical+phase, not pneumatic.
 question_excerpt: Two-hand stamp; eject cylinder B; E-stop returns both to initial.

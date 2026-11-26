@@ -1,0 +1,17 @@
+[03-Jan-2023] MCL431 Re-Major Exam. Source: exams/pyqs/MCL431_Re_Major_2022-23.pdf p1/3 (text) and p2/3 (Fig. 2(a), 2(b)).
+Q2. Using linear and circular interpolations, tool length and cutter diameter compensations, program the moves required to mill the contour of the part as shown in Fig. 2(a). To enable cutting of the entire step in one axial pass, select the correct minimum diameter end mill. For a minimum of two out of four radii, use the I and J parameters. The material is alloy steel. The depth of the step is 0.375 inch and it should be machined in two equal depth-of-cut passes. The overall thickness is 1.0 inch. After contour milling, drill the four through holes of 0.375 diameter and thereafter counter-boring of 0.500 inch diameter upto 0.375 inch depth (as shown in Fig. 2(b)).
+Following cutters are available in machine tool magazine:
+T01: Face Mill, 3.0 inch diameter, Carbide
+T02: End Mill, 2-Flute, 1/8 inch
+T03: End Mill, 2-Flute, 3/8 inch
+T04: End Mill, 2-Flute, 9/16 inch
+T05: End Mill, 2-Flute, 1.0 inch
+T06: End Mill, 4-Flute, 3/8 inch
+T07: End Mill, 4-Flute, 1/2 inch
+T08: End Mill, 4-Flute, 5/8 inch
+T09: End Mill, 4-Flute, 3/4 inch
+T10: End Mill, 4-Flute, 1.0 inch
+T11: Roughing End Mill, 4-Flute, 1.0 inch
+T12: Center Drill
+[25 Marks]
+Figure: Fig. 2(a) plan + isometric of a plate with a stepped pocket/boss; Fig. 2(b) plan with dimensions .250 .375 .125 .375 .562 .413 3.750 4.250 and radii R.250 R.313 R.562 R.750; Ø0.375 4PL, Ø0.500 4PL. Origin mark at lower-left corner.

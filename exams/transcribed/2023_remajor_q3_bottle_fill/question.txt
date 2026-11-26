@@ -1,0 +1,1 @@
+Electrical circuit for bottle conveyor → rotary table; A retracts at pos1+START; B indexes at pos2; C opens fill ~2 s at pos3; manual index if empty; label paths and contact tables.

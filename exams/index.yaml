@@ -558,7 +558,7 @@ questions:
     file: exams/transcribed/2022_major_q4_twohand
     source: exams/pyqs/Major 2022.pdf
     readable: true
-    domain: pneumatic_plus_electrical
+    domain: electrical_only
     identifiers: [A, B, START, EMERGENCY]
     deliverables:
       sheets: [electrical]
@@ -667,3 +667,51 @@ questions:
     identifiers: [HC1, HC2, HM1, START]
     deliverables: {sheets: [hydraulic, electrical], calcs: []}
     pattern_hint: grinding_sequence
+
+  # --- OCR closure: Re-Major 03-Jan-2023, WhatsApp workings, lab.pdf OOS ---
+  - id: 2023_remajor_q1_conveyor
+    file: exams/transcribed/2023_remajor_q1_conveyor
+    source: exams/pyqs/MCL431_Re_Major_2022-23.pdf
+    readable: true
+    same_as: quiz6_conveyor_weight
+    domain: plc
+    identifiers: [START, STOP]
+    deliverables: {sheets: [plc_connection, plc_ladder], calcs: [AI/AO counts]}
+    pattern_hint: plc_scale_mov
+    tags: [plc_v2, same_as_quiz6]
+
+  - id: 2023_remajor_q2_cnc_mill
+    file: exams/transcribed/2023_remajor_q2_cnc_mill
+    source: exams/pyqs/MCL431_Re_Major_2022-23.pdf
+    readable: true
+    domain: hydraulic
+    deliverables: {sheets: [], calcs: [part_program]}
+    pattern_hint: cnc_program
+    tags: [not_given, figure_partial]
+
+  - id: 2023_remajor_q3_bottle_fill
+    file: exams/transcribed/2023_remajor_q3_bottle_fill
+    source: exams/pyqs/MCL431_Re_Major_2022-23.pdf
+    readable: true
+    domain: electrical_only
+    identifiers: [A, B, C, START]
+    deliverables: {sheets: [electrical], calcs: []}
+    pattern_hint: sequence_double_solenoid
+    tags: [electrical_only, bottle_fill]
+
+  - id: 2024_midterm_q1_press
+    file: exams/transcribed/2024_midterm_q1_press
+    source: exams/pyqs/WhatsApp Image 2025-09-14 at 20.40.46_ed37d725.jpg
+    readable: partial
+    domain: hydraulic
+    deliverables: {sheets: [], calcs: [pump ratings with head loss]}
+    pattern_hint: hilo_double_pump
+    tags: [not_given, whatsapp_ocr]
+
+  - id: whatsapp_2025_09_14_workings
+    file: exams/transcribed/whatsapp_2025_09_14_workings
+    source: exams/pyqs/
+    readable: partial
+    domain: hydraulic
+    deliverables: {sheets: [], calcs: []}
+    tags: [workings_photos, evidence_only]

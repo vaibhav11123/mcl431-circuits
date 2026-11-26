@@ -89,6 +89,19 @@ def test_plc_draw_all_has_connection_and_ladder(tmp_path: Path) -> None:
     assert "907" in sol
 
 
+def test_twohand_electrical_only_skips_pneumatic(tmp_path: Path) -> None:
+    spec = CircuitSpec.from_yaml(ROOT / "examples/twohand_2022/circuit.yaml")
+    written = draw_all(spec, tmp_path)
+    assert "electrical" in written
+    assert "phase" in written
+    assert "pneumatic" not in written
+    assert not (tmp_path / "pneumatic_circuit.svg").exists()
+    assert (tmp_path / "electrical_circuit.svg").exists()
+    elec = (tmp_path / "electrical_circuit.svg").read_text()
+    for token in ("S1", "S2", "ESTOP", "1Y1", "2Y2"):
+        assert token in elec, token
+
+
 def test_emboss_2016_draws_pneumatic_electrical_phase(tmp_path: Path) -> None:
     spec = CircuitSpec.from_yaml(ROOT / "examples/emboss_2016/circuit.yaml")
     written = draw_all(spec, tmp_path)
