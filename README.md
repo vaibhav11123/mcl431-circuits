@@ -30,6 +30,8 @@ The 300-case suite and the LLM fixtures call **no paid API**. Fly.io is not requ
 
 ChatGPT / Claude directory listing needs a human-operated public HTTPS origin. Local MCP does not make the plugin directory-eligible. See [plugin/SUBMISSION.md](plugin/SUBMISSION.md) and [HUMAN_ACTIONS_REQUIRED.md](HUMAN_ACTIONS_REQUIRED.md).
 
+Release notes: [CHANGELOG.md](CHANGELOG.md). Launch copy: [docs/marketing.md](docs/marketing.md). Channel status: [docs/distribution.md](docs/distribution.md).
+
 ## Course goldens (MCL 431)
 
 - **Sheets:** 2023 B1 grinding, 2017 hi-lo punch, 2023 Minor-2 strip feed, 2023 Minor-2 PLC conveyor, 2017 5/3 drill, 2016 emboss, L14 PLC set, 2018 air-jet (3Z = `dcv_3_2`), 2020 mill clamp (5 bar), 2022 two-hand stamp, 2023 four-hole drill, majors PLC (oven, sprinkler, lockout, preset counter, tank mix, orange juice, plywood stack, traffic / quiz conveyor)

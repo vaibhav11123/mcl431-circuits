@@ -10,6 +10,8 @@ How to use this repo if you are taking **MCL 431 CAM and Automation** at IIT Del
 - [PYQ solution run log](pyq-solution-run-log.md) — zip disposition, learning cards, wave measures
 - [Product execution plan](product-execution-plan.md) — Sequence Circuit contract (T0–T57 executed; T29 Fly is SKIPPED_OPTIONAL)
 - [Ship the studio (T1–T10 subset)](ship-execution-plan.md) — pack/MCP slice subsumed by the product plan.
+- [Distribution record](distribution.md) — channels, Pages, plugin ZIP, what is still human-only
+- [Marketing copy](marketing.md) — one-liners and launch post; do not call this an AI circuit generator
 
 ## Gallery
 

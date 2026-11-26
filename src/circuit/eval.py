@@ -467,7 +467,8 @@ def math_checks(spec: CircuitSpec) -> list[Check]:
     if exam == "2018_major_q1_airjet":
         types = [v.type for v in spec.valves.values()]
         checks.append(Check("airjet_3_2", "dcv_3_2_spring_offset" in types, ",".join(types)))
-        crop = root / "lecture/crops/dcv_3_2_spring_offset.png"
+        repo = Path(__file__).resolve().parents[2]
+        crop = repo / "lecture/crops/dcv_3_2_spring_offset.png"
         checks.append(Check("airjet_3_2_crop", crop.is_file() and crop.stat().st_size > 2000, str(crop.stat().st_size if crop.is_file() else 0)))
     if exam == "2022_major_q4_twohand":
         checks.append(

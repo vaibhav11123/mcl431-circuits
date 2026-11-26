@@ -10,7 +10,7 @@ Source: [Package your plugin](https://developers.openai.com/plugins/build/plugin
 
 | Field | Value to paste |
 | --- | --- |
-| Package ZIP | `plugin/` (plugin.json, mcp.json, skills/, PRIVACY.md, TERMS.md, assets/logo.svg) |
+| Package ZIP | `python scripts/pack_plugin.py` → `dist/sequence-circuit-plugin.zip` from `plugin/` (plugin.json, mcp.json, skills/, PRIVACY.md, TERMS.md, assets/logo.svg) |
 | Display name | Sequence Circuit |
 | Short description | Verified ISO circuit compiler |
 | Long description | From `plugin.json` `extensions.com.openai.interface.longDescription` |
