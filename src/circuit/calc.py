@@ -631,6 +631,7 @@ def solution_lines_2023_b3_cnc() -> list[str]:
         "N40 G01 X1.75 F0.02",
         "N45 G01 X2.0 Z-0.125 F0.02",
         "N50 G01 Z-1.125 F0.02",
+        # shortcut: N55 as R-form from figure Ø3.350; solution scan had garbled U.750/K0.0/I0.750 — upgrade when figure arc centre is locked
         "N55 G02 X3.35 Z-1.875 R0.750",
         "N60 G01 X3.51 F0.02",
         "N65 G01 X3.75 Z-1.995 F0.02",

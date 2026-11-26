@@ -108,7 +108,7 @@ Filled as each wave closes.
 | lab.pdf | readable (ocrmac) | **out of scope** — SBL100 biology buffers/microscopy, not MCL431 |
 | MCL431_Re_Major_2022-23.pdf | readable (ocrmac) | 03-Jan-2023 Re-Major: Q1=quiz6 conveyor same_as; Q2 CNC mill not_given; Q3 bottle-fill electrical_only |
 | Quiz 2/4/5/6/8, 2024 self study | readable via ocrmac | cards added |
-| WhatsApp Image … (all) | readable (partial) | mapped to apple/tank/oven/same_as + new 2024_midterm_q1_press; 6.5 kN twin stays keep_locked |
+| WhatsApp Image … (all) | readable (partial) | mapped to apple/tank/oven/air-jet/same_as + new 2024_midterm_q1_press; screenshot = MCL431_minor 6.5 kN twin (keep_locked); full OCR report `/tmp/pyq_ocr_report.md` (local) |
 
 | ID | Check | Actual | Pass |
 | --- | --- | --- | --- |
