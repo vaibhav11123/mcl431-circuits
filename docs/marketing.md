@@ -49,7 +49,9 @@ Repo: https://github.com/vaibhav11123/mcl431-circuits
 
 ## Assets
 
-- Stills: `docs/release-assets/demo-*.png`, `docs/release-assets/workspace-demo.png` (live workspace)
+- Video: [GitHub release mp4](https://github.com/vaibhav11123/mcl431-circuits/releases/download/v0.1.0-distribution/sequence-circuit-workspace-demo.mp4) and `docs/release-assets/sequence-circuit-workspace-demo.mp4`
+- README loop: `docs/release-assets/workspace-demo.gif`
+- Stills: `docs/release-assets/demo-*.png`, `docs/release-assets/workspace-demo.png`
 - Logo: `plugin/assets/logo.svg`
 - Workspace: `web/`
 - Plugin ZIP: `python scripts/pack_plugin.py`

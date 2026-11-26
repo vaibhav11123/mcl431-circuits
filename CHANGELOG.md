@@ -18,6 +18,7 @@ Verification-oriented compiler for sequence circuits. The model proposes YAML; t
 - Static Pyodide workspace in `web/`
 - Plugin manifests in `plugin/` (ChatGPT/Claude directory still need a human HTTPS origin)
 - Fly.io is SKIPPED_OPTIONAL and is **not** deployed
+- Workspace demo video on the `v0.1.0-distribution` GitHub release; README shows the recording as a GIF with a link to the mp4
 
 ### Course pack
 
