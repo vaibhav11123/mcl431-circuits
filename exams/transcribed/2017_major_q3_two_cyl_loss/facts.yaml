@@ -1,0 +1,22 @@
+id: 2017_major_q3_two_cyl_loss
+year: 2017
+paper: Major 22-Nov-2017 Q3
+source: exams/pyqs/MCL431_Major-22Nov2017.pdf
+domain: hydraulic
+figure_given: true
+identifiers: []
+deliverable_sheets: []
+deliverable_calcs:
+- F1
+- F2 with pipe losses
+given:
+  pump_bar: 70
+  flow_lpm: 150
+  piston_dia_cm: 20
+  rod_dia_cm: 10
+  oil_sg: 0.8
+  nu_cm2_s: 0.93
+  elbow_K: 0.75
+note: Pipe table scrambled with servo Q on same pages; missing cells stay not_given
+question_excerpt: Two cylinders extending; pump 70 bar 150 lpm; find F1 and F2 with
+  frictional losses.

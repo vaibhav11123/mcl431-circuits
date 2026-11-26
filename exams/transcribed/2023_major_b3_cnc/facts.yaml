@@ -1,0 +1,28 @@
+id: 2023_major_b3_cnc
+year: 2023
+paper: Major 07-May-2023 B3
+source: exams/pyqs/Major_07May2023.pdf
+domain: cnc_program
+figure_given: true
+identifiers: []
+deliverable_sheets: []
+deliverable_calcs:
+- part_program
+units: inch
+rough_doc_inch: 0.09
+finish_allow_x_inch: 0.014
+finish_allow_z_inch: 0.003
+face_excess_inch: 0.035
+figure:
+  # From Major_07May2023.pdf p4 figure (question outranks solution scan)
+  total_length_z: 4.600
+  diameters:
+    nose: 2.000
+    after_fillet: 3.350
+    body: 3.750
+    flange: 5.000
+  fillet_r: 0.750
+  front_chamfer: 0.125x45
+  groove_width: 0.250
+  secondary_chamfer: 0.120x45
+question_excerpt: G71/G70 turning; rough DOC 0.09; finish X 0.014 Z 0.003; face 0.035.

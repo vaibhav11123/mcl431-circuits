@@ -1,0 +1,16 @@
+id: quiz4_airjet
+paper: Quiz 4 Electropneumatic
+source: exams/pyqs/Quiz 4 - Electropneumatic.jpeg.jpg
+domain: pneumatic_plus_electrical
+same_as: 2018_major_q1_airjet
+readable: true
+identifiers:
+- 1A
+- 2A
+- 3Z
+deliverable_sheets:
+- pneumatic
+- displacement_step
+- electrical
+deliverable_calcs: []
+question_excerpt: Same clamp-drill-airjet as 2018 Major Q1.

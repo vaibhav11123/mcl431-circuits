@@ -1,0 +1,9 @@
+id: plc_l14_apple_packing
+solution_files: []
+solution: absent
+items:
+- claim: L14 apple
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: exams/transcribed/plc_l14_apple_packing

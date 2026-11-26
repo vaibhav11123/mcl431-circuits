@@ -56,9 +56,10 @@ symbols:
   - A
   deenergized: true
   source:
-    pdf: MCL431_L4_Circuits.pdf
+    pdf: MCL431_L9_ElectropneumaticRelayCircuits.pdf
     page: 4
-  crop: null
+  crop: lecture/crops/dcv_3_2_spring_offset.png
+  naming: Air jet / single-solenoid 3/2 from L9 p4 SAC direct (no nozzle glyph).
 - id: dcv_4_3_spring_centered
   kind: hydraulic
   ports:

@@ -1,0 +1,14 @@
+id: 2020_major_q5_mill_clamp
+solution_files: []
+solution: absent
+items:
+- claim: PS 5 bar; do not copy emboss retract-on-2B2
+  source: lecture
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/mill_clamp_2020/circuit.yaml
+- claim: Cutter motor stays on until 2A returned; 1A waits for 2A home
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/mill_clamp_2020/circuit.yaml

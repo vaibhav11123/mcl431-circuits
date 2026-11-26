@@ -1,0 +1,1 @@
+DC servomotor; pitch 6.25 mm; encoder 200 slots; N15 G01 X25 Y180 F200.

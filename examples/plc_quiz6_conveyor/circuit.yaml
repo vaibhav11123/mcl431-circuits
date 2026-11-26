@@ -1,0 +1,72 @@
+meta:
+  title: Quiz 6 weight conveyor
+  domain: plc
+  exam_id: quiz6_conveyor_weight
+  patterns: []
+
+sequence: []
+power: { pumps: [], tank: "" }
+cylinders: {}
+motors: {}
+valves: {}
+sensors: [START, STOP, L1, L2, L3]
+electrical: { convention: plc, paths: [] }
+
+plc:
+  subtitle_connection: "PLC connection  ·  quiz 6 conveyor"
+  subtitle_ladder: "PLC ladder  ·  AI 0–920 kg  ·  AO 0–4600 rpm"
+  notes: ["Zones around 470→2250 and >580→3545 rpm."]
+  io:
+    - { address: I0.0, device: START, function: "Start" }
+    - { address: I0.1, device: STOP, function: "Stop" }
+    - { address: "AI Slot-3 Ch-2", device: LoadCell, function: "0–920 kg 10-bit" }
+    - { address: "AO Slot-2 Ch-1", device: Speed, function: "0–4600 rpm 12-bit" }
+    - { address: Q0.0, device: L1, function: "Low" }
+    - { address: Q0.1, device: L2, function: "Normal" }
+    - { address: Q0.2, device: L3, function: "High" }
+  field:
+    - title: Scaling
+      lines: ["AI max 920", "AO max 4600"]
+  scaling:
+    ai: { eng_max: 920, bits: 10, slot: 3, channel: 2, unit: kg }
+    ao: { eng_max: 4600, bits: 12, slot: 2, channel: 1, unit: rpm }
+    checkpoints: { ai_470: 470, ai_580: 580, ao_2250: 2250, ao_3545: 3545 }
+    counts: { ai_470: 523, ai_580: 645, ao_2250: 2003, ao_3545: 3156 }
+  rungs:
+    - id: 1
+      caption: Latch
+      series:
+        - { kind: contact, tag: I0.0, label: "I0.0 START", sense: "NO" }
+        - { kind: contact, tag: I0.1, label: "I0.1 STOP", sense: "NC" }
+      branch:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+      output: { kind: coil, tag: M0.0, label: "M0.0 RUN" }
+    - id: 2
+      caption: Normal at/under 580 including 470
+      series:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+        - { kind: cmp, op: "≤", left: AI, right_from: ai_580 }
+      output: { kind: mov, dest: AO, value_from: ao_2250 }
+    - id: 3
+      caption: High above 580
+      series:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+        - { kind: cmp, op: ">", left: AI, right_from: ai_580 }
+      output: { kind: mov, dest: AO, value_from: ao_3545 }
+    - id: 4
+      caption: L2 lamp
+      series:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+        - { kind: cmp, op: "≤", left: AI, right_from: ai_580 }
+      output: { kind: coil, tag: Q0.1, label: "Q0.1 L2" }
+    - id: 5
+      caption: L3 lamp
+      series:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NO" }
+        - { kind: cmp, op: ">", left: AI, right_from: ai_580 }
+      output: { kind: coil, tag: Q0.2, label: "Q0.2 L3" }
+    - id: 6
+      caption: Zero AO on stop
+      series:
+        - { kind: contact, tag: M0.0, label: "M0.0 RUN", sense: "NC" }
+      output: { kind: mov, dest: AO, value: 0 }

@@ -1,0 +1,9 @@
+id: 2019_major_q3_cnc
+solution_files: []
+solution: absent
+items:
+- claim: Coordinates from figure or not_given
+  source: lecture
+  lecture_ok: true
+  disposition: not_given
+  lands_in: solution.txt

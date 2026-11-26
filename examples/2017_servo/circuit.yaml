@@ -1,0 +1,14 @@
+meta:
+  title: 2017/2020 servo axis numbers
+  domain: hydraulic
+  exam_id: 2017_major_servo
+  figure_given: true
+  patterns: []
+
+sequence: []
+power: { pumps: [], tank: "" }
+cylinders: {}
+motors: {}
+valves: {}
+sensors: []
+electrical: { convention: lecture, paths: [] }

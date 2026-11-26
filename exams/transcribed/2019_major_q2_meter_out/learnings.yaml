@@ -1,0 +1,9 @@
+id: 2019_major_q2_meter_out
+solution_files: []
+solution: absent
+items:
+- claim: Extend speed from meter-out setting and annulus/cap as lecture meter-out
+  source: lecture
+  lecture_ok: true
+  disposition: adopt
+  lands_in: src/circuit/calc.py

@@ -1,0 +1,1 @@
+Motor lockout: 5 min after each OL trip; permanent lock after 5 trips in an hour until RESET; pilot lamp on permanent lock.

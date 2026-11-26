@@ -42,6 +42,8 @@ BOXES = [
     # L9 p4 — solenoid coil + SAC + 3/2
     ("MCL431_L9_ElectropneumaticRelayCircuits_p04", 1880, 1180, 2360, 1520, "solenoid_coil.png"),
     ("MCL431_L9_ElectropneumaticRelayCircuits_p04", 80, 520, 1320, 1680, "l9_p04_sac_direct.png"),
+    # L9 p4 — full 3/2 spring-offset (solenoid+spring) lecture crop for atlas
+    ("MCL431_L9_ElectropneumaticRelayCircuits_p04", 400, 1050, 1045, 1500, "dcv_3_2_spring_offset.png"),
     # L9 p5 — indirect SAC + electrical
     ("MCL431_L9_ElectropneumaticRelayCircuits_p05", 80, 400, 2760, 1880, "l9_p05_indirect.png"),
     # L10 p4 / p5

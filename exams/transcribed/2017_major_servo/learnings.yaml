@@ -1,0 +1,10 @@
+id: 2017_major_servo
+solution_files: []
+solution: absent
+items:
+- claim: Control resolution = pitch / (4*slots) for quadrature if lecture says so;
+    else pitch/slots — use L21 note
+  source: lecture
+  lecture_ok: true
+  disposition: adopt
+  lands_in: src/circuit/calc.py

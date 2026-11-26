@@ -1,0 +1,22 @@
+id: 2018_major_q1_airjet
+year: 2018
+paper: Major 17-Nov-2018 Q1
+source: exams/pyqs/MCL431_Major-17Nov2018.pdf
+domain: pneumatic_plus_electrical
+identifiers:
+- 1A
+- 2A
+- 3Z
+- START
+sequence:
+- 1A+
+- 2A+
+- 2A- with 3Z
+- 1A-
+deliverable_sheets:
+- pneumatic
+- electrical
+deliverable_calcs: []
+air_jet_atlas_id: dcv_3_2_spring_offset
+question_excerpt: Clamp 1A, drill 2A, swarf blown by air jet 3Z while drill retracts,
+  then unclamp.

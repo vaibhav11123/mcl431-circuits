@@ -1,0 +1,9 @@
+id: 2016_minor1_hoist
+solution_files: []
+solution: absent
+items:
+- claim: figure_given hoist; must not invent pipe losses on THIS paper
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: exams/transcribed/2016_minor1_hoist

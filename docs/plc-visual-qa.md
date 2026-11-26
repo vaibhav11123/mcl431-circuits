@@ -1,6 +1,6 @@
 # PLC visual + answer QA
 
-Without an MCL431 L14 answer key, a golden is **exam-defensible** only if it passes gates 1–5. Never claim “official key match.”
+Without an official MCL431 answer key, a golden is **exam-defensible** only if it passes gates 1–5. Never claim “official key match.” L14 still has no course key (use OpenPLC/Sanfoundry twins). Majors that have a readable solution scan use that scan as Gate 2 twin for structure, not as text to paste.
 
 ## Gate 0 — Pattern oracle (spike)
 
@@ -23,6 +23,14 @@ Against `lecture/ingest/MCL431_L14_PLC_Problems/document.md` and `exams/transcri
 | Stamping | Sanfoundry | START→RUN→Power; LS1–3; LSUP/LSDN; CONV/Up/Dn |
 | Apple | CTU+TON packing | Edge on apple pulse; CTU=12; TON=5 s |
 | Conveyor 2023 | Paper + calc | Keep as quality bar |
+| Oven 2017/2022 | Solution scan / question bands | OTL at low, OTU at high; 2022 MOV AO + TON 5 s |
+| Sprinkler 2019 | Question | 1 s TON + CTU s/min/h; 5 min open |
+| Lockout 2018 | Question | CTU=5; 5 min TON; permanent OTL |
+| Preset counter 2018 | Question | 300/175/50; last switch wins |
+| Tank mix 2017 | Question | TON 180 s |
+| Orange juice 2020 | Question | pumps together; pump3 10 s |
+| Plywood 2023 | Solution I/O table | CTU=20; paint 10.6 s; blink |
+| Traffic quiz 5 | Question | R10 Y5 G15 |
 
 ## Gate 3 — Math
 

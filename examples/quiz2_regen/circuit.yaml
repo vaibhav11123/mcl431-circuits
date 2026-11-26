@@ -1,0 +1,14 @@
+meta:
+  title: Quiz 2 regen calc
+  domain: hydraulic
+  exam_id: quiz2_regen
+  figure_given: true
+  patterns: []
+
+sequence: []
+power: { pumps: [], tank: "" }
+cylinders: {}
+motors: {}
+valves: {}
+sensors: []
+electrical: { convention: lecture, paths: [] }

@@ -1,0 +1,12 @@
+[06-Nov-2024] MCL431: CAM and Automation — Mid Term Exam (60 marks, 120 min; open notes). Source: exams/pyqs/WhatsApp Image 2025-09-14 at 20.40.46_849ecbb6.jpg (duplicate: ..._ed37d725.jpg, identical bytes). Photo of printed paper.
+Q1. In a Sheet metal forming press, the shape to be formed is hemispherical cup of radius 35 cm in a mild steel sheet. The force required to overcome packing friction is 1.55 kN and to deform sheet is 7.65 kN. The forming hammer should approach job from a distance of 10 cm. Flow rates of Pump P1 and P2 are 250 cm3/s and 70 cm3/s respectively. Hydraulic cylinder has piston area Ap = 20 cm2 and rod area Ar = 10 cm2.
+- Diameters of pipes: D1a = D1b = 2.2 cm, D2 to D8 = 1.4 cm.
+- Length of pipes: L1 = 20 cm, L2 = 40 cm, L3 = 36 cm, L4 = 20 cm, L5 = 26 cm, L6 = 100 cm, L7 = 108 cm, L8 = 50 cm.
+- Consider Laminar flow in pipes.
+- K value of all Tee Joints = 3.1 and Elbow joints = 2.8. K value for Check Valve = 3.6, DCV = 4.5.
+- Hydraulic Fluid: Kinematic viscosity = 115 cS, Weight density of oil = 9876 N/m3.
+- Frictional pressure losses in pipes, fittings, valves are negligibly small during the punching operation and can be ignored.
+- Ignore small length of pipes for which dimensions are not given.
+Considering Head Loss in Pipes, Valves and Fitting, Find the pressure ratings of pumps P1 & P2 considering 82% overall efficiency.
+[40 Marks]
+Figure on paper: hi-lo forming press with P1, P2, M, 1a/1b/2a/2b, check valve CV, DCV, relief valve(s), tee T1, elbows E1..E4 (legend: E = Elbows, T = Tee), pipes 3-8 to a vertical cylinder. Only Q1 was photographed; remaining 20 marks not seen.

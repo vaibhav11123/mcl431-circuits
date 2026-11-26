@@ -1,0 +1,9 @@
+id: 2020_remajor_q3_strip
+solution_files: []
+solution: absent
+items:
+- claim: same_as 2023_minor2_q1
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/strip_feed_2023/circuit.yaml

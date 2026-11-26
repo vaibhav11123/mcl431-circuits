@@ -1,0 +1,14 @@
+id: 2019_major_q1_sprinkler
+solution_files: []
+solution: absent
+items:
+- claim: Build from 1 s TON + three CTU; no new clock rung kind
+  source: lecture
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/plc_sprinkler_2019/circuit.yaml
+- claim: Open at 06:30:45 for 5 min
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/plc_sprinkler_2019/circuit.yaml

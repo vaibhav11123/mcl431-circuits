@@ -1,0 +1,14 @@
+id: 2020_major_q3_hoist_loss
+solution_files: []
+solution: absent
+items:
+- claim: 2016 hoist must-not-invent-losses does not ban this paper
+  source: lecture
+  lecture_ok: true
+  disposition: adopt
+  lands_in: src/circuit/calc.py
+- claim: Use paper displacements and pipe lengths
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: src/circuit/calc.py

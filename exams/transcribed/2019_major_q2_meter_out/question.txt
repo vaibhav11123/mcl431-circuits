@@ -1,0 +1,1 @@
+Vertical lift 3 t; bore 50 rod 32; pump 8 lpm; RV 180 bar; extend meter-out 4 lpm.

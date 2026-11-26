@@ -1,0 +1,1 @@
+24-Hr clock AWSS; reset to 00:00:00; open solenoid at 06:30:45 for 5 minutes.

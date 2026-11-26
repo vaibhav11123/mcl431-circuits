@@ -1,0 +1,76 @@
+meta:
+  title: 2018 Major Q3 motor lockout
+  domain: plc
+  exam_id: 2018_major_q3_lockout
+  patterns: []
+
+sequence: []
+power: { pumps: [], tank: "" }
+cylinders: {}
+motors: {}
+valves: {}
+sensors: [OL, START, RESET]
+electrical: { convention: plc, paths: [] }
+
+plc:
+  subtitle_connection: "PLC connection  ·  motor lockout"
+  subtitle_ladder: "PLC ladder  ·  CTU=5  ·  TON 5 min  ·  hour window"
+  notes:
+    - "OL edge clocks CTU. Each trip locks start for 5 min. After 5 trips in 60 min, OTL permanent lock until RESET."
+  io:
+    - { address: I0.0, device: OL, function: "Overload NO pulse" }
+    - { address: I0.1, device: START, function: "Motor start" }
+    - { address: I0.2, device: RESET, function: "Clear permanent lock" }
+    - { address: Q0.0, device: MOTOR, function: "Motor contactor" }
+    - { address: Q0.1, device: LOCK_LAMP, function: "Permanent lockout pilot" }
+  field:
+    - title: Inputs
+      lines: ["OL", "START", "RESET"]
+    - title: Timers/Counters
+      lines: ["C5:0 PV=5", "T4:0 PT=300s", "T4:1 PT=3600s"]
+  rungs:
+    - id: 1
+      caption: OL edge into CTU
+      series:
+        - { kind: contact, tag: I0.0, label: "I0.0 OL", sense: "NO" }
+        - { kind: ons, tag: B3:0/0, label: "ONS" }
+      output: { kind: ctu, tag: C5:0, preset: 5 }
+    - id: 2
+      caption: 5 min lockout after OL
+      series:
+        - { kind: contact, tag: I0.0, label: "I0.0 OL", sense: "NO" }
+      branch:
+        - { kind: contact, tag: "T4:0/TT", label: "T4:0/TT", sense: "NO" }
+      output: { kind: ton, tag: T4:0, preset: 300 }
+    - id: 3
+      caption: One-hour window (resets CTU when done)
+      series:
+        - { kind: contact, tag: "C5:0/ACC", label: "C5:0 has count", sense: "NO" }
+      output: { kind: ton, tag: T4:1, preset: 3600 }
+    - id: 4
+      caption: RES CTU after hour
+      series:
+        - { kind: contact, tag: "T4:1/DN", label: "T4:1/DN", sense: "NO" }
+      output: { kind: res, tag: C5:0, label: "RES C5:0" }
+    - id: 5
+      caption: Permanent lock OTL
+      series:
+        - { kind: contact, tag: "C5:0/DN", label: "C5:0/DN", sense: "NO" }
+      output: { kind: otl, tag: M0.1, label: "M0.1 PERM" }
+    - id: 6
+      caption: Clear permanent lock
+      series:
+        - { kind: contact, tag: I0.2, label: "I0.2 RESET", sense: "NO" }
+      output: { kind: otu, tag: M0.1, label: "M0.1 PERM" }
+    - id: 7
+      caption: Motor start if not locked
+      series:
+        - { kind: contact, tag: I0.1, label: "I0.1 START", sense: "NO" }
+        - { kind: contact, tag: "T4:0/DN", label: "T4:0/DN", sense: "NC" }
+        - { kind: contact, tag: M0.1, label: "M0.1 PERM", sense: "NC" }
+      output: { kind: coil, tag: Q0.0, label: "Q0.0 MOTOR" }
+    - id: 8
+      caption: Lockout lamp
+      series:
+        - { kind: contact, tag: M0.1, label: "M0.1 PERM", sense: "NO" }
+      output: { kind: coil, tag: Q0.1, label: "Q0.1 LOCK_LAMP" }

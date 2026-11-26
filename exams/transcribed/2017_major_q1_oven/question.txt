@@ -1,0 +1,1 @@
+Set-point oven PLC: S1 ON/OFF; AI 0-1024 F on 10-bit slot 1; display N7:4; A/B select 600/800 F; heaters on at 597/796, off at 603/804.

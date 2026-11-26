@@ -1,0 +1,9 @@
+id: 2022_major_q3_hoist_loss
+solution_files: []
+solution: absent
+items:
+- claim: Separate input set from 2020 hoist; same head-loss family
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: src/circuit/calc.py

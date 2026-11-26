@@ -1,0 +1,15 @@
+id: 2022_major_q1_oven_ao
+solution_files:
+- Major 2022 Solution.pdf
+solution: unreadable
+items:
+- claim: Band latch plus MOV for 2 kW and 8 kW AO counts
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/plc_oven_2022/circuit.yaml
+- claim: Display update TON 5 s
+  source: question
+  lecture_ok: true
+  disposition: adopt
+  lands_in: examples/plc_oven_2022/circuit.yaml

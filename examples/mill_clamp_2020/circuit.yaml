@@ -1,0 +1,57 @@
+meta:
+  title: 2020 Major Q5 mill clamp at 5 bar
+  domain: pneumatic_plus_electrical
+  exam_id: 2020_major_q5_mill_clamp
+  patterns:
+    - ep_dac_5_2
+    - sequence_double_solenoid
+
+sequence:
+  - { action: 1A+, label: clamp to 5 bar }
+  - { action: 2A+, label: feed mill (motor on) }
+  - { action: 2A-, label: retract feed (motor still on) }
+  - { action: 1A-, label: unclamp after 2A home }
+
+power:
+  pumps: []
+  tank: ""
+
+cylinders:
+  1A:
+    dcv: 1V
+    sensors: [1B1, 1B2]
+  2A:
+    dcv: 2V
+    sensors: [2B1, 2B2]
+
+motors: {}
+
+valves:
+  1V:
+    type: dcv_5_2_double_solenoid
+    solenoids: [1Y1, 1Y2]
+  2V:
+    type: dcv_5_2_double_solenoid
+    solenoids: [2Y1, 2Y2]
+
+sensors:
+  - START
+  - S0
+  - PS
+  - 1B1
+  - 1B2
+  - 2B1
+  - 2B2
+
+electrical:
+  convention: lecture
+  paths:
+    - { number: 1, kind: control, contacts: [START, S0, 1B1, 2B1], coil: K1 }
+    - { number: 2, kind: control, contacts: [K1], coil: 1Y1 }
+    - { number: 3, kind: control, contacts: [PS], coil: K2 }
+    - { number: 4, kind: control, contacts: [K2], coil: 2Y1 }
+    - { number: 5, kind: main, contacts: [K2], coil: KM }
+    - { number: 6, kind: control, contacts: [2B2], coil: K3 }
+    - { number: 7, kind: control, contacts: [K3], coil: 2Y2 }
+    - { number: 8, kind: control, contacts: [K3, 2B1], coil: K4 }
+    - { number: 9, kind: control, contacts: [K4], coil: 1Y2 }

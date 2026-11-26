@@ -1,0 +1,11 @@
+id: 2020_remajor_q4_cnc
+year: 2020
+paper: Re-Major 03-Jan-2020 Q4
+source: exams/pyqs/MCL431_ReMajor-3Jan2020.pdf
+domain: cnc_program
+figure_given: true
+identifiers: []
+deliverable_sheets: []
+deliverable_calcs:
+- part_program
+question_excerpt: Mill contour; two DOC passes; tools T11/T12.

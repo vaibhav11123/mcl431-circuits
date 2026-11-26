@@ -1,0 +1,1 @@
+Fill with sol A until full; agitate 3 min; empty with sol B until empty sensor opens; START/STOP.

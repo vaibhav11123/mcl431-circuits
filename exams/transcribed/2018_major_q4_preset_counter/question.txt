@@ -1,0 +1,1 @@
+Variable CTU presets 300/175/50 via product switches; last closed wins; lamp when full.
